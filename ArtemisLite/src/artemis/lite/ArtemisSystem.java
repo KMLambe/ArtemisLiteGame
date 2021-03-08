@@ -88,8 +88,8 @@ public class ArtemisSystem {
 		
 		System.out.println("System name:\t" + this.systemName);
 		
-		if (this.systemName.length() > 0) {
-			System.out.println("System name:\t" + this.systemName);
+		if (this.systemOwner.getName().length() > 0) {
+			System.out.println("System owner:\t" + this.systemOwner.getName());
 		} else {
 			System.out.println("This system is currently unowned.");
 		}
