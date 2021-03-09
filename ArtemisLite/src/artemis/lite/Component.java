@@ -69,105 +69,7 @@ public class Component extends Square {
 		this.componentOwner = componentOwner;
 		this.componentSystem = componentSystem;
 	}
-
-	/**
-	 * @return the developmentStage
-	 */
-	public int getDevelopmentStage() {
-		return developmentStage;
-	}
-
-	/**
-	 * @param developmentStage the developmentStage to set
-	 */
-	public void setDevelopmentStage(int developmentStage) {
-		this.developmentStage = developmentStage;
-	}
-
-	/**
-	 * @return the componentCost
-	 */
-	public int getComponentCost() {
-		return componentCost;
-	}
-
-	/**
-	 * @param componentCost the componentCost to set
-	 */
-	public void setComponentCost(int componentCost) {
-		this.componentCost = componentCost;
-	}
-
-	/**
-	 * @return the costToDevelop
-	 */
-	public int getCostToDevelop() {
-		return costToDevelop;
-	}
-
-	/**
-	 * @param costToDevelop the costToDevelop to set
-	 */
-	public void setCostToDevelop(int costToDevelop) {
-		this.costToDevelop = costToDevelop;
-	}
-
-	/**
-	 * @return the costForLanding
-	 */
-	public int getCostForLanding() {
-		return costForLanding;
-	}
-
-	/**
-	 * @param costForLanding the costForLanding to set
-	 */
-	public void setCostForLanding(int costForLanding) {
-		this.costForLanding = costForLanding;
-	}
-
-	/**
-	 * @return the componentOwner
-	 */
-	public Player getComponentOwner() {
-		return componentOwner;
-	}
-
-	/**
-	 * @param componentOwner the componentOwner to set
-	 */
-	public void setComponentOwner(Player componentOwner) {
-		this.componentOwner = componentOwner;
-	}
-
-	/**
-	 * @return the componentSystem
-	 */
-	public ArtemisSystem getComponentSystem() {
-		return componentSystem;
-	}
-
-	/**
-	 * @param componentSystem the componentSystem to set
-	 */
-	public void setComponentSystem(ArtemisSystem componentSystem) {
-		this.componentSystem = componentSystem;
-	}
-
-	/**
-	 * @return the fullyDeveloped
-	 */
-	public boolean isFullyDeveloped() {
-		return fullyDeveloped;
-	}
-
-	/**
-	 * @param fullyDeveloped the fullyDeveloped to set
-	 */
-	public void setFullyDeveloped(boolean fullyDeveloped) {
-		this.fullyDeveloped = fullyDeveloped;
-	}
-
+	
 	/**
 	 * This method facilitates the development of the component to the next stage
 	 * 
@@ -275,5 +177,103 @@ public class Component extends Square {
 	/**
 	 * DISPLAY ALL DETAILS METHOD TO BE ADDED - WILL OVERRIDE METHOD FROM SUPERCLASS
 	 */
+
+	/**
+	 * @return the developmentStage
+	 */
+	public int getDevelopmentStage() {
+		return developmentStage;
+	}
+
+	/**
+	 * @param developmentStage the developmentStage to set
+	 */
+	public void setDevelopmentStage(int developmentStage) {
+		this.developmentStage = developmentStage;
+	}
+
+	/**
+	 * @return the componentCost
+	 */
+	public int getComponentCost() {
+		return componentCost;
+	}
+
+	/**
+	 * @param componentCost the componentCost to set
+	 */
+	public void setComponentCost(int componentCost) {
+		this.componentCost = componentCost;
+	}
+
+	/**
+	 * @return the costToDevelop
+	 */
+	public int getCostToDevelop() {
+		return costToDevelop;
+	}
+
+	/**
+	 * @param costToDevelop the costToDevelop to set
+	 */
+	public void setCostToDevelop(int costToDevelop) {
+		this.costToDevelop = costToDevelop;
+	}
+
+	/**
+	 * @return the costForLanding
+	 */
+	public int getCostForLanding() {
+		return costForLanding;
+	}
+
+	/**
+	 * @param costForLanding the costForLanding to set
+	 */
+	public void setCostForLanding(int costForLanding) {
+		this.costForLanding = costForLanding;
+	}
+
+	/**
+	 * @return the componentOwner
+	 */
+	public Player getComponentOwner() {
+		return componentOwner;
+	}
+
+	/**
+	 * @param componentOwner the componentOwner to set
+	 */
+	public void setComponentOwner(Player componentOwner) {
+		this.componentOwner = componentOwner;
+	}
+
+	/**
+	 * @return the componentSystem
+	 */
+	public ArtemisSystem getComponentSystem() {
+		return componentSystem;
+	}
+
+	/**
+	 * @param componentSystem the componentSystem to set
+	 */
+	public void setComponentSystem(ArtemisSystem componentSystem) {
+		this.componentSystem = componentSystem;
+	}
+
+	/**
+	 * @return the fullyDeveloped
+	 */
+	public boolean isFullyDeveloped() {
+		return fullyDeveloped;
+	}
+
+	/**
+	 * @param fullyDeveloped the fullyDeveloped to set
+	 */
+	public void setFullyDeveloped(boolean fullyDeveloped) {
+		this.fullyDeveloped = fullyDeveloped;
+	}
 
 }
