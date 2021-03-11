@@ -22,7 +22,7 @@ public class Component extends Square {
 	private final int MAXIMUM_DEVELOPMENT_LEVEL = 4; // NEW
 
 	private int developmentStage; // NEW
-	private boolean fullyDeveloped; // NEW
+	// private boolean fullyDeveloped; REPLACED by checkFullyDeveloped() method 
 
 	private int componentCost;
 	private int costToDevelop;
@@ -61,7 +61,7 @@ public class Component extends Square {
 	 */
 	public Component(String squareName, int componentCost, int costToDevelop, int costForLanding, Player componentOwner,
 			ArtemisSystem componentSystem) {
-		super(squareName);
+		super(squareName); // TO DO: NEEDS TO BE BROUGHT IN LINE WITH SQUARE CONSTRUCTOR
 		this.developmentStage = MINIMUM_DEVELOPMENT_LEVEL;
 		this.componentCost = componentCost;
 		this.costToDevelop = costToDevelop;
@@ -78,11 +78,11 @@ public class Component extends Square {
 	 */
 	public void developComponent(Player currentPlayer) throws IllegalArgumentException {
 
-		if (!fullyDeveloped && componentSystem.getSystemOwner() == currentPlayer
-				&& currentPlayer.getResourceBalance >= this.costToDevelop) {
+		if (!this.checkFullyDeveloped() && componentSystem.getSystemOwner() == currentPlayer
+				&& currentPlayer.getResourceBalance() >= costToDevelop) {
 
 			// deduct development fee from current player
-			currentPlayer.setResourceBalance(currentPlayer.getResourceBalance - this.costToDevelop);
+			currentPlayer.setResourceBalance(currentPlayer.getResourceBalance() - costToDevelop);
 
 			// increase the development level to the next stage
 			this.developmentStage++;
@@ -129,12 +129,12 @@ public class Component extends Square {
 
 		// notify players of cost for landing
 		System.out.println("The cost of landing on this component is " + this.costForLanding);
-		System.out.println(this.getComponentOwner().playerName
+		System.out.println(this.getComponentOwner().getPlayerName()
 				+ " is the owner of this component - meaning they can choose whether they want to take their fee or not!");
 
 		if (currentPlayer.getResourceBalance() < this.costForLanding) {
 			System.out.println(
-					"WARNING: If " + this.getComponentOwner().playerName + " decides to request their fee then "
+					"WARNING: If " + this.getComponentOwner().getPlayerName() + " decides to request their fee then "
 							+ currentPlayer.getPlayerName() + " will run out of experts and the game will end!");
 		}
 
@@ -144,7 +144,7 @@ public class Component extends Square {
 			Scanner scanner = new Scanner(System.in);
 			
 			// confirm if owner wishes to take their fee
-			System.out.println(this.getComponentOwner().playerName + ", do you require experts from "
+			System.out.println(this.getComponentOwner().getPlayerName() + ", do you require experts from "
 					+ currentPlayer.getPlayerName() + "?");
 			System.out.println("Type 1 and press enter if you wish to receive experts.");
 			System.out.println("Type 2 and press enter if do NOT wish to receive experts.");
@@ -159,19 +159,28 @@ public class Component extends Square {
 				} else {
 					currentPlayer.setResourceBalance(currentPlayer.getResourceBalance() - this.costForLanding);
 					this.getComponentOwner().setResourceBalance(this.getComponentOwner().getResourceBalance() + this.costForLanding);
-					System.out.println(currentPlayer.getPlayerName + ", your new resource balance is: "
+					System.out.println(currentPlayer.getPlayerName() + ", your new resource balance is: "
 							+ currentPlayer.getResourceBalance());
-					System.out.println(this.getComponentOwner().getPlayerName + ", your new resource balance is: "
+					System.out.println(this.getComponentOwner().getPlayerName() + ", your new resource balance is: "
 							+ currentPlayer.getResourceBalance());
 				}
 			} else if (ownerResponse == 2) {
-				System.out.println(this.getComponentOwner().getPlayerName + " has decided not to request experts.");
+				System.out.println(this.getComponentOwner().getPlayerName() + " has decided not to request experts.");
 			}
 			
 			scanner.close();
 
 		} while (ownerResponse != 1 || ownerResponse != 2);
 
+	}
+	
+	/**
+	 * This method checks if the component is at the maximum development level
+	 * and returns a boolean value
+	 * @return - this method returns either true or false
+	 */
+	public boolean checkFullyDeveloped() {
+		return developmentStage == MAXIMUM_DEVELOPMENT_LEVEL;
 	}
 	
 	/**
@@ -261,19 +270,6 @@ public class Component extends Square {
 	public void setComponentSystem(ArtemisSystem componentSystem) {
 		this.componentSystem = componentSystem;
 	}
-
-	/**
-	 * @return the fullyDeveloped
-	 */
-	public boolean isFullyDeveloped() {
-		return fullyDeveloped;
-	}
-
-	/**
-	 * @param fullyDeveloped the fullyDeveloped to set
-	 */
-	public void setFullyDeveloped(boolean fullyDeveloped) {
-		this.fullyDeveloped = fullyDeveloped;
-	}
+	
 
 }
