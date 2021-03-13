@@ -11,18 +11,9 @@ public class Game {
     private final static int DEFAULT_RESOURCES = 100;
     public final static int DEFAULT_ACTION_POINTS = 2;
 	private final static int MAXIMUM_DICE_ROLL = 6;
-
-    //player array
-    static int[] players = new int[]{};
-    //board
-
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
-
-    }
-
+	public final static int MAXIMUM_SQUARES = 12;
+	public final static int MAXIMUM_SYSTEMS = 4;
+	public final static int MAXIMUM_NAME_LENGTH = 20;
 
 	// player array
 	static int[] players = new int[] {};
