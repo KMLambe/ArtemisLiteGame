@@ -12,7 +12,7 @@ public class Player {
     private String playerName;
     private int resourceBalance;
     private int currentBoardPosition;
-    private int actionPoints;
+    private int actionPoints = Game.DEFAULT_ACTION_POINTS;
     private ArrayList<Component> ownedComponents = new ArrayList<>();
     private ArrayList<ArtemisSystem> ownedSystems = new ArrayList<>();
 
@@ -44,7 +44,7 @@ public class Player {
      * @param component the object to be updated
      */
     private void updateOwner(Component component) {
-         component.setComponentOwner(this);
+        component.setComponentOwner(this);
     }
 
     /**
@@ -53,7 +53,7 @@ public class Player {
      * @param system the object to be updated
      */
     private void updateOwner(ArtemisSystem system) {
-         system.setSystemOwner(this);
+        system.setSystemOwner(this);
     }
 
     // TODO - additional validation to ensure that this is not already owned - likely dealt with within
@@ -106,7 +106,7 @@ public class Player {
      */
     private void addSystem(ArtemisSystem system) throws NullPointerException {
         if (system == null) {
-            throw new NullPointerException("Cannot add null component to player's owned systems");
+            throw new NullPointerException("Cannot add null to player's owned systems");
         }
 
         // make sure player does not already own this
@@ -125,7 +125,7 @@ public class Player {
      */
     private void removeSystem(ArtemisSystem system) throws NullPointerException {
         if (system == null) {
-            throw new NullPointerException("Cannot remove null component to player's owned systems");
+            throw new NullPointerException("Cannot remove null from player's owned systems");
         }
 
         // can only be removed if it does not already exist
@@ -136,10 +136,10 @@ public class Player {
      * Determines whether the component already has an owner
      *
      * @param component to be checked
-     * @return true if the component has an owner, as specified by the component's instance var
+     * @return true - when a component does not have an owner
      */
-    private boolean isComponentOwned(Component component) {
-        return !component.getComponentOwner().equals(null);
+    private boolean checkComponentIsNotOwned(Component component) {
+        return component.getComponentOwner() == null;
     }
 
     /**
@@ -170,15 +170,40 @@ public class Player {
     }
 
 
-    // TODO - check that component is not already owned
-    // TODO - check that player does not already own component
-    // TODO - check that player has enough resources to purchase
-    // TODO - check that player has enough action points to perform action
-    // TODO - change ownership of component to this player
-    // TODO - update player's ownedComponents to include component
-    public boolean purchaseComponent(Component component) {
+    /**
+     * Updates Player and Component objects to reflect new owner, providing that all validation checks were successful.
+     *
+     * @param component - the component that will be purchased
+     * @return true - if the component was successfully purchased and ownership changed
+     * @throws Exception - if any validation conditions fail
+     */
+    public boolean purchaseComponent(Component component) throws IllegalArgumentException {
 
-        return false;
+        // perform validation
+        if (!checkComponentIsNotOwned(component)) {
+            throw new IllegalArgumentException(component.getSquareName() + " is already owned.");
+        } else if (!checkSufficientResources(component.getComponentCost())) {
+            throw new IllegalArgumentException("Insufficient resources to purchase " + component.getSquareName());
+        } else if (!checkHasActionPoints()) {
+            throw new IllegalArgumentException("Insufficient action points cannot perform this action.");
+        }
+
+        // player has enough resources, action points, and component is not already owned
+
+        // update action points
+        setActionPoints(actionPoints - 1);
+        // update player resources
+        setResourceBalance(resourceBalance - component.getComponentCost());
+        // add component to player's components
+        addComponent(component);
+        // update component owned
+        component.setComponentOwner(this);
+        // announce to all game players what just happened
+        // Game.announcement();
+
+        // return that this was successful
+        return true;
+
     }
 
     public boolean tradeComponent(Component component) {

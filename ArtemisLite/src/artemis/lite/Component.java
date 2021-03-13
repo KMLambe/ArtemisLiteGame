@@ -69,6 +69,25 @@ public class Component extends Square {
 		this.componentOwner = componentOwner;
 		this.componentSystem = componentSystem;
 	}
+
+	/**
+	 * Constructor with arguments
+	 *
+	 * @param squareName
+	 * @param componentCost
+	 * @param costToDevelop
+	 * @param costForLanding
+	 * @param componentSystem
+	 */
+	public Component(String squareName, int componentCost, int costToDevelop, int costForLanding,
+					 ArtemisSystem componentSystem) {
+		super(squareName); // TO DO: NEEDS TO BE BROUGHT IN LINE WITH SQUARE CONSTRUCTOR
+		this.developmentStage = MINIMUM_DEVELOPMENT_LEVEL;
+		this.componentCost = componentCost;
+		this.costToDevelop = costToDevelop;
+		this.costForLanding = costForLanding;
+		this.componentSystem = componentSystem;
+	}
 	
 	/**
 	 * This method facilitates the development of the component to the next stage
@@ -105,7 +124,7 @@ public class Component extends Square {
 			case 4:
 				this.setCostForLanding(costForLandingAtDevelopmentStage4);
 				this.setCostToDevelop(costToDevelopAtDevelopmentStage4); // Should be impossible to develop here
-				this.setFullyDeveloped(true);
+//				this.setFullyDeveloped(true);
 				break;
 			default:
 				// nothing happens

@@ -6,10 +6,23 @@ import java.util.Scanner;
 
 public class Game {
 
-	private final static int MINIMUM_PLAYERS = 2;
-	private final static int MAXIMUM_PLAYERS = 4;
-	private final static int DEFAULT_RESOURCES = 100;
-	private static final int MAXIMUM_DICE_ROLL = 6; // NEW - KL
+    private final static int MINIMUM_PLAYERS = 2;
+    private final static int MAXIMUM_PLAYERS = 4;
+    private final static int DEFAULT_RESOURCES = 100;
+    public final static int DEFAULT_ACTION_POINTS = 2;
+	private final static int MAXIMUM_DICE_ROLL = 6;
+
+    //player array
+    static int[] players = new int[]{};
+    //board
+
+    /**
+     * @param args
+     */
+    public static void main(String[] args) {
+
+    }
+
 
 	// player array
 	static int[] players = new int[] {};
