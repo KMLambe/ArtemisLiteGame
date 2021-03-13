@@ -8,43 +8,52 @@ package artemis.lite;
  *
  */
 public class ArtemisSystem {
-	
-	private String systemName;
-	private Player systemOwner;
-	private boolean fullyDeveloped;
-	private Square[] componentsInSystem;
-	
-	/**
-	 * Default constructor
-	 */
-	public ArtemisSystem() {
-		
-	}
-	
-	/**
-	 * Constructor with arguments
-	 * @param systemName
-	 */
-	public ArtemisSystem(String systemName, Square[] componentsInSystem) {
-		this.setSystemName(systemName);
-		this.componentsInSystem = componentsInSystem;
-	}
-	
-	/**
-	 * @return the systemName
-	 */
-	public String getSystemName() {
-		return systemName;
-	}
-	/**
-	 * @param systemName the systemName to set
-	 */
-	public void setSystemName(String systemName) throws IllegalArgumentException {
-		if (systemName.length() > 0) {
-			this.systemName = systemName;
-		} else {
-			throw new IllegalArgumentException();
-		}
+
+    private String systemName;
+    private Player systemOwner;
+    private boolean fullyDeveloped;
+    private Square[] componentsInSystem;
+
+    /**
+     * Default constructor
+     */
+    public ArtemisSystem() {
+
+    }
+
+    /**
+     * Constructor with arguments
+     * @param systemName
+     */
+    public ArtemisSystem(String systemName, Square[] componentsInSystem) {
+        this.setSystemName(systemName);
+        this.componentsInSystem = componentsInSystem;
+    }
+
+    /**
+     * Overloaded constructor that only needs system name to instantiate
+     * @param systemName the name of the system
+     */
+    public ArtemisSystem(String systemName) {
+        this.setSystemName(systemName);
+    }
+
+    /**
+     * @return the systemName
+     */
+    public String getSystemName() {
+        return systemName;
+    }
+
+    /**
+     * @param systemName the systemName to set
+     */
+    public void setSystemName(String systemName) throws IllegalArgumentException {
+        if (systemName.length() > 0) {
+            this.systemName = systemName;
+        } else {
+            throw new IllegalArgumentException();
+        }
 
 	}
 	/**
