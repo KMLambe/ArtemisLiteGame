@@ -13,7 +13,7 @@ public class Game {
 	private final static int MAXIMUM_DICE_ROLL = 6;
 	public final static int MAXIMUM_SQUARES = 12;
 	public final static int MAXIMUM_SYSTEMS = 4;
-	public final static int MAXIMUM_NAME_LENGTH = 20;
+	public final static int MAXIMUM_NAME_LENGTH = 50;
 
 	// player array
 	static int[] players = new int[] {};
@@ -24,13 +24,51 @@ public class Game {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-
 	}
+
 
 	public static void startGame() {
 		System.out.println("Mission Brief");
+		createBoard();
 		createPlayers();
 		generatePlayerOrder();
+	}
+
+	/**
+	 *
+	 */
+	private static void createBoard() {
+		board = new Board();
+
+		// create systems
+		ArtemisSystem system1 = board.createSystem("SPACE LAUNCH SYSTEM");
+		ArtemisSystem system2 = board.createSystem("PRE-STAGING SYSTEM");
+		ArtemisSystem system3 = board.createSystem("ORION SPACECRAFT");
+		ArtemisSystem system4 = board.createSystem("GATEWAY LUNAR SYSTEM");
+
+		// create squares and components
+		board.createSquare("RECRUITMENT");
+		// system1
+		board.createSquare("CARGO HOLD", 100, 50, 20, system1);
+		board.createSquare("EXPLORATION UPPER STAGE & CORE STAGE", 100, 50, 20, system1);
+		board.createSquare("SOLID ROCKET BOOSTERS", 100, 50, 20, system1);
+		// system2
+		board.createSquare("LUNAR ROVERS", 50, 25, 10, system2);
+		board.createSquare("SCIENCE EXPERIMENTS", 50, 25, 10, system2);
+		// non-system
+		board.createSquare("TEAM BONDING");
+		// system3
+		board.createSquare("CREW MODULE", 150, 75, 35, system3);
+		board.createSquare("SERVICE MODULE", 150, 75, 35, system3);
+		board.createSquare("LAUNCH ABORT SYSTEM", 150, 75, 35, system3);
+		// system4
+		board.createSquare("POWER AND PROPULSION ELEMENT", 200, 100, 50, system4);
+		board.createSquare("HABITATION AND LOGISTICS OUTPOST", 200, 100, 50, system4);
+
+		// TODO - remove below display methods - temporarily here to show squares and systems are created
+		board.displayAllSystems();
+		board.displayAllSquares();
+
 	}
 
 	public static void createPlayers() {
@@ -149,7 +187,7 @@ public class Game {
 	public static void playTurn() {
 		// container for other methods
 		rollDice();
-		updatePlayerPosition();
+//		updatePlayerPosition();
 		displayMenu();
 
 	}
@@ -172,6 +210,8 @@ public class Game {
 		// counter if square=start
 	}
 
+
+
 	/**
 	 * @return the players
 	 */
@@ -189,19 +229,5 @@ public class Game {
 	public static void endGame() {
 		// needs to terminate loop of the game
 		System.out.println("The mission has failed");
-	}
-
-	/**
-	 * @return the board
-	 */
-	public Board getBoard() {
-		return board;
-	}
-
-	/**
-	 * @param board the board to set
-	 */
-	public void setBoard(Board board) {
-		this.board = board;
 	}
 }
