@@ -94,8 +94,11 @@ public class ArtemisSystem {
         // add to arraylist
         componentsInSystem.add(component);
         // update component's system
-        component.setComponentSystem(this);
+        if (!component.getComponentSystem().equals(this)) {
+            component.setComponentSystem(this);
+        }
     }
+
 
     public void displayAllDetails() {
 
@@ -114,7 +117,7 @@ public class ArtemisSystem {
 			int totalDeveloped = 0;
 			
 			for (Component component : this.componentsInSystem) {
-				if (component.isFullyDeveloped()) {
+				if (component.checkFullyDeveloped()) {
 					System.out.println(component.getSquareName() + " is fully developed.");
 					totalDeveloped++;
 				} else {
@@ -122,13 +125,10 @@ public class ArtemisSystem {
 				}
 			}
 			
-			System.out.println(totalDeveloped + " out of " + this.componentsInSystem.length() + " components in this system are fully developed.");
+			System.out.println(totalDeveloped + " out of " + this.componentsInSystem.size() + " components in this system are fully developed.");
 			
 		}
 		
 		
 	}
-	
-
-
 }
