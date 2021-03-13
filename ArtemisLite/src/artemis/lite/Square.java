@@ -17,7 +17,7 @@ public class Square {
 	/**
 	 * represents the system a square is allocated to
 	 */
-	private ArtemisProjectArea squareSystem;
+	private ArtemisSystem squareSystem;
 	
 	
 	
@@ -38,13 +38,12 @@ public class Square {
 	 * @param squareName
 	 * @param squarePosition
 	 */
-	public Square(String squareName, int squarePosition, ArtemisProjectArea squareSystem) {
+	public Square(String squareName, int squarePosition, ArtemisSystem squareSystem) {
 		this.setSquareName(squareName);
 		this.setSquarePosition(squarePosition);
 		this.squareSystem = squareSystem;
 	}
-	
-	
+
 	
 	// methods
 
@@ -94,7 +93,7 @@ public class Square {
 	/**
 	 * @return the squareSystem
 	 */
-	public ArtemisProjectArea getSquareSystem() {
+	public ArtemisSystem getSquareSystem() {
 		return squareSystem;
 	}
 
@@ -102,7 +101,7 @@ public class Square {
 	/**
 	 * @param squareSystem the squareSystem to set
 	 */
-	public void setSquareSystem(ArtemisProjectArea squareSystem) {
+	public void setSquareSystem(ArtemisSystem squareSystem) {
 		this.squareSystem = squareSystem;
 	}
 	
