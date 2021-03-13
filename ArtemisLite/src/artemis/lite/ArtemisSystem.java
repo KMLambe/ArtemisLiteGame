@@ -55,57 +55,63 @@ public class ArtemisSystem {
             throw new IllegalArgumentException();
         }
 
-	}
-	/**
-	 * @return the systemOwner
-	 */
-	public Player getSystemOwner() {
-		return systemOwner;
-	}
-	/**
-	 * @param systemOwner the systemOwner to set
-	 */
-	public void setSystemOwner(Player systemOwner) {
-		this.systemOwner = systemOwner;
-	}
-	/**
-	 * @return the fullyDeveloped
-	 */
-	public boolean isFullyDeveloped() {
-		return fullyDeveloped;
-	}
-	/**
-	 * @param fullyDeveloped the fullyDeveloped to set
-	 */
-	public void setFullyDeveloped(boolean fullyDeveloped) {
-		this.fullyDeveloped = fullyDeveloped;
-	}
-	/**
-	 * @return the componentsInSystem
-	 */
-	public Square[] getComponentsInSystem() {
-		return componentsInSystem;
-	}
-	/**
-	 * @param componentsInSystem the componentsInSystem to set
-	 */
-	public void setComponentsInSystem(Square[] componentsInSystem) {
-		this.componentsInSystem = componentsInSystem;
-	}
-	
-	public void displayAllDetails() {
-		
-		System.out.println("System name:\t" + this.systemName);
-		
-		if (this.systemOwner.getName().length() > 0) {
-			System.out.println("System owner:\t" + this.systemOwner.getName());
-		} else {
-			System.out.println("This system is currently unowned.");
-		}
-		
-		if (this.fullyDeveloped) {
-			System.out.println("This system is fully developed. That's a big step towards the completion of the Artemis project.");
-		} else {
+    }
+
+    /**
+     * @return the systemOwner
+     */
+    public Player getSystemOwner() {
+        return systemOwner;
+    }
+
+    /**
+     * @param systemOwner the systemOwner to set
+     */
+    public void setSystemOwner(Player systemOwner) {
+        this.systemOwner = systemOwner;
+    }
+
+    /**
+     * @return the fullyDeveloped
+     */
+    public boolean isFullyDeveloped() {
+        return fullyDeveloped;
+    }
+
+    /**
+     * @param fullyDeveloped the fullyDeveloped to set
+     */
+    public void setFullyDeveloped(boolean fullyDeveloped) {
+        this.fullyDeveloped = fullyDeveloped;
+    }
+
+    /**
+     * @return the componentsInSystem
+     */
+    public Square[] getComponentsInSystem() {
+        return componentsInSystem;
+    }
+
+    /**
+     * @param componentsInSystem the componentsInSystem to set
+     */
+    public void setComponentsInSystem(Square[] componentsInSystem) {
+        this.componentsInSystem = componentsInSystem;
+    }
+
+    public void displayAllDetails() {
+
+        System.out.println("System name:\t" + this.systemName);
+
+        if (this.systemOwner.getPlayerName().length() > 0) {
+            System.out.println("System owner:\t" + this.systemOwner.getPlayerName());
+        } else {
+            System.out.println("This system is currently unowned.");
+        }
+
+        if (this.fullyDeveloped) {
+            System.out.println("This system is fully developed. That's a big step towards the completion of the Artemis project.");
+        } else {
 
 			int totalDeveloped = 0;
 			

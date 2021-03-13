@@ -148,13 +148,13 @@ public class Component extends Square {
 
 		// notify players of cost for landing
 		System.out.println("The cost of landing on this component is " + this.costForLanding);
-		System.out.println(this.getComponentOwner().getName()
+		System.out.println(this.getComponentOwner().getPlayerName()
 				+ " is the owner of this component - meaning they can choose whether they want to take their fee or not!");
 
 		if (currentPlayer.getResourceBalance() < this.costForLanding) {
 			System.out.println(
-					"WARNING: If " + this.getComponentOwner().getName() + " decides to request their fee then "
-							+ currentPlayer.getName() + " will run out of experts and the game will end!");
+					"WARNING: If " + this.getComponentOwner().getPlayerName() + " decides to request their fee then "
+							+ currentPlayer.getPlayerName() + " will run out of experts and the game will end!");
 		}
 
 		do {
@@ -163,8 +163,8 @@ public class Component extends Square {
 			Scanner scanner = new Scanner(System.in);
 			
 			// confirm if owner wishes to take their fee
-			System.out.println(this.getComponentOwner().getName() + ", do you require experts from "
-					+ currentPlayer.getName() + "?");
+			System.out.println(this.getComponentOwner().getPlayerName() + ", do you require experts from "
+					+ currentPlayer.getPlayerName() + "?");
 			System.out.println("Type 1 and press enter if you wish to receive experts.");
 			System.out.println("Type 2 and press enter if do NOT wish to receive experts.");
 
@@ -178,13 +178,13 @@ public class Component extends Square {
 				} else {
 					currentPlayer.setResourceBalance(currentPlayer.getResourceBalance() - this.costForLanding);
 					this.getComponentOwner().setResourceBalance(this.getComponentOwner().getResourceBalance() + this.costForLanding);
-					System.out.println(currentPlayer.getName() + ", your new resource balance is: "
+					System.out.println(currentPlayer.getPlayerName() + ", your new resource balance is: "
 							+ currentPlayer.getResourceBalance());
-					System.out.println(this.getComponentOwner().getName() + ", your new resource balance is: "
+					System.out.println(this.getComponentOwner().getPlayerName() + ", your new resource balance is: "
 							+ currentPlayer.getResourceBalance());
 				}
 			} else if (ownerResponse == 2) {
-				System.out.println(this.getComponentOwner().getName() + " has decided not to request experts.");
+				System.out.println(this.getComponentOwner().getPlayerName() + " has decided not to request experts.");
 			}
 			
 			scanner.close();
