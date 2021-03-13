@@ -69,6 +69,25 @@ public class Component extends Square {
 		this.componentOwner = componentOwner;
 		this.componentSystem = componentSystem;
 	}
+
+	/**
+	 * Constructor with arguments
+	 *
+	 * @param squareName
+	 * @param componentCost
+	 * @param costToDevelop
+	 * @param costForLanding
+	 * @param componentSystem
+	 */
+	public Component(String squareName, int componentCost, int costToDevelop, int costForLanding,
+					 ArtemisSystem componentSystem) {
+		super(squareName); // TO DO: NEEDS TO BE BROUGHT IN LINE WITH SQUARE CONSTRUCTOR
+		this.developmentStage = MINIMUM_DEVELOPMENT_LEVEL;
+		this.componentCost = componentCost;
+		this.costToDevelop = costToDevelop;
+		this.costForLanding = costForLanding;
+		this.componentSystem = componentSystem;
+	}
 	
 	/**
 	 * This method facilitates the development of the component to the next stage
@@ -105,7 +124,7 @@ public class Component extends Square {
 			case 4:
 				this.setCostForLanding(costForLandingAtDevelopmentStage4);
 				this.setCostToDevelop(costToDevelopAtDevelopmentStage4); // Should be impossible to develop here
-				this.setFullyDeveloped(true);
+//				this.setFullyDeveloped(true);
 				break;
 			default:
 				// nothing happens
@@ -129,13 +148,13 @@ public class Component extends Square {
 
 		// notify players of cost for landing
 		System.out.println("The cost of landing on this component is " + this.costForLanding);
-		System.out.println(this.getComponentOwner().getPlayerName()
+		System.out.println(this.getComponentOwner().getName()
 				+ " is the owner of this component - meaning they can choose whether they want to take their fee or not!");
 
 		if (currentPlayer.getResourceBalance() < this.costForLanding) {
 			System.out.println(
-					"WARNING: If " + this.getComponentOwner().getPlayerName() + " decides to request their fee then "
-							+ currentPlayer.getPlayerName() + " will run out of experts and the game will end!");
+					"WARNING: If " + this.getComponentOwner().getName() + " decides to request their fee then "
+							+ currentPlayer.getName() + " will run out of experts and the game will end!");
 		}
 
 		do {
@@ -144,8 +163,8 @@ public class Component extends Square {
 			Scanner scanner = new Scanner(System.in);
 			
 			// confirm if owner wishes to take their fee
-			System.out.println(this.getComponentOwner().getPlayerName() + ", do you require experts from "
-					+ currentPlayer.getPlayerName() + "?");
+			System.out.println(this.getComponentOwner().getName() + ", do you require experts from "
+					+ currentPlayer.getName() + "?");
 			System.out.println("Type 1 and press enter if you wish to receive experts.");
 			System.out.println("Type 2 and press enter if do NOT wish to receive experts.");
 
@@ -159,13 +178,13 @@ public class Component extends Square {
 				} else {
 					currentPlayer.setResourceBalance(currentPlayer.getResourceBalance() - this.costForLanding);
 					this.getComponentOwner().setResourceBalance(this.getComponentOwner().getResourceBalance() + this.costForLanding);
-					System.out.println(currentPlayer.getPlayerName() + ", your new resource balance is: "
+					System.out.println(currentPlayer.getName() + ", your new resource balance is: "
 							+ currentPlayer.getResourceBalance());
-					System.out.println(this.getComponentOwner().getPlayerName() + ", your new resource balance is: "
+					System.out.println(this.getComponentOwner().getName() + ", your new resource balance is: "
 							+ currentPlayer.getResourceBalance());
 				}
 			} else if (ownerResponse == 2) {
-				System.out.println(this.getComponentOwner().getPlayerName() + " has decided not to request experts.");
+				System.out.println(this.getComponentOwner().getName() + " has decided not to request experts.");
 			}
 			
 			scanner.close();
