@@ -1,10 +1,12 @@
 /**
- * 
+ *
  */
 package artemis.lite;
 
+import java.util.ArrayList;
+
 /**
- * @author Kieran Lambe 40040696
+ * @author Kieran Lambe 40040696, John Young 40030361
  *
  */
 public class ArtemisSystem {
@@ -12,22 +14,13 @@ public class ArtemisSystem {
     private String systemName;
     private Player systemOwner;
     private boolean fullyDeveloped;
-    private Square[] componentsInSystem;
+    private ArrayList<Component> componentsInSystem = new ArrayList<>();
 
     /**
      * Default constructor
      */
     public ArtemisSystem() {
 
-    }
-
-    /**
-     * Constructor with arguments
-     * @param systemName
-     */
-    public ArtemisSystem(String systemName, Square[] componentsInSystem) {
-        this.setSystemName(systemName);
-        this.componentsInSystem = componentsInSystem;
     }
 
     /**
@@ -49,12 +42,13 @@ public class ArtemisSystem {
      * @param systemName the systemName to set
      */
     public void setSystemName(String systemName) throws IllegalArgumentException {
-        if (systemName.length() > 0) {
-            this.systemName = systemName;
-        } else {
-            throw new IllegalArgumentException();
+        // validate name length
+        if (systemName.length() <= 0 || systemName.length() > Game.MAXIMUM_NAME_LENGTH) {
+            throw new IllegalArgumentException("Invalid name - must be between 1-" + Game.MAXIMUM_NAME_LENGTH +
+                    " characters long");
         }
 
+        this.systemName = systemName;
     }
 
     /**
@@ -88,15 +82,19 @@ public class ArtemisSystem {
     /**
      * @return the componentsInSystem
      */
-    public Square[] getComponentsInSystem() {
+    public ArrayList<Component> getComponentsInSystem() {
         return componentsInSystem;
     }
 
-    /**
-     * @param componentsInSystem the componentsInSystem to set
-     */
-    public void setComponentsInSystem(Square[] componentsInSystem) {
-        this.componentsInSystem = componentsInSystem;
+    public void addComponent(Component component) throws IllegalArgumentException {
+        if (component == null) {
+            throw new IllegalArgumentException("Invalid component");
+        }
+
+        // add to arraylist
+        componentsInSystem.add(component);
+        // update component's system
+        component.setComponentSystem(this);
     }
 
     public void displayAllDetails() {
@@ -131,6 +129,6 @@ public class ArtemisSystem {
 		
 	}
 	
-	
+
 
 }
