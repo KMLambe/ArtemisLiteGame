@@ -1,6 +1,8 @@
 package artemis.lite;
 
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  * This implements the Player object for the game. It retains player information
@@ -177,7 +179,7 @@ public class Player {
      * @return true - if the component was successfully purchased and ownership changed
      * @throws Exception - if any validation conditions fail
      */
-    public boolean purchaseComponent(Component component) throws IllegalArgumentException {
+    public void purchaseComponent(Component component) throws IllegalArgumentException {
 
         // perform validation
         if (!checkComponentIsNotOwned(component)) {
@@ -191,7 +193,7 @@ public class Player {
         // player has enough resources, action points, and component is not already owned
 
         // update action points
-        setActionPoints(actionPoints - 1);
+        consumeActionPoint(1);
         // update player resources
         setResourceBalance(resourceBalance - component.getComponentCost());
         // add component to player's components
@@ -199,15 +201,113 @@ public class Player {
         // update component owned
         component.setComponentOwner(this);
         // announce to all game players what just happened
-        // Game.announcement();
-
-        // return that this was successful
-        return true;
-
+        String message;
+        message = getPlayerName() + " has purchased " + component.getSquareName() + " for " + component.getComponentCost();
+        message += " " + Game.RESOURCE_NAME + " and has " + this.getResourceBalance() + " " + Game.RESOURCE_NAME + " remaining";
+        Game.announce(message);
     }
 
-    public boolean tradeComponent(Component component) {
-        return false;
+    /**
+     * Enables the active player to propose a trade with another player. The other player can reject the trade.
+     * When a trade is proposed, the trade resource amount is the component cost.
+     *
+     * @param component - the object that will be proposed for a trade
+     * @param scanner   - used to pass through a scanner input.
+     *                  - NOTE: this should be Scanner(System.in) outside of testing.
+     * @throws IllegalArgumentException
+     */
+    public void tradeComponent(Component component, Scanner scanner) throws IllegalArgumentException {
+        // TODO - get component owner
+        // TODO - initiate trade with other player
+        // TODO - update action points
+        // TODO - if accepted, updated other player resources & remove ownership
+        //  AND update currentPlayer, removing resources and adding ownership
+        // TODO _ if not accepted, make announcement and end process
+
+        // if player already owns this exit method
+        if (component.getComponentOwner() == this) {
+            return;
+        }
+
+        if (checkComponentIsNotOwned(component)) {
+            throw new IllegalArgumentException(component.getSquareName() + " cannot be traded as it is not owned.");
+        } else if (!checkSufficientResources(component.getComponentCost())) {
+            throw new IllegalArgumentException("Insufficient resources to purchase " + component.getSquareName());
+        } else if (!checkHasActionPoints()) {
+            throw new IllegalArgumentException("Insufficient action points cannot perform this action.");
+        }
+
+        Player componentOwner = component.getComponentOwner();
+
+
+        // announcement
+        String message;
+        message = getPlayerName() + " has initiated a trade with " + componentOwner.getPlayerName() + "...\n";
+        message += "[" + componentOwner.getPlayerName() + "] Do you wish to trade the component " +
+                component.getSquareName() + " for " + component.getComponentCost() + " " + Game.RESOURCE_NAME + "?\n\n";
+        message += "Input 'yes' to accept, or, 'no' to reject";
+
+        Game.announce(message);
+
+        // get user input
+        System.out.print("Decision: ");
+        String playerInput = scanner.next();
+        System.out.println();
+
+        if (playerInput.equalsIgnoreCase("yes")) {
+            message = componentOwner.getPlayerName() + " has accepted the trade with " + getPlayerName() + "\n\n";
+            message += "\tTransferring " + component.getSquareName() + " from " + componentOwner.getPlayerName() + " to "
+                    + this.getPlayerName() + "\n";
+
+            Game.announce(message);
+            // update resources
+            transferResources(componentOwner, component.getComponentCost());
+            // update owner
+            component.setComponentOwner(this);
+
+            message = "Transfer completed."; // this will be announced outside the if-else block below
+        } else {
+            // trade rejected (input was not yes)
+            message = componentOwner.getPlayerName() + " has rejected the trade with " + getPlayerName();
+        }
+
+        Game.announce(message);
+        consumeActionPoint(1);
+        scanner.close();
+    }
+
+    /**
+     * Facilitates the transfer of resources from one player to another. This will transfer from currentPlayer to
+     * otherPlayer and vice-versa, dependent on the value of resources (positive or negative).
+     *
+     * @param otherPlayer - the player on the other side of the transfer
+     * @param resources   - a positive balance transfers resources TO otherPlayer, a negative balance transfers resources
+     *                    TO the currentPlayer
+     */
+    private void transferResources(Player otherPlayer, int resources) throws IllegalArgumentException {
+        Player transferFrom, transferTo;
+        if (resources >= 0) {
+            transferFrom = this;
+            transferTo = otherPlayer;
+        } else {
+            transferFrom = otherPlayer;
+            transferTo = this;
+        }
+
+        resources = Math.abs(resources); // get absolute value
+
+        if (!transferFrom.checkSufficientResources(resources)) {
+            throw new IllegalArgumentException(transferFrom + " does not have enough " + Game.RESOURCE_NAME
+                    + " to complete this action");
+        }
+
+        transferFrom.updateResources(-1 * resources); // multiplied by -1 to make this a negative adjustment
+        transferTo.updateResources(resources);
+
+        String message = "Transferred " + resources + " " + Game.RESOURCE_NAME + " from " +
+                transferFrom.getPlayerName() + " to " + transferTo.getPlayerName();
+
+        Game.announce(message);
     }
 
     public boolean offerComponentToOtherPlayers(Component component) {
@@ -226,6 +326,22 @@ public class Player {
 
     }
 
+    /**
+     * Updates the current resources to reflect the change
+     *
+     * @param resources - the amount to add/subtract from the current resources
+     */
+    private int updateResources(int resources) {
+        int newBalance = this.getResourceBalance() + resources;
+        setResourceBalance(newBalance);
+
+        // used to provide user friendly output of resource change (+ or -)
+        String change = (resources >= 0 ? "+" + resources : "" + resources);
+
+        Game.announce(getPlayerName() + " now has " + newBalance + " " + Game.RESOURCE_NAME + " (" + change + ")");
+
+        return newBalance;
+    }
 
     // getters and setters
 
@@ -294,6 +410,17 @@ public class Player {
      */
     public int getActionPoints() {
         return actionPoints;
+    }
+
+    /**
+     * Update the players action points
+     *
+     * @param actionPoints - the number of action points that will be subtracted for a given action
+     */
+    public void consumeActionPoint(int actionPoints) {
+        setActionPoints(getActionPoints() - actionPoints);
+        Game.announce(getPlayerName() + " has consumed " + actionPoints + " action points and has " + this.actionPoints
+                + " remaining for this turn.");
     }
 
 
