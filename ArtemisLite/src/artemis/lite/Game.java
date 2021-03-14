@@ -17,10 +17,13 @@ public class Game {
 	public final static int MAXIMUM_SYSTEMS = 4;
 	public final static int MAXIMUM_NAME_LENGTH = 50;
 
-	// player array
-	static int[] players = new int[] {};
-	// board
-	private static Board board;
+    // labels - to be used in place of hard coding strings
+    public final static String RESOURCE_NAME = "EXPERTS";
+
+    // player array
+    static int[] players = new int[]{};
+    // board
+    private static Board board;
 
 	/**
 	 * @param args
@@ -227,13 +230,24 @@ public class Game {
 		// use a loop to change the boolean at the end of a players turn
 	}
 
-	/**
-	 * This method allocates the default number of resources once a player lands on
-	 * or passes the Recruitment square
-	 * 
-	 * @param currentPlayer
-	 */
-	public static void allocateResources(Player currentPlayer) {
+    /**
+     * Outputs a message to the screen for all players to view.
+     *
+     * @param message - the message to be outputted
+     */
+    public static void announce(String message) {
+        System.out.println("----------------------------------");
+        System.out.println("ANNOUNCEMENT:");
+        System.out.println("\t" + message);
+    }
+
+    /**
+     * This method allocates the default number of resources once a player lands on
+     * or passes the Recruitment square
+     *
+     * @param currentPlayer
+     */
+    public static void allocateResources(Player currentPlayer) {
 
 		String updatedResourceBalanceAnnouncement;
 		
