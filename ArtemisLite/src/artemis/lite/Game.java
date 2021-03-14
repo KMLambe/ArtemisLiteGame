@@ -6,11 +6,13 @@ import java.util.Scanner;
 
 public class Game {
 
-    private final static int MINIMUM_PLAYERS = 2;
-    private final static int MAXIMUM_PLAYERS = 4;
-    private final static int DEFAULT_RESOURCES = 100;
-    public final static int DEFAULT_ACTION_POINTS = 2;
+	private final static int MINIMUM_PLAYERS = 2;
+	private final static int MAXIMUM_PLAYERS = 4;
+	private final static int DEFAULT_RESOURCES = 100;
+	public final static int DEFAULT_ACTION_POINTS = 2;
+	private final static int MINIMUM_DICE_ROLL = 1;
 	private final static int MAXIMUM_DICE_ROLL = 6;
+	private final static int NUMBER_OF_DICE = 2;
 	public final static int MAXIMUM_SQUARES = 12;
 	public final static int MAXIMUM_SYSTEMS = 4;
 	public final static int MAXIMUM_NAME_LENGTH = 50;
@@ -18,14 +20,13 @@ public class Game {
 	// player array
 	static int[] players = new int[] {};
 	// board
-	private static Board board; 
+	private static Board board;
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 	}
-
 
 	public static void startGame() {
 		System.out.println("Mission Brief");
@@ -65,7 +66,8 @@ public class Game {
 		board.createSquare("POWER AND PROPULSION ELEMENT", 200, 100, 50, system4);
 		board.createSquare("HABITATION AND LOGISTICS OUTPOST", 200, 100, 50, system4);
 
-		// TODO - remove below display methods - temporarily here to show squares and systems are created
+		// TODO - remove below display methods - temporarily here to show squares and
+		// systems are created
 		board.displayAllSystems();
 		board.displayAllSquares();
 
@@ -106,51 +108,74 @@ public class Game {
 	}
 
 	/**
-	 * This method simulates the rolling of two dice
-	 * and returns the sum of the two values as an integer.
+	 * This method simulates the rolling of two dice and returns the sum of the two
+	 * values as an integer.
+	 * 
 	 * @return sumOfDice - the sum of the two dice rolls.
 	 */
 	public static int rollDice() {
-		
+
 		String rollAnnouncement;
 
 		int dice1 = (int) (Math.random() * MAXIMUM_DICE_ROLL + 1); // KL - Added use of constants
 		int dice2 = (int) (Math.random() * MAXIMUM_DICE_ROLL + 1); // KL - Added use of constants
 		int sumOfDice = dice1 + dice2;
-		
+
 		rollAnnouncement = "You have rolled " + dice1 + " and " + dice2 + ". Move " + sumOfDice + " spaces."; // KL
 
-		System.out.println(rollAnnouncement); // KL Question: Is this something that would instead be passed to the announcement method discussed previously?
-	
+		System.out.println(rollAnnouncement); // KL Question: Is this something that would instead be passed to the
+												// announcement method discussed previously?
+
 		return sumOfDice;
 	}
 
 	/**
-	 * This method updates the current player's board position
-	 * based on the sum of the two dice rolled during the current turn
+	 * This method updates the current player's board position based on the sum of
+	 * the two dice rolled during the current turn
+	 * 
 	 * @param currentPlayer - the current player, passed as a parameter argument
-	 * @param sumOfDice - the sum of two dice returned by the rollDice() method, passed as a parameter argument
+	 * @param sumOfDice     - the sum of two dice returned by the rollDice() method,
+	 *                      passed as a parameter argument
 	 */
-	public static void updatePlayerPosition(Player currentPlayer, int sumOfDice) {
-		
+	public static void updatePlayerPosition(Player currentPlayer, Board board, int sumOfDice) throws IllegalArgumentException {
+
+		int movementCalculation, newBoardPosition, boardLength;
 		String positionChangeAnnouncement, squareName;
-		int movementCalculation, newBoardPosition;
-		int boardLength = board.getSquares().length;
-		
-		// calculate new board position
+
+		if (currentPlayer == null) {
+			throw new IllegalArgumentException("Current player cannot be null");
+		} else if (board == null) {
+			throw new IllegalArgumentException("Board cannot be null");
+		} else if (sumOfDice < MINIMUM_DICE_ROLL * NUMBER_OF_DICE || sumOfDice > MAXIMUM_DICE_ROLL * NUMBER_OF_DICE) {
+			throw new IllegalArgumentException("Combined dice roll must be between "
+					+ MINIMUM_DICE_ROLL * NUMBER_OF_DICE + " and " + MAXIMUM_DICE_ROLL * NUMBER_OF_DICE);
+		}
+
+		boardLength = board.getSquares().length;
+
+		// roll dice
+		// currentPlayerDiceRoll = Game.rollDice(); KL - this will be taken as a
+		// parameter argument
+
 		movementCalculation = currentPlayer.getCurrentBoardPosition() + sumOfDice;
 		newBoardPosition = movementCalculation % boardLength;
-		
+
 		// update player's position
 		currentPlayer.setCurrentBoardPosition(newBoardPosition);
-		
+
+		// check if player landed on or passed recruitment
+		// allocate resources if condition has been met
+		if (movementCalculation > boardLength) {
+			allocateResources(currentPlayer);
+		}
+
 		// get name of square on which player has landed
 		squareName = board.getSquares()[newBoardPosition].getSquareName();
-		
+
 		// announce new board position
 		positionChangeAnnouncement = currentPlayer.getPlayerName() + " has landed on " + squareName;
 		System.out.println(positionChangeAnnouncement);
-		
+
 	}
 
 	public static void displayMenu() {
@@ -202,15 +227,29 @@ public class Game {
 		// use a loop to change the boolean at the end of a players turn
 	}
 
-	public static void allocateResources() {
-		// resourceBalance + DEFAULT_RESOURCES
-		// run using an if statement after updated player position
-		// to see if the player has moved enough to qualify
+	/**
+	 * This method allocates the default number of resources once a player lands on
+	 * or passes the Recruitment square
+	 * 
+	 * @param currentPlayer
+	 */
+	public static void allocateResources(Player currentPlayer) {
 
-		// counter if square=start
+		String updatedResourceBalanceAnnouncement;
+		
+		if (currentPlayer == null) {
+			throw new IllegalArgumentException("Current player cannot be null");
+		}
+
+		// add default resources to current player's balance
+		currentPlayer.setResourceBalance(currentPlayer.getResourceBalance() + DEFAULT_RESOURCES);
+
+		updatedResourceBalanceAnnouncement = "Recruitment drive! It's time for some fresh ideas. "
+				+ currentPlayer.getPlayerName() + " has added " + DEFAULT_RESOURCES + " experts to their team.";
+
+		System.out.println(updatedResourceBalanceAnnouncement);
+
 	}
-
-
 
 	/**
 	 * @return the players
