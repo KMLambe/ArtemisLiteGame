@@ -110,7 +110,7 @@ public class Board {
             }
 
             // if code gets to here then the array is full, i.e. trying to add too many squares
-            if (index == squares.length) {
+            if (index == squares.length - 1) {
                 throw new IllegalArgumentException("Too many squares added - cannot add square, " + componentName);
             }
         }
