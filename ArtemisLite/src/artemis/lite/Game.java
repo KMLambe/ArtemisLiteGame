@@ -177,7 +177,7 @@ public class Game {
 
 		// announce new board position
 		positionChangeAnnouncement = currentPlayer.getPlayerName() + " has landed on " + squareName;
-		System.out.println(positionChangeAnnouncement);
+		announce(positionChangeAnnouncement);
 
 	}
 
@@ -259,9 +259,9 @@ public class Game {
 		currentPlayer.setResourceBalance(currentPlayer.getResourceBalance() + DEFAULT_RESOURCES);
 
 		updatedResourceBalanceAnnouncement = "Recruitment drive! It's time for some fresh ideas. "
-				+ currentPlayer.getPlayerName() + " has added " + DEFAULT_RESOURCES + " experts to their team.";
+				+ currentPlayer.getPlayerName() + " has added " + DEFAULT_RESOURCES + " " + RESOURCE_NAME + " to their team.";
 
-		System.out.println(updatedResourceBalanceAnnouncement);
+		announce(updatedResourceBalanceAnnouncement);
 
 	}
 
