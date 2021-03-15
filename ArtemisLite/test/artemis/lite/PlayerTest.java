@@ -194,6 +194,12 @@ class PlayerTest {
         // tradeInitiator action points has reduced
         expected = openingActionPointsTradeInitiator - 1;
         assertEquals(expected, tradeInitiator.getActionPoints());
+
+        // originalComponentOwner should no longer have the component
+        assertFalse(originalComponentOwner.getOwnedComponents().contains(componentBeingTraded));
+
+        // tradeIntiator should now have component as part of their components
+        assertTrue(tradeInitiator.getOwnedComponents().contains(componentBeingTraded));
     }
 
 
@@ -221,6 +227,12 @@ class PlayerTest {
         // tradeInitiator action points has reduced
         int expected = openingActionPointsTradeInitiator - 1;
         assertEquals(expected, tradeInitiator.getActionPoints());
+
+        // originalComponentOwner should still have component
+        assertTrue(componentOwner.getOwnedComponents().contains(component));
+
+        // tradeIntiator should not have the component
+        assertFalse(tradeInitiator.getOwnedComponents().contains(component));
     }
 
     @Test

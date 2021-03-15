@@ -264,6 +264,10 @@ public class Player {
             transferResources(componentOwner, component.getComponentCost());
             // update owner
             component.setComponentOwner(this);
+            // remove from componentOwner's components
+            componentOwner.removeComponent(component);
+            // add component to player's components
+            addComponent(component);
 
             message = "Transfer completed."; // this will be announced outside the if-else block below
         } else {
