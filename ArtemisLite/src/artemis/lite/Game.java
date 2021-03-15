@@ -8,6 +8,8 @@ public class Game {
 
 	private final static int MINIMUM_PLAYERS = 2;
 	private final static int MAXIMUM_PLAYERS = 4;
+	private final static int STARTING_POSITION =0;
+	private final static int STARTING_RESOURCES = 500;
 	private final static int DEFAULT_RESOURCES = 100;
 	public final static int DEFAULT_ACTION_POINTS = 2;
 	private final static int MINIMUM_DICE_ROLL = 1;
@@ -21,7 +23,8 @@ public class Game {
     public final static String RESOURCE_NAME = "EXPERTS";
 
     // player array
-    static int[] players = new int[]{};
+    private static Player player;
+	private static ArrayList<Player> players = new ArrayList<Player>();
     // board
     private static Board board;
 
@@ -76,39 +79,65 @@ public class Game {
 
 	}
 
-	public static void createPlayers() {
-		int numberOfPlayers = 0;
-		Scanner enterPlayers = new Scanner(System.in);
+	/**
+	 * Takes an input from the user to confirm the number of players playing
+	 * @param scanner
+	 * @return
+	 */
+	public static int playersInTheGame(Scanner scanner) {
+		
+		int numberOfPlayers=0;
 		while (numberOfPlayers < MINIMUM_PLAYERS || numberOfPlayers > MAXIMUM_PLAYERS) {
 			System.out.println("How many players are there?");
-			numberOfPlayers = enterPlayers.nextInt();
+			numberOfPlayers = scanner.nextInt();
 			if (numberOfPlayers >= MINIMUM_PLAYERS && numberOfPlayers <= MAXIMUM_PLAYERS) {
 				System.out.println("There are " + numberOfPlayers + " players in the game.");
 			} else {
-				System.out.println("Invalid input");
+				System.out.println("Invalid input please set number of players between 2-4");
 			}
 		}
-
-		String Players[] = new String[numberOfPlayers];
-
-		// for(int loop=1; loop<=Players.length; loop++) {
-		// System.out.println("Run getPlayerName");
-		// }
-
+		return numberOfPlayers;
+		
 	}
-
-	public static void generatePlayerOrder() {
-		Random rand = new Random();
-
-		for (int i = 0; i < players.length; i++) {
-			int randomSwap = rand.nextInt(players.length);
-			int temp = players[randomSwap];
-			players[randomSwap] = players[i];
-			players[i] = temp;
+	
+	/**
+	 * Set the names of each player
+	 */
+	public static void createPlayers(Scanner scanner) {
+		
+		
+		int numberOfPlayers= playersInTheGame(scanner);
+		
+		ArrayList<String> playerNames = new ArrayList<String>();
+		for(int loop=1; loop<=numberOfPlayers; loop++) {
+			System.out.println("Enter player " +loop + " name");
+			String playerName = scanner.next();
+			
+			while (playerNames.contains(playerName.toLowerCase())) {
+				System.out.println("Player name already exists please enter a different name.");
+				playerName = scanner.next();
+				
+			}
+			playerNames.add(playerName.toLowerCase());
+			players.add(new Player(playerName, STARTING_RESOURCES, STARTING_POSITION));
 		}
-		System.out.println(Arrays.toString(players));
-
 	}
+	
+	public static void cast() {
+		createPlayers(new Scanner(System.in));
+		generatePlayerOrder();
+		for(Player player: players) {
+			System.out.println(player.getPlayerName());
+		}
+	}
+		
+	/**
+	 * Shuffles the order of the players
+	 */
+	public static void generatePlayerOrder() {
+		Collections.shuffle(players);
+	}
+	
 
 	/**
 	 * This method simulates the rolling of two dice and returns the sum of the two

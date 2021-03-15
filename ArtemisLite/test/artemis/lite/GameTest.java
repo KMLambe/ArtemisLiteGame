@@ -24,6 +24,10 @@ class GameTest {
 	// variables for dice roll
 	int validDiceRollLower, validDiceRollMid, validDiceRollUpper, invalidDiceRollLower, invalidDiceRollUpper, randomCombinedDiceRoll, minimumCombinedDiceRoll, maximumCombinedDiceRoll;
 
+	// variables for number of players in game
+		int validNumberOfPlayersUpper, validNumberOfPlayersMid, validNumberOfPlayersLower, invalidNumberOfPlayersUpper, numberOfPlayers;
+		int invalidNumberOfPlayersLower;  
+	
 	@BeforeEach
 	void setUp() throws Exception {
 
@@ -89,6 +93,13 @@ class GameTest {
 		validDiceRollLower = 2;
 		validDiceRollMid = 8;
 		validDiceRollUpper = 12;
+		
+		// number of players in game boundaries
+				validNumberOfPlayersLower = 2;
+				validNumberOfPlayersMid = 3;
+				validNumberOfPlayersUpper = 4;
+				invalidNumberOfPlayersLower = 1;
+				invalidNumberOfPlayersUpper = 5;
 
 		player1 = new Player(validPlayerName1, validResourceBalance1, validCurrentBoardPosition1);
 	}
@@ -103,6 +114,14 @@ class GameTest {
 		fail("Not yet implemented");
 	}
 
+	@Test
+	void playersInTheGameValid() {
+	
+	assertEquals(validNumberOfPlayersLower,Game.playersInTheGame(new Scanner("2")) );
+	assertEquals(validNumberOfPlayersMid, Game.playersInTheGame(new Scanner("3")));
+	assertEquals(validNumberOfPlayersUpper, Game.playersInTheGame(new Scanner("4")));
+	}
+	
 	@Test
 	void testCreatePlayers() {
 		fail("Not yet implemented");
