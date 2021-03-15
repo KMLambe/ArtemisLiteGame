@@ -8,7 +8,7 @@ public class Game {
 
 	private final static int MINIMUM_PLAYERS = 2;
 	private final static int MAXIMUM_PLAYERS = 4;
-	private final static int STARTING_POSITION =0;
+	private final static int STARTING_POSITION = 0;
 	private final static int STARTING_RESOURCES = 500;
 	private final static int DEFAULT_RESOURCES = 100;
 	public final static int DEFAULT_ACTION_POINTS = 2;
@@ -19,14 +19,14 @@ public class Game {
 	public final static int MAXIMUM_SYSTEMS = 4;
 	public final static int MAXIMUM_NAME_LENGTH = 50;
 
-    // labels - to be used in place of hard coding strings
-    public final static String RESOURCE_NAME = "EXPERTS";
+	// labels - to be used in place of hard coding strings
+	public final static String RESOURCE_NAME = "EXPERTS";
 
-    // player array
-    private static Player player;
+	// player array
+	private static Player player;
 	private static ArrayList<Player> players = new ArrayList<Player>();
-    // board
-    private static Board board;
+	// board
+	private static Board board;
 
 	/**
 	 * @param args
@@ -81,12 +81,13 @@ public class Game {
 
 	/**
 	 * Takes an input from the user to confirm the number of players playing
+	 * 
 	 * @param scanner
 	 * @return
 	 */
 	public static int playersInTheGame(Scanner scanner) {
-		
-		int numberOfPlayers=0;
+
+		int numberOfPlayers = 0;
 		while (numberOfPlayers < MINIMUM_PLAYERS || numberOfPlayers > MAXIMUM_PLAYERS) {
 			System.out.println("How many players are there?");
 			numberOfPlayers = scanner.nextInt();
@@ -97,47 +98,45 @@ public class Game {
 			}
 		}
 		return numberOfPlayers;
-		
+
 	}
-	
+
 	/**
 	 * Set the names of each player
 	 */
 	public static void createPlayers(Scanner scanner) {
-		
-		
-		int numberOfPlayers= playersInTheGame(scanner);
-		
+
+		int numberOfPlayers = playersInTheGame(scanner);
+
 		ArrayList<String> playerNames = new ArrayList<String>();
-		for(int loop=1; loop<=numberOfPlayers; loop++) {
-			System.out.println("Enter player " +loop + " name");
+		for (int loop = 1; loop <= numberOfPlayers; loop++) {
+			System.out.println("Enter player " + loop + " name");
 			String playerName = scanner.next();
-			
+
 			while (playerNames.contains(playerName.toLowerCase())) {
 				System.out.println("Player name already exists please enter a different name.");
 				playerName = scanner.next();
-				
+
 			}
 			playerNames.add(playerName.toLowerCase());
 			players.add(new Player(playerName, STARTING_RESOURCES, STARTING_POSITION));
 		}
 	}
-	
+
 	public static void cast() {
 		createPlayers(new Scanner(System.in));
 		generatePlayerOrder();
-		for(Player player: players) {
+		for (Player player : players) {
 			System.out.println(player.getPlayerName());
 		}
 	}
-		
+
 	/**
 	 * Shuffles the order of the players
 	 */
 	public static void generatePlayerOrder() {
 		Collections.shuffle(players);
 	}
-	
 
 	/**
 	 * This method simulates the rolling of two dice and returns the sum of the two
@@ -169,7 +168,8 @@ public class Game {
 	 * @param sumOfDice     - the sum of two dice returned by the rollDice() method,
 	 *                      passed as a parameter argument
 	 */
-	public static void updatePlayerPosition(Player currentPlayer, Board board, int sumOfDice) throws IllegalArgumentException {
+	public static void updatePlayerPosition(Player currentPlayer, Board board, int sumOfDice)
+			throws IllegalArgumentException {
 
 		int movementCalculation, newBoardPosition, boardLength;
 		String positionChangeAnnouncement, squareName;
@@ -207,6 +207,18 @@ public class Game {
 		// announce new board position
 		positionChangeAnnouncement = currentPlayer.getPlayerName() + " has landed on " + squareName;
 		announce(positionChangeAnnouncement);
+
+		// check if player landed on owned square
+		if (board.getSquares()[newBoardPosition] instanceof Component) {
+			Component currentComponent = (Component) board.getSquares()[newBoardPosition];
+			if (currentComponent.getComponentOwner() != null) {
+				Scanner scanner = new Scanner(System.in);
+				currentComponent.checkOwnerWantsResources(currentPlayer, scanner);
+				scanner.close();
+			} else {
+				// TO DO - offer player chance to take charge of component
+			}
+		}
 
 	}
 
@@ -259,27 +271,27 @@ public class Game {
 		// use a loop to change the boolean at the end of a players turn
 	}
 
-    /**
-     * Outputs a message to the screen for all players to view.
-     *
-     * @param message - the message to be outputted
-     */
-    public static void announce(String message) {
-        System.out.println("----------------------------------");
-        System.out.println("ANNOUNCEMENT:");
-        System.out.println("\t" + message);
-    }
+	/**
+	 * Outputs a message to the screen for all players to view.
+	 *
+	 * @param message - the message to be outputted
+	 */
+	public static void announce(String message) {
+		System.out.println("----------------------------------");
+		System.out.println("ANNOUNCEMENT:");
+		System.out.println("\t" + message);
+	}
 
-    /**
-     * This method allocates the default number of resources once a player lands on
-     * or passes the Recruitment square
-     *
-     * @param currentPlayer
-     */
-    public static void allocateResources(Player currentPlayer) {
+	/**
+	 * This method allocates the default number of resources once a player lands on
+	 * or passes the Recruitment square
+	 *
+	 * @param currentPlayer
+	 */
+	public static void allocateResources(Player currentPlayer) {
 
 		String updatedResourceBalanceAnnouncement;
-		
+
 		if (currentPlayer == null) {
 			throw new IllegalArgumentException("Current player cannot be null");
 		}
@@ -288,7 +300,8 @@ public class Game {
 		currentPlayer.setResourceBalance(currentPlayer.getResourceBalance() + DEFAULT_RESOURCES);
 
 		updatedResourceBalanceAnnouncement = "Recruitment drive! It's time for some fresh ideas. "
-				+ currentPlayer.getPlayerName() + " has added " + DEFAULT_RESOURCES + " " + RESOURCE_NAME + " to their team.";
+				+ currentPlayer.getPlayerName() + " has added " + DEFAULT_RESOURCES + " " + RESOURCE_NAME
+				+ " to their team.";
 
 		announce(updatedResourceBalanceAnnouncement);
 
