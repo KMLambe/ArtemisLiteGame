@@ -231,13 +231,6 @@ public class Player {
      * @throws IllegalArgumentException
      */
     public void tradeComponent(Component component, Scanner scanner) throws IllegalArgumentException {
-        // TODO - get component owner
-        // TODO - initiate trade with other player
-        // TODO - update action points
-        // TODO - if accepted, updated other player resources & remove ownership
-        //  AND update currentPlayer, removing resources and adding ownership
-        // TODO _ if not accepted, make announcement and end process
-
         // if player already owns this exit method
         if (component.getComponentOwner() == this) {
             return;
