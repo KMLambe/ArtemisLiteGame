@@ -4,33 +4,33 @@ import java.util.*;
 
 public class Game {
 
-    private final static int MINIMUM_PLAYERS = 2;
-    private final static int MAXIMUM_PLAYERS = 4;
-    private final static int STARTING_POSITION = 0;
-    private final static int STARTING_RESOURCES = 500;
-    private final static int DEFAULT_RESOURCES = 100;
-    public final static int DEFAULT_ACTION_POINTS = 2;
-    private final static int MINIMUM_DICE_ROLL = 1;
-    private final static int MAXIMUM_DICE_ROLL = 6;
-    private final static int NUMBER_OF_DICE = 2;
-    public final static int MAXIMUM_SQUARES = 12;
-    public final static int MAXIMUM_SYSTEMS = 4;
-    public final static int MAXIMUM_NAME_LENGTH = 50;
+	private final static int MINIMUM_PLAYERS = 2;
+	private final static int MAXIMUM_PLAYERS = 4;
+	private final static int STARTING_POSITION = 0;
+	private final static int STARTING_RESOURCES = 500;
+	private final static int DEFAULT_RESOURCES = 100;
+	public final static int DEFAULT_ACTION_POINTS = 2;
+	private final static int MINIMUM_DICE_ROLL = 1;
+	private final static int MAXIMUM_DICE_ROLL = 6;
+	private final static int NUMBER_OF_DICE = 2;
+	public final static int MAXIMUM_SQUARES = 12;
+	public final static int MAXIMUM_SYSTEMS = 4;
+	public final static int MAXIMUM_NAME_LENGTH = 50;
 
-    // labels - to be used in place of hard coding strings
-    public final static String RESOURCE_NAME = "EXPERTS";
+	// labels - to be used in place of hard coding strings
+	public final static String RESOURCE_NAME = "EXPERTS";
 
-    // player array
-    private static Player player;
-    private static ArrayList<Player> players = new ArrayList<Player>();
-    // board
-    private static Board board;
+	// player array
+	private static Player player;
+	private static ArrayList<Player> players = new ArrayList<Player>();
+	// board
+	private static Board board;
 
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
-    }
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+	}
 
 	public static void startGame() {
 		System.out.println("Mission Brief");
@@ -39,42 +39,42 @@ public class Game {
 		generatePlayerOrder();
 	}
 
-    /**
-     *
-     */
-    private static void createBoard(Board board) {
+	/**
+	 *
+	 */
+	private static void createBoard(Board board) {
 
-        // create systems
-        ArtemisSystem system1 = board.createSystem("SPACE LAUNCH SYSTEM");
-        ArtemisSystem system2 = board.createSystem("PRE-STAGING SYSTEM");
-        ArtemisSystem system3 = board.createSystem("ORION SPACECRAFT");
-        ArtemisSystem system4 = board.createSystem("GATEWAY LUNAR SYSTEM");
+		// create systems
+		ArtemisSystem system1 = board.createSystem("SPACE LAUNCH SYSTEM");
+		ArtemisSystem system2 = board.createSystem("PRE-STAGING SYSTEM");
+		ArtemisSystem system3 = board.createSystem("ORION SPACECRAFT");
+		ArtemisSystem system4 = board.createSystem("GATEWAY LUNAR SYSTEM");
 
-        // create squares and components
-        board.createSquare("RECRUITMENT");
-        // system1
-        board.createSquare("CARGO HOLD", 100, 50, 20, system1);
-        board.createSquare("EXPLORATION UPPER STAGE & CORE STAGE", 100, 50, 20, system1);
-        board.createSquare("SOLID ROCKET BOOSTERS", 100, 50, 20, system1);
-        // system2
-        board.createSquare("LUNAR ROVERS", 50, 25, 10, system2);
-        board.createSquare("SCIENCE EXPERIMENTS", 50, 25, 10, system2);
-        // non-system
-        board.createSquare("TEAM BONDING");
-        // system3
-        board.createSquare("CREW MODULE", 150, 75, 35, system3);
-        board.createSquare("SERVICE MODULE", 150, 75, 35, system3);
-        board.createSquare("LAUNCH ABORT SYSTEM", 150, 75, 35, system3);
-        // system4
-        board.createSquare("POWER AND PROPULSION ELEMENT", 200, 100, 50, system4);
-        board.createSquare("HABITATION AND LOGISTICS OUTPOST", 200, 100, 50, system4);
+		// create squares and components
+		board.createSquare("RECRUITMENT");
+		// system1
+		board.createSquare("CARGO HOLD", 100, 50, 20, system1);
+		board.createSquare("EXPLORATION UPPER STAGE & CORE STAGE", 100, 50, 20, system1);
+		board.createSquare("SOLID ROCKET BOOSTERS", 100, 50, 20, system1);
+		// system2
+		board.createSquare("LUNAR ROVERS", 50, 25, 10, system2);
+		board.createSquare("SCIENCE EXPERIMENTS", 50, 25, 10, system2);
+		// non-system
+		board.createSquare("TEAM BONDING");
+		// system3
+		board.createSquare("CREW MODULE", 150, 75, 35, system3);
+		board.createSquare("SERVICE MODULE", 150, 75, 35, system3);
+		board.createSquare("LAUNCH ABORT SYSTEM", 150, 75, 35, system3);
+		// system4
+		board.createSquare("POWER AND PROPULSION ELEMENT", 200, 100, 50, system4);
+		board.createSquare("HABITATION AND LOGISTICS OUTPOST", 200, 100, 50, system4);
 
-        // TODO - remove below display methods - temporarily here to show squares and
-        //  systems are created
-        board.displayAllSystems();
-        board.displayAllSquares();
+		// TODO - remove below display methods - temporarily here to show squares and
+		// systems are created
+		board.displayAllSystems();
+		board.displayAllSquares();
 
-    }
+	}
 
 	/**
 	 * Takes an input from the user to confirm the number of players playing
@@ -235,147 +235,203 @@ public class Game {
 		Scanner scanner = new Scanner(System.in);
 		playerChoice = scanner.nextInt();
 
-		// while (actionPoints>0)
+		// ignore - put in place to test menu functionality for
+		// displayPurchasableComponent
+		ArtemisSystem system = (ArtemisSystem) board.getSystems()[1];
+		Component component = (Component) board.getSquares()[1];
 
-		/**
-		 * 
-		 * switch (playerChoice) { case 1: purchaseComponent; break; case 2:
-		 * offerComponentToOtherPlayers; break; case 3: developComponent; break; case 4:
-		 * developSystem; break; case 5: tradeComponent; break; case 6;
-		 * showAllComponentOwners; break; case 7; getResourceBalance; break; case 8:
-		 * getNextPlayer(); break; case 9: endGame(); break; default:
-		 * System.out.println("Please enter a valid option"); }
-		 */
+		while ((actionPoints > 0) && (endGame == false)) {
+			switch (playerChoice) {
+			case 1:
+				displayPurchasableComponent(scanner);
+				break;
+			case 2:
+				player.offerComponentToOtherPlayers(component);
+				break;
+			case 3:
+				player.develop(component);
+				break;
+			case 4:
+				player.develop(system);
+				break;
+			case 5:
+				player.tradeComponent(component, scanner);
+				break;
+			case 6:
+				player.getOwnedComponents();
+				break;
+			case 7:
+				player.getResourceBalance();
+				break;
+			case 8:
+				getNextPlayer();
+				break;
+			case 9:
+				endGame();
+				break;
+			default:
+				throw new IllegalArgumentException("Invalid option - please try again");
+			}
+		}
 
 		// loop ends run getNextPlayer
 	}
 
+	/**
+	 * shows players updated position and component details Prompts user to respond
+	 * to question with yes or no: if yes then player can then purchase component
+	 * through the method being passed if no then menu is displayed again
+	 * 
+	 * @param scanner
+	 */
+	public static void displayPurchasableComponent(Scanner scanner) {
 
-    /**
-     * Creates an map of components which the active player can purchase. The components included are subject to
-     * a number of constraints:
-     * 1) the component must have an owner
-     * 2) the owner must not be the current player
-     * 3) the current player must have sufficient resources to purchase the component
-     *
-     * @param player the current player
-     * @param board  the board object which contains the squares and systems
-     * @return an map of identifiers and components that the player can trade for
-     */
-    public static Map<Integer, Component> getComponentsForTrading(Player player, Board board) {
-        Map<Integer, Component> componentsWithOwners = new HashMap<Integer, Component>();
-        Component component;
+		String response;
 
-        int counter = 1;
+		// ignore as put in place to test functionality
+		Player player = new Player("Peter", DEFAULT_RESOURCES, 2);
+		Component component = (Component) board.getSquares()[2];
 
-        for (Square square : board.getSquares()) {
-            if (square instanceof Component) {
-                component = (Component) square;
+		component.displayAllDetails();
+		System.out.println("Do you want to purchase Component?");
+		response = scanner.next();
 
-                if (component.getComponentOwner() != null
-                        && component.getComponentOwner() != player
-                        && player.checkSufficientResources(component.getComponentCost())) {
-                    componentsWithOwners.put(counter++, component);
-                }
-            }
-        }
+		if (response.equalsIgnoreCase("Yes")) {
+			player.purchaseComponent(component);
+		} else if (response.equalsIgnoreCase("No")) {
+			displayMenu();
+		}
 
-        return componentsWithOwners;
-    }
+	}
 
-    /**
-     * Displays components that the currentPlayer does not own but ARE owned by other players, so long as the
-     * currentPlayer has sufficient resources to trade for them
-     *
-     * @param componentsForTrading map of integer-component pair values
-     */
-    public static void outputComponentsForTrading(Map<Integer, Component> componentsForTrading) {
-        Component component;
+	/**
+	 * Creates an map of components which the active player can purchase. The
+	 * components included are subject to a number of constraints: 1) the component
+	 * must have an owner 2) the owner must not be the current player 3) the current
+	 * player must have sufficient resources to purchase the component
+	 *
+	 * @param player the current player
+	 * @param board  the board object which contains the squares and systems
+	 * @return an map of identifiers and components that the player can trade for
+	 */
+	public static Map<Integer, Component> getComponentsForTrading(Player player, Board board) {
+		Map<Integer, Component> componentsWithOwners = new HashMap<Integer, Component>();
+		Component component;
 
-        System.out.println();
+		int counter = 1;
 
-        if (componentsForTrading.size() == 0) {
-            System.out.println("There are no available components for you to purchase. This is either because you do not" +
-                    "have enough resources and/or there are no components owned by other players at present.");
-            return;
-        }
+		for (Square square : board.getSquares()) {
+			if (square instanceof Component) {
+				component = (Component) square;
 
-        System.out.printf("%-5s %-40s %-20s %-4s\n", "REF", "COMPONENT NAME", "OWNER", "COST");
+				if (component.getComponentOwner() != null && component.getComponentOwner() != player
+						&& player.checkSufficientResources(component.getComponentCost())) {
+					componentsWithOwners.put(counter++, component);
+				}
+			}
+		}
 
-        Set<Map.Entry<Integer, Component>> componentSet = componentsForTrading.entrySet();
+		return componentsWithOwners;
+	}
 
-        for (Map.Entry<Integer, Component> componentEntry : componentSet) {
-            component = componentEntry.getValue();
-            System.out.printf("%-5s %-40s %-20s %-4s\n",
-                    componentEntry.getKey(), component, component.getComponentOwner(), component.getComponentCost());
-        }
+	/**
+	 * Displays components that the currentPlayer does not own but ARE owned by
+	 * other players, so long as the currentPlayer has sufficient resources to trade
+	 * for them
+	 *
+	 * @param componentsForTrading map of integer-component pair values
+	 */
+	public static void outputComponentsForTrading(Map<Integer, Component> componentsForTrading) {
+		Component component;
 
-    }
+		System.out.println();
 
-    /**
-     * Takes a map object and uses it to prompt the user to select a valid component to perform an action on.
-     *
-     * @param scanner a scanner object
-     * @param components a map containing components as the value
-     * @return a component object if a valid selection was made, otherwise will return null
-     */
-    public static Component getPlayerComponentSelection(Scanner scanner, Map<Integer, Component> components) {
-        String playerInput;
-        int playerSelection = -1;
-        Component component;
+		if (componentsForTrading.size() == 0) {
+			System.out
+					.println("There are no available components for you to purchase. This is either because you do not"
+							+ "have enough resources and/or there are no components owned by other players at present.");
+			return;
+		}
 
-        do {
-            System.out.printf("Input your selection (number only) or type 'end' to go back...");
-            playerInput = scanner.next();
+		System.out.printf("%-5s %-40s %-20s %-4s\n", "REF", "COMPONENT NAME", "OWNER", "COST");
 
-            if (playerInput.equalsIgnoreCase("end")) {
-                return null;
-            }
+		Set<Map.Entry<Integer, Component>> componentSet = componentsForTrading.entrySet();
 
-            try {
-                playerSelection = Integer.parseInt(playerInput);
-            } catch (NumberFormatException e) {
-                // do nothing
-            }
-            System.out.println();
+		for (Map.Entry<Integer, Component> componentEntry : componentSet) {
+			component = componentEntry.getValue();
+			System.out.printf("%-5s %-40s %-20s %-4s\n", componentEntry.getKey(), component,
+					component.getComponentOwner(), component.getComponentCost());
+		}
 
-            component = components.get(playerSelection);
-        } while (component == null);
+	}
 
-        return component;
-    }
+	/**
+	 * Takes a map object and uses it to prompt the user to select a valid component
+	 * to perform an action on.
+	 *
+	 * @param scanner    a scanner object
+	 * @param components a map containing components as the value
+	 * @return a component object if a valid selection was made, otherwise will
+	 *         return null
+	 */
+	public static Component getPlayerComponentSelection(Scanner scanner, Map<Integer, Component> components) {
+		String playerInput;
+		int playerSelection = -1;
+		Component component;
 
-    /**
-     * Outputs a list of components which the player can trade resources for, the user is then prompted to select one of
-     * the list of components. If a valid selection is made, the purchaseComponent method is invoked.
-     *
-     * @param player the current player
-     * @param scanner a scanner object
-     */
-    public static void displayTradeMenu(Player player, Board board, Scanner scanner) {
-        Map<Integer, Component> componentsAvailable = getComponentsForTrading(player, board);
+		do {
+			System.out.printf("Input your selection (number only) or type 'end' to go back...");
+			playerInput = scanner.next();
 
-        // display components
-        outputComponentsForTrading(componentsAvailable);
+			if (playerInput.equalsIgnoreCase("end")) {
+				return null;
+			}
 
-        // get user input
-        Component playerSelection = getPlayerComponentSelection(scanner, componentsAvailable);
+			try {
+				playerSelection = Integer.parseInt(playerInput);
+			} catch (NumberFormatException e) {
+				// do nothing
+			}
+			System.out.println();
 
-        // player did not select a component - return to main main
-        if (playerSelection == null) {
-            displayMenu();
-            return;
-        }
+			component = components.get(playerSelection);
+		} while (component == null);
 
-        System.out.println(player+" has selected to trade with "+playerSelection.getComponentOwner()+" for "+playerSelection);
-        // process the trade
-        player.tradeComponent(playerSelection, scanner);
-    }
+		return component;
+	}
 
+	/**
+	 * Outputs a list of components which the player can trade resources for, the
+	 * user is then prompted to select one of the list of components. If a valid
+	 * selection is made, the purchaseComponent method is invoked.
+	 *
+	 * @param player  the current player
+	 * @param scanner a scanner object
+	 */
+	public static void displayTradeMenu(Player player, Board board, Scanner scanner) {
+		Map<Integer, Component> componentsAvailable = getComponentsForTrading(player, board);
 
-    public static void playTurn() {
-        // container for other methods
-        rollDice();
+		// display components
+		outputComponentsForTrading(componentsAvailable);
+
+		// get user input
+		Component playerSelection = getPlayerComponentSelection(scanner, componentsAvailable);
+
+		// player did not select a component - return to main main
+		if (playerSelection == null) {
+			displayMenu();
+			return;
+		}
+
+		System.out.println(player + " has selected to trade with " + playerSelection.getComponentOwner() + " for "
+				+ playerSelection);
+		// process the trade
+		player.tradeComponent(playerSelection, scanner);
+	}
+
+	public static void playTurn() {
+		// container for other methods
+		rollDice();
 //		updatePlayerPosition();
 		displayMenu();
 
@@ -391,16 +447,16 @@ public class Game {
 		// use a loop to change the boolean at the end of a players turn
 	}
 
-    /**
-     * Outputs a message to the screen for all players to view.
-     *
-     * @param message - the message to be outputted
-     */
-    public static void announce(String message) {
-        System.out.println("----------------------------------");
-        System.out.println("ANNOUNCEMENT:");
-        System.out.println("\t" + message);
-    }
+	/**
+	 * Outputs a message to the screen for all players to view.
+	 *
+	 * @param message - the message to be outputted
+	 */
+	public static void announce(String message) {
+		System.out.println("----------------------------------");
+		System.out.println("ANNOUNCEMENT:");
+		System.out.println("\t" + message);
+	}
 
 	/**
 	 * This method allocates the default number of resources once a player lands on
