@@ -8,7 +8,7 @@ import java.util.Scanner;
  * This implements the Player object for the game. It retains player information
  * and records player owned objects.
  *
- * @author John Young
+ * @author John Young 40030361
  */
 public class Player {
     private String playerName;
@@ -205,6 +205,20 @@ public class Player {
         message = getPlayerName() + " has purchased " + component.getSquareName() + " for " + component.getComponentCost();
         message += " " + Game.RESOURCE_NAME + " and has " + this.getResourceBalance() + " " + Game.RESOURCE_NAME + " remaining";
         Game.announce(message);
+    }
+
+    /**
+     * Overloaded method that casts a Square object into a Component object and invokes purchaseComponent(Component) method
+     *
+     * @param square a square object
+     */
+    public void purchaseComponent(Square square) {
+        if (square instanceof Component) {
+            // cast square as Component
+            purchaseComponent((Component) square);
+        } else {
+            System.out.println(square.getSquareName() + " is not purchasable");
+        }
     }
 
     /**
@@ -456,5 +470,13 @@ public class Player {
      */
     public ArrayList<ArtemisSystem> getOwnedSystems() {
         return ownedSystems;
+    }
+
+    /**
+     * @return the player's name
+     */
+    @Override
+    public String toString() {
+        return playerName;
     }
 }
