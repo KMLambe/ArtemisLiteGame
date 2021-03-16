@@ -118,13 +118,15 @@ public class Component extends Square {
 	}
 
 	public boolean checkOwnerWantsResources(Player currentPlayer, Scanner scanner) {
+		
+		// TODO - implement tests
 
-		int ownerResponse;
+		String ownerResponse;
 		boolean decision = false;
-
+		
 		// notify players of cost for landing
 		System.out.println("The cost of landing on this component is " + costForLanding);
-		System.out.println(componentOwner.getPlayerName()
+		System.out.println(this.getComponentOwner().getPlayerName()
 				+ " is the owner of this component - meaning they can choose whether they want to take their fee or not!");
 
 		if (currentPlayer.getResourceBalance() < costForLanding) {
@@ -132,27 +134,31 @@ public class Component extends Square {
 					+ currentPlayer.getPlayerName() + " will run out of " + Game.RESOURCE_NAME.toLowerCase()
 					+ " and the game will end!");
 		}
+		
+		
 
 		do {
 			// confirm if owner wishes to take their fee
 			System.out.println(componentOwner.getPlayerName() + ", do you require " + Game.RESOURCE_NAME.toLowerCase()
 					+ " from " + currentPlayer.getPlayerName() + "?");
-			System.out.println("Type 1 and press enter if you wish to receive " + Game.RESOURCE_NAME.toLowerCase() + ".");
+			System.out.println("Type Yes and press enter if you wish to receive " + Game.RESOURCE_NAME.toLowerCase() + ".");
 			System.out
-					.println("Type 2 and press enter if do NOT wish to receive " + Game.RESOURCE_NAME.toLowerCase() + ".");
+					.println("Type No and press enter if do NOT wish to receive " + Game.RESOURCE_NAME.toLowerCase() + ".");
 
-			ownerResponse = scanner.nextInt();
+			ownerResponse = scanner.next();
 
-			if (ownerResponse != 1 || ownerResponse != 2) {
+			if (!ownerResponse.equalsIgnoreCase("Yes") && !ownerResponse.equalsIgnoreCase("No")) {
 				System.out.println("Oops - that's not a valid response.");
-			} else if (ownerResponse == 1) {
+			} else if (ownerResponse.equalsIgnoreCase("Yes")) {
 				decision = true;
 			} else {
 				decision = false;
 			}
 
-		} while (ownerResponse != 1 || ownerResponse != 2);
-
+		} while (!ownerResponse.equalsIgnoreCase("Yes") && !ownerResponse.equalsIgnoreCase("No"));
+		
+		// scanner.close();
+		
 		return decision;
 	}
 
@@ -164,7 +170,8 @@ public class Component extends Square {
 	 */
 	public void chargePlayerForLanding(Player currentPlayer, boolean ownerResponse) {
 		
-		// TO DO - incorporate announcement method for balance updates
+		// TODO - incorporate announcement method for balance updates
+		// TODO - incorporate method to transfer resources
 
 		if (ownerResponse == true) {
 			if (currentPlayer.getResourceBalance() < costForLanding) {
@@ -285,5 +292,17 @@ public class Component extends Square {
 			componentSystem.addComponent(this);
 		}
 	}
+	
+	@Override
+    public void displayAllDetails() {
+        System.out.println("Name: \t" + this.getSquareName());
+        System.out.println("Position: \t" + this.getSquarePosition());
+        System.out.println("Development Stage: \t" + developmentStage);
+        System.out.println("Component Cost: \t" + componentCost);
+        System.out.println("Cost to Develop to Next Stage: \t" + costToDevelop); // TO DO - code around component being fully developed
+        System.out.println("Cost for Landing: \t" + costForLanding);
+        System.out.println("Component Owner: \t" + componentOwner.getPlayerName());
+        System.out.println("Component System: \t" + componentSystem.getSystemName());
+    }
 
 }
