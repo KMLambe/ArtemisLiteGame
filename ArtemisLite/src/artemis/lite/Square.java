@@ -91,4 +91,12 @@ public class Square {
         System.out.println("Name \t:" + this.squareName);
         System.out.println("Position \t:" + this.squarePosition);
     }
+
+    /**
+     * @return the name of the square
+     */
+    @Override
+    public String toString() {
+        return squareName;
+    }
 }
