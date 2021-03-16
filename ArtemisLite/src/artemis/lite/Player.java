@@ -150,7 +150,7 @@ public class Player {
      * @param component the object to be checked
      * @return true if player owns the component
      */
-    private boolean checkPlayerOwns(Component component) {
+    public boolean checkPlayerOwns(Component component) {
         return (ownedComponents.contains(component));
     }
 
@@ -160,14 +160,14 @@ public class Player {
      * @param resourcesRequired integer value of resources needed
      * @return true if player has resources greater than or equal to that specified
      */
-    private boolean checkSufficientResources(int resourcesRequired) {
+    public boolean checkSufficientResources(int resourcesRequired) {
         return (resourceBalance >= resourcesRequired);
     }
 
     /**
      * @return true if the player has more than zero actionPoints
      */
-    private boolean checkHasActionPoints() {
+    public boolean checkHasActionPoints() {
         return (actionPoints > 0);
     }
 
@@ -195,7 +195,7 @@ public class Player {
         // update action points
         consumeActionPoint(1);
         // update player resources
-        setResourceBalance(resourceBalance - component.getComponentCost());
+        updateResources(-component.getComponentCost());
         // add component to player's components
         addComponent(component);
         // update component owned
