@@ -5,8 +5,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+
 import java.util.Map;
 import java.util.Scanner;
+import java.util.ArrayList;
 
 class GameTest {
 
@@ -27,9 +29,6 @@ class GameTest {
     // variables for dice roll
     int validDiceRollLower, validDiceRollMid, validDiceRollUpper, invalidDiceRollLower, invalidDiceRollUpper, randomCombinedDiceRoll, minimumCombinedDiceRoll, maximumCombinedDiceRoll;
 
-    // variables for number of players in game
-    int validNumberOfPlayersUpper, validNumberOfPlayersMid, validNumberOfPlayersLower, invalidNumberOfPlayersUpper, numberOfPlayers;
-    int invalidNumberOfPlayersLower;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -97,12 +96,7 @@ class GameTest {
         validDiceRollMid = 8;
         validDiceRollUpper = 12;
 
-        // number of players in game boundaries
-        validNumberOfPlayersLower = 2;
-        validNumberOfPlayersMid = 3;
-        validNumberOfPlayersUpper = 4;
-        invalidNumberOfPlayersLower = 1;
-        invalidNumberOfPlayersUpper = 5;
+ 
 
         player1 = new Player(validPlayerName1, validResourceBalance1, validCurrentBoardPosition1);
     }
@@ -118,22 +112,78 @@ class GameTest {
     }
 
     @Test
-    void playersInTheGameValid() {
+	void playersInTheGameValid() {
+		// variables for number of players in game
+		int validNumberOfPlayersLower = 2;
+		int validNumberOfPlayersMid = 3;
+		int validNumberOfPlayersUpper = 4;
+				
+	// test that valid number of players is accepted
+	assertEquals(validNumberOfPlayersLower,Game.playersInTheGame(new Scanner("2")) );
+	assertEquals(validNumberOfPlayersMid, Game.playersInTheGame(new Scanner("3")));
+	assertEquals(validNumberOfPlayersUpper, Game.playersInTheGame(new Scanner("4")));
+	
+	}
+	
+	@Test
+	void playersInTheGameInvalid() {
+		
+		// test that invalid number of players will not be accepted
+		int invalidNumberOfPlayers = -1;
+		assertEquals(invalidNumberOfPlayers, Game.playersInTheGame(new Scanner("1")));
+		assertEquals(invalidNumberOfPlayers, Game.playersInTheGame(new Scanner("5")));				
+	}
+	
+	@Test
+	void createPlayersValid() {
+	    ArrayList<Player> players = Game.createPlayers(new Scanner("2 player1 player2"));
+	    Player player1 = players.get(0);
+	    Player player2 = players.get(1);
+	    // tests that Array return at correct size with names and starting resources and board position
+	    assertEquals(2, players.size());
+	    assertTrue(player1.getPlayerName().equals("player1"));
+	    assertEquals(500, player1.getResourceBalance());
+	    assertEquals(0, player1.getCurrentBoardPosition());
+	    assertTrue(player2.getPlayerName().equals("player2"));
+	    assertEquals(500, player2.getResourceBalance());
+	    assertEquals(0, player2.getCurrentBoardPosition());
+	    
+	}
 
-        assertEquals(validNumberOfPlayersLower, Game.playersInTheGame(new Scanner("2")));
-        assertEquals(validNumberOfPlayersMid, Game.playersInTheGame(new Scanner("3")));
-        assertEquals(validNumberOfPlayersUpper, Game.playersInTheGame(new Scanner("4")));
-    }
-
-    @Test
-    void testCreatePlayers() {
-        fail("Not yet implemented");
-    }
-
-    @Test
-    void testGeneratePlayerOrder() {
-        fail("Not yet implemented");
-    }
+	@Test
+	void createPlayersValidWithDuplicateName() {
+	    // test showing duplicate name not accepted for second player and having to enter a third input to set player2 name
+	    ArrayList<Player> players = Game.createPlayers(new Scanner("2 name1 name1 name2"));
+	    Player player1 = players.get(0);
+	    Player player2 = players.get(1);
+	    // tests
+	    assertEquals(2, players.size());
+	    assertTrue(player1.getPlayerName().equals("name1"));
+	    assertTrue(player2.getPlayerName().equals("name2"));
+	}
+	
+	@Test
+	void testGeneratePlayerOrderValid() {
+		//test array for create players
+		ArrayList<Player> playerstest = new ArrayList<Player>();
+		int STARTING_RESOURCES = 500;
+		int STARTING_POSITION =0;
+		String validPlayer1, validPlayer2;
+		
+		// player info to pass into array for player test
+				validPlayer1 = "name1";
+				validPlayer2 = "name2";
+				
+				playerstest.add(new Player(validPlayer1, STARTING_RESOURCES, STARTING_POSITION));
+				playerstest.add(new Player(validPlayer2, STARTING_RESOURCES, STARTING_POSITION));
+				
+				// run method
+				Game.generatePlayerOrder(playerstest);
+				// test that Array List still contains same amount of items
+				assertEquals(2, playerstest.size());
+		
+	}
+    
 
     @Test
     void testRollDice() {

@@ -1,6 +1,11 @@
 package artemis.lite;
 
 import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Random;
+import java.util.Scanner;
 
 public class Game {
 
@@ -20,9 +25,7 @@ public class Game {
 	// labels - to be used in place of hard coding strings
 	public final static String RESOURCE_NAME = "EXPERTS";
 
-	// player array
-	private static Player player;
-	private static ArrayList<Player> players = new ArrayList<Player>();
+	
 	// board
 	private static Board board;
 
@@ -78,62 +81,69 @@ public class Game {
 
 	/**
 	 * Takes an input from the user to confirm the number of players playing
-	 * 
 	 * @param scanner
 	 * @return
 	 */
 	public static int playersInTheGame(Scanner scanner) {
-
-		int numberOfPlayers = 0;
+		
+		int numberOfPlayers=0;
 		while (numberOfPlayers < MINIMUM_PLAYERS || numberOfPlayers > MAXIMUM_PLAYERS) {
 			System.out.println("How many players are there?");
 			numberOfPlayers = scanner.nextInt();
+			
 			if (numberOfPlayers >= MINIMUM_PLAYERS && numberOfPlayers <= MAXIMUM_PLAYERS) {
 				System.out.println("There are " + numberOfPlayers + " players in the game.");
 			} else {
 				System.out.println("Invalid input please set number of players between 2-4");
+				return -1;
 			}
 		}
 		return numberOfPlayers;
-
+		
 	}
-
+	
 	/**
-	 * Set the names of each player
+	 * Sets the player names, starting position and starting resources
+	 * @param scanner
+	 * @return
 	 */
-	public static void createPlayers(Scanner scanner) {
+	public static ArrayList<Player> createPlayers(Scanner scanner) {
+	    int numberOfPlayers;
+	    do {
+	        numberOfPlayers = playersInTheGame(scanner);
+	    } while (numberOfPlayers < 0);
 
-		int numberOfPlayers = playersInTheGame(scanner);
+	    ArrayList<String> playerNames = new ArrayList<String>(numberOfPlayers);
+	    ArrayList<Player> players = new ArrayList<>(numberOfPlayers);
+	    for (int loop = 1; loop <= numberOfPlayers; loop++) {
+	        System.out.println("Enter player " + loop + " name");
+	        String playerName = scanner.next();
 
-		ArrayList<String> playerNames = new ArrayList<String>();
-		for (int loop = 1; loop <= numberOfPlayers; loop++) {
-			System.out.println("Enter player " + loop + " name");
-			String playerName = scanner.next();
-
-			while (playerNames.contains(playerName.toLowerCase())) {
-				System.out.println("Player name already exists please enter a different name.");
-				playerName = scanner.next();
-
-			}
-			playerNames.add(playerName.toLowerCase());
-			players.add(new Player(playerName, STARTING_RESOURCES, STARTING_POSITION));
-		}
+	        while (playerNames.contains(playerName.toLowerCase())) {
+	            System.out.println("Player name already exists please enter a different name.");
+	            playerName = scanner.next();
+	        }
+	        playerNames.add(playerName.toLowerCase());
+	        players.add(new Player(playerName, STARTING_RESOURCES, STARTING_POSITION));
+	    }
+	    return players;
 	}
-
+	
 	public static void cast() {
-		createPlayers(new Scanner(System.in));
-		generatePlayerOrder();
-		for (Player player : players) {
+		ArrayList<Player>players=createPlayers(new Scanner(System.in));
+		generatePlayerOrder(players);
+		for(Player player: players) {
 			System.out.println(player.getPlayerName());
 		}
 	}
-
+		
 	/**
 	 * Shuffles the order of the players
 	 */
-	public static void generatePlayerOrder() {
+	public static void generatePlayerOrder(ArrayList<Player> players) {
 		Collections.shuffle(players);
 	}
+	
 
 	/**
 	 * This method simulates the rolling of two dice and returns the sum of the two
