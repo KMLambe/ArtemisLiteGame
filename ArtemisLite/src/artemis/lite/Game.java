@@ -300,6 +300,9 @@ public class Game {
 			player.purchaseComponent(component);
 		} else if (response.equalsIgnoreCase("No")) {
 			displayMenu();
+		} else {
+			System.out.println("Invalid input - please respond with yes or no");
+			System.out.println();
 		}
 
 	}

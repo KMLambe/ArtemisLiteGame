@@ -301,6 +301,28 @@ class GameTest {
     void testEndGame() {
         fail("Not yet implemented");
     }
+    
+    @Test
+    void testDisplayPurchasableComponentValid() {
+    	String validInputToPurchase = "Yes";
+    	String validInputNotToPurchase = "No";
+    	
+    	Player player1 = new Player("Player1", 400, 2);
+		Component component = (Component) board1.getSquares()[2];
+		
+		assertEquals(validInputToPurchase, new Scanner("Yes"));
+		assertEquals(validInputNotToPurchase, new Scanner("No"));
+		
+    }
+	
+	@Test
+	void testDisplayPurchasableComponentInvalid() {
+		
+		// test that invalid input will not be accepted
+		String invalidInputToPurchase = "";
+		
+		assertEquals(invalidInputToPurchase, new Scanner("Yes"));
+	}
 
 
     // tradeable component testing
