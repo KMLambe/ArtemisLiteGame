@@ -255,7 +255,7 @@ public class Game {
 				player.develop(system);
 				break;
 			case 5:
-				player.tradeComponent(component, scanner);
+				displayTradeMenu(player, board, scanner);
 				break;
 			case 6:
 				player.getOwnedComponents();
