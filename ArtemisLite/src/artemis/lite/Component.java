@@ -18,11 +18,10 @@ public class Component extends Square {
 	 * Constants to define the minimum and maximum development levels for all
 	 * components
 	 */
-	private final int MINIMUM_DEVELOPMENT_LEVEL = 0; // NEW
-	private final int MAXIMUM_DEVELOPMENT_LEVEL = 4; // NEW
+	private final int MINIMUM_DEVELOPMENT_LEVEL = 0;
+	private final int MAXIMUM_DEVELOPMENT_LEVEL = 4;
 
-	private int developmentStage; // NEW
-	// private boolean fullyDeveloped; REPLACED by checkFullyDeveloped() method
+	private int developmentStage;
 
 	private int componentCost;
 	private int costToDevelop;
@@ -30,6 +29,8 @@ public class Component extends Square {
 	private Player componentOwner;
 	private ArtemisSystem componentSystem;
 
+	// TODO - reevaluate how to implement cost for development stages
+	
 	private int costForLandingAtDevelopmentStage0; // NEW - this will be zero
 	private int costForLandingAtDevelopmentStage1; // NEW
 	private int costForLandingAtDevelopmentStage2; // NEW
@@ -118,12 +119,12 @@ public class Component extends Square {
 	}
 
 	public boolean checkOwnerWantsResources(Player currentPlayer, Scanner scanner) {
-		
+
 		// TODO - implement tests
 
 		String ownerResponse;
 		boolean decision = false;
-		
+
 		// notify players of cost for landing
 		System.out.println("The cost of landing on this component is " + costForLanding);
 		System.out.println(this.getComponentOwner().getPlayerName()
@@ -134,16 +135,15 @@ public class Component extends Square {
 					+ currentPlayer.getPlayerName() + " will run out of " + Game.RESOURCE_NAME.toLowerCase()
 					+ " and the game will end!");
 		}
-		
-		
 
 		do {
 			// confirm if owner wishes to take their fee
 			System.out.println(componentOwner.getPlayerName() + ", do you require " + Game.RESOURCE_NAME.toLowerCase()
 					+ " from " + currentPlayer.getPlayerName() + "?");
-			System.out.println("Type Yes and press enter if you wish to receive " + Game.RESOURCE_NAME.toLowerCase() + ".");
-			System.out
-					.println("Type No and press enter if do NOT wish to receive " + Game.RESOURCE_NAME.toLowerCase() + ".");
+			System.out.println(
+					"Type Yes and press enter if you wish to receive " + Game.RESOURCE_NAME.toLowerCase() + ".");
+			System.out.println(
+					"Type No and press enter if do NOT wish to receive " + Game.RESOURCE_NAME.toLowerCase() + ".");
 
 			ownerResponse = scanner.next();
 
@@ -156,9 +156,9 @@ public class Component extends Square {
 			}
 
 		} while (!ownerResponse.equalsIgnoreCase("Yes") && !ownerResponse.equalsIgnoreCase("No"));
-		
+
 		// scanner.close();
-		
+
 		return decision;
 	}
 
@@ -169,24 +169,17 @@ public class Component extends Square {
 	 * @param currentPlayer - the current player
 	 */
 	public void chargePlayerForLanding(Player currentPlayer, boolean ownerResponse) {
-		
-		// TODO - incorporate announcement method for balance updates
-		// TODO - incorporate method to transfer resources
 
 		if (ownerResponse == true) {
 			if (currentPlayer.getResourceBalance() < costForLanding) {
 				Game.endGame();
 			} else {
-				currentPlayer.setResourceBalance(currentPlayer.getResourceBalance() - costForLanding);
-				getComponentOwner().setResourceBalance(getComponentOwner().getResourceBalance() + costForLanding);
-				System.out.println(currentPlayer.getPlayerName() + ", your new resource balance is: "
-						+ currentPlayer.getResourceBalance());
-				System.out.println(getComponentOwner().getPlayerName() + ", your new resource balance is: "
-						+ currentPlayer.getResourceBalance());
+				currentPlayer.transferResources(componentOwner, costForLanding);
 			}
 		} else {
-			System.out.println(getComponentOwner().getPlayerName() + " has decided not to request "
+			String ownerDeclinesResources = (getComponentOwner().getPlayerName() + " has decided not to request "
 					+ Game.RESOURCE_NAME + ".");
+			Game.announce(ownerDeclinesResources);
 		}
 	}
 
@@ -199,10 +192,6 @@ public class Component extends Square {
 	public boolean checkFullyDeveloped() {
 		return developmentStage == MAXIMUM_DEVELOPMENT_LEVEL;
 	}
-
-	/**
-	 * DISPLAY ALL DETAILS METHOD TO BE ADDED - WILL OVERRIDE METHOD FROM SUPERCLASS
-	 */
 
 	/**
 	 * @return the developmentStage
@@ -292,17 +281,24 @@ public class Component extends Square {
 			componentSystem.addComponent(this);
 		}
 	}
-	
+
+	/**
+	 * This method prints to screen key information about this component.
+	 */
 	@Override
-    public void displayAllDetails() {
-        System.out.println("Name: \t" + this.getSquareName());
-        System.out.println("Position: \t" + this.getSquarePosition());
-        System.out.println("Development Stage: \t" + developmentStage);
-        System.out.println("Component Cost: \t" + componentCost);
-        System.out.println("Cost to Develop to Next Stage: \t" + costToDevelop); // TO DO - code around component being fully developed
-        System.out.println("Cost for Landing: \t" + costForLanding);
-        System.out.println("Component Owner: \t" + componentOwner.getPlayerName());
-        System.out.println("Component System: \t" + componentSystem.getSystemName());
-    }
+	public void displayAllDetails() {
+		System.out.println("Name: \t" + this.getSquareName());
+		System.out.println("Position: \t" + this.getSquarePosition());
+		System.out.println("Development Stage: \t" + developmentStage);
+		System.out.println("Component Cost: \t" + componentCost);
+		if (this.checkFullyDeveloped()) {
+			System.out.println("Cost to Develop to Next Stage: \tThis component is at the maximum development stage!");
+		} else {
+			System.out.println("Cost to Develop to Next Stage: \t" + costToDevelop);
+		}
+		System.out.println("Cost for Landing: \t" + costForLanding);
+		System.out.println("Component Owner: \t" + componentOwner.getPlayerName());
+		System.out.println("Component System: \t" + componentSystem.getSystemName());
+	}
 
 }
