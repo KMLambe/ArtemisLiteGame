@@ -295,7 +295,10 @@ public class Player {
      * @param resources   - a positive balance transfers resources TO otherPlayer, a negative balance transfers resources
      *                    TO the currentPlayer
      */
-    private void transferResources(Player otherPlayer, int resources) throws IllegalArgumentException {
+    
+    // TODO - test transferResources() method
+    
+    public void transferResources(Player otherPlayer, int resources) throws IllegalArgumentException {
         Player transferFrom, transferTo;
         if (resources >= 0) {
             transferFrom = this;

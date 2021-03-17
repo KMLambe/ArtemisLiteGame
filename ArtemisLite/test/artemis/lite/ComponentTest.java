@@ -17,6 +17,10 @@ class ComponentTest {
 	Player player2;
 	String validPlayerName2;
 	int validResourceBalance2, validCurrentBoardPosition2;
+	
+	Player player3;
+	String validPlayerName3;
+	int validResourceBalance3, validCurrentBoardPosition3;
 
 	// test board
 	Board board1;
@@ -28,6 +32,9 @@ class ComponentTest {
 			validComponentName6, validComponentName7, validComponentName8, validComponentName9, validComponentName10;
 	int validComponentCost, validCostToDevelop, validCostForLanding;
 
+	// Component to be assigned an owner
+	Component testComponent;
+	
 	// test scanner
 	Scanner scannerAffirmative = new Scanner("Yes");
 	Scanner scannerNegative = new Scanner("No");
@@ -67,6 +74,10 @@ class ComponentTest {
 		validPlayerName2 = "validPlayerName2";
 		validResourceBalance2 = 200;
 		validCurrentBoardPosition2 = 2;
+		
+		validPlayerName3 = "validPlayerName3";
+		validResourceBalance3 = 1;
+		validCurrentBoardPosition3 = 3;
 
 		// create test systems
 		ArtemisSystem system1 = board1.createSystem(validSystemName1);
@@ -100,6 +111,17 @@ class ComponentTest {
 		player2 = new Player();
 		player2.setPlayerName(validPlayerName2);
 		player2.setResourceBalance(validResourceBalance2);
+		
+		player3 = new Player();
+		player3.setPlayerName(validPlayerName3);
+		player3.setResourceBalance(validResourceBalance3);
+		
+		// set up the component
+		testComponent = (Component) board1.getSquares()[1];
+
+		// set the owner
+		testComponent.setComponentOwner(player1);
+		
 	}
 
 	@Test
@@ -118,28 +140,21 @@ class ComponentTest {
 	}
 
 	@Test
-	void testCheckOwnerWantsResourcesAffirmative() { // Build in testing for endGame()
+	void testCheckOwnerWantsResourcesAffirmative() {
 
-		boolean actualResult;
-		boolean expectedResult = true;
-
-		// set up the component for the test
-		Component testComponent = (Component) board1.getSquares()[1];
-
-		// set the owner
-		testComponent.setComponentOwner(player1);
-		testComponent.displayAllDetails();
+		boolean actualOwnerResponse;
+		boolean expectedOwnerResponse = true;
 
 		// run the check
-		actualResult = testComponent.checkOwnerWantsResources(player2, scannerAffirmative);
+		actualOwnerResponse = testComponent.checkOwnerWantsResources(player2, scannerAffirmative);
 
 		// compare expected and actual outcomes
-		assertEquals(expectedResult, actualResult);
+		assertEquals(expectedOwnerResponse, actualOwnerResponse);
 
 	}
 	
 	@Test
-	void testCheckOwnerWantsResourcesNegative() { // Build in testing for endGame()
+	void testCheckOwnerWantsResourcesNegative() {
 
 		boolean actualResult;
 		boolean expectedResult = false;
@@ -151,7 +166,7 @@ class ComponentTest {
 		testComponent.setComponentOwner(player1);
 		testComponent.displayAllDetails();
 
-		// run the check
+		// run the check - owner replies they don't want resources
 		actualResult = testComponent.checkOwnerWantsResources(player2, scannerNegative);
 
 		// compare expected and actual outcomes
@@ -160,8 +175,47 @@ class ComponentTest {
 	}
 
 	@Test
-	void testChargePlayerForLanding() {
-		fail("Not yet implemented");
+	void testChargePlayerForLandingAffirmativeTransferResources() {
+		
+		int expectedResourceBalanceCurrentPlayer = 180;
+		int expectedResourceBalanceComponentOwner = 120;
+		
+		// transfer resources
+		testComponent.chargePlayerForLanding(player2, true);
+		
+		// check resources have been deducted from current player
+		assertEquals(expectedResourceBalanceCurrentPlayer, player2.getResourceBalance());
+		
+		// check resources have been credited to component owner
+		assertEquals(expectedResourceBalanceComponentOwner, player1.getResourceBalance());
+	
+	}
+	
+	@Test
+	void testChargePlayerForLandingAffirmativeEndGame() {
+		
+		// attempt to transfer resources - player 3 has no resources so game should end
+		testComponent.chargePlayerForLanding(player3, true);
+		
+		// TODO - implement check that game is ending / has ended
+	
+	}
+	
+	@Test
+	void testChargePlayerForLandingNegativeNoTransferAndGameContinues() {
+		
+		int expectedResourceBalanceCurrentPlayer = 200;
+		int expectedResourceBalanceComponentOwner = 100;
+		
+		// transfer resources
+		testComponent.chargePlayerForLanding(player2, false);
+		
+		// check resources have NOT been deducted from current player
+		assertEquals(expectedResourceBalanceCurrentPlayer, player2.getResourceBalance());
+		
+		// check resources have NOT been credited to component owner
+		assertEquals(expectedResourceBalanceComponentOwner, player1.getResourceBalance());
+	
 	}
 
 	@Test
