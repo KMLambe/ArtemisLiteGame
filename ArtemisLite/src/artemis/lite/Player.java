@@ -2,6 +2,7 @@ package artemis.lite;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -15,8 +16,8 @@ public class Player {
     private int resourceBalance;
     private int currentBoardPosition;
     private int actionPoints = Game.DEFAULT_ACTION_POINTS;
-    private ArrayList<Component> ownedComponents = new ArrayList<>();
-    private ArrayList<ArtemisSystem> ownedSystems = new ArrayList<>();
+    private List<Component> ownedComponents = new ArrayList<>();
+    private List<ArtemisSystem> ownedSystems = new ArrayList<>();
 
 
     /**
@@ -295,7 +296,10 @@ public class Player {
      * @param resources   - a positive balance transfers resources TO otherPlayer, a negative balance transfers resources
      *                    TO the currentPlayer
      */
-    private void transferResources(Player otherPlayer, int resources) throws IllegalArgumentException {
+    
+    // TODO - test transferResources() method
+    
+    public void transferResources(Player otherPlayer, int resources) throws IllegalArgumentException {
         Player transferFrom, transferTo;
         if (resources >= 0) {
             transferFrom = this;
@@ -454,14 +458,14 @@ public class Player {
     /**
      * @return an ArrayList of Components owned by the player
      */
-    public ArrayList<Component> getOwnedComponents() {
+    public List<Component> getOwnedComponents() {
         return ownedComponents;
     }
 
     /**
      * @return an ArrayList of ArtemisSystems owned by the player
      */
-    public ArrayList<ArtemisSystem> getOwnedSystems() {
+    public List<ArtemisSystem> getOwnedSystems() {
         return ownedSystems;
     }
 
