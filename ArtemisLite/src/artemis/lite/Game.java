@@ -32,12 +32,12 @@ public class Game {
 	public static void main(String[] args) {
 	}
 
-	public static void startGame() {
-		System.out.println("Mission Brief");
-		createBoard();
-		createPlayers();
-		generatePlayerOrder();
-	}
+    public static void startGame() {
+        System.out.println("Mission Brief");
+//		createBoard();
+//		createPlayers();
+//		generatePlayerOrder();
+    }
 
 	/**
 	 *
@@ -277,160 +277,157 @@ public class Game {
 		// loop ends run getNextPlayer
 	}
 
-	/**
-	 * shows players updated position and component details Prompts user to respond
-	 * to question with yes or no: if yes then player can then purchase component
-	 * through the method being passed if no then menu is displayed again
-	 * 
-	 * @param scanner
-	 */
-	public static void displayPurchasableComponent(Scanner scanner) {
+    /**
+     * shows players updated position and component details Prompts user to respond
+     * to question with yes or no: if yes then player can then purchase component
+     * through the method being passed if no then menu is displayed again
+     *
+     * @param scanner
+     */
+    public static void displayPurchasableComponent(Scanner scanner) {
 
-		String response;
+        String response;
 
-		// ignore as put in place to test functionality
-		Player player = new Player("Peter", DEFAULT_RESOURCES, 2);
-		Component component = (Component) board.getSquares()[2];
+        // ignore as put in place to test functionality
+        Player player = new Player("Peter", DEFAULT_RESOURCES, 2);
+        Component component = (Component) board.getSquares()[2];
 
-		component.displayAllDetails();
-		System.out.println("Do you want to purchase Component?");
-		response = scanner.next();
+        component.displayAllDetails();
+        System.out.println("Do you want to purchase Component?");
+        response = scanner.next();
 
-		if (response.equalsIgnoreCase("Yes")) {
-			player.purchaseComponent(component);
-		} else if (response.equalsIgnoreCase("No")) {
-			displayMenu();
-		} else {
-			System.out.println("Invalid input - please respond with yes or no");
-			System.out.println();
-		}
-
-	}
-
-	/**
-	 * Creates an map of components which the active player can purchase. The
-	 * components included are subject to a number of constraints: 1) the component
-	 * must have an owner 2) the owner must not be the current player 3) the current
-	 * player must have sufficient resources to purchase the component
-	 *
-	 * @param player the current player
-	 * @param board  the board object which contains the squares and systems
-	 * @return an map of identifiers and components that the player can trade for
-	 */
-	public static Map<Integer, Component> getComponentsForTrading(Player player, Board board) {
-		Map<Integer, Component> componentsWithOwners = new HashMap<Integer, Component>();
-		Component component;
-
-		int counter = 1;
-
-		for (Square square : board.getSquares()) {
-			if (square instanceof Component) {
-				component = (Component) square;
-
-				if (component.getComponentOwner() != null && component.getComponentOwner() != player
-						&& player.checkSufficientResources(component.getComponentCost())) {
-					componentsWithOwners.put(counter++, component);
-				}
-			}
-		}
-
-		return componentsWithOwners;
-	}
-
-	/**
-	 * Displays components that the currentPlayer does not own but ARE owned by
-	 * other players, so long as the currentPlayer has sufficient resources to trade
-	 * for them
-	 *
-	 * @param componentsForTrading map of integer-component pair values
-	 */
-	public static void outputComponentsForTrading(Map<Integer, Component> componentsForTrading) {
-		Component component;
-
-		System.out.println();
-
-		if (componentsForTrading.size() == 0) {
-			System.out
-					.println("There are no available components for you to purchase. This is either because you do not"
-							+ "have enough resources and/or there are no components owned by other players at present.");
-			return;
-		}
-
-		System.out.printf("%-5s %-40s %-20s %-4s\n", "REF", "COMPONENT NAME", "OWNER", "COST");
-
-		Set<Map.Entry<Integer, Component>> componentSet = componentsForTrading.entrySet();
-
-		for (Map.Entry<Integer, Component> componentEntry : componentSet) {
-			component = componentEntry.getValue();
-			System.out.printf("%-5s %-40s %-20s %-4s\n", componentEntry.getKey(), component,
-					component.getComponentOwner(), component.getComponentCost());
-		}
+        if (response.equalsIgnoreCase("Yes")) {
+            player.purchaseComponent(component);
+        } else if (response.equalsIgnoreCase("No")) {
+            displayMenu();
+        } else {
+            System.out.println("Invalid input - please respond with yes or no");
+            System.out.println();
+        }
 
 	}
 
-	/**
-	 * Takes a map object and uses it to prompt the user to select a valid component
-	 * to perform an action on.
-	 *
-	 * @param scanner    a scanner object
-	 * @param components a map containing components as the value
-	 * @return a component object if a valid selection was made, otherwise will
-	 *         return null
-	 */
-	public static Component getPlayerComponentSelection(Scanner scanner, Map<Integer, Component> components) {
-		String playerInput;
-		int playerSelection = -1;
-		Component component;
+    /**
+     * Creates an map of components which the active player can purchase. The
+     * components included are subject to a number of constraints: 1) the component
+     * must have an owner 2) the owner must not be the current player 3) the current
+     * player must have sufficient resources to purchase the component
+     *
+     * @param player the current player
+     * @param board  the board object which contains the squares and systems
+     * @return an map of identifiers and components that the player can trade for
+     */
+    public static Map<Integer, Component> getComponentsForTrading(Player player, Board board) {
+        Map<Integer, Component> componentsWithOwners = new HashMap<Integer, Component>();
+        Component component;
 
-		do {
-			System.out.printf("Input your selection (number only) or type 'end' to go back...");
-			playerInput = scanner.next();
+        int counter = 1;
 
-			if (playerInput.equalsIgnoreCase("end")) {
-				return null;
-			}
+        for (Square square : board.getSquares()) {
+            if (square instanceof Component) {
+                component = (Component) square;
 
-			try {
-				playerSelection = Integer.parseInt(playerInput);
-			} catch (NumberFormatException e) {
-				// do nothing
-			}
-			System.out.println();
+                if (component.getComponentOwner() != null && component.getComponentOwner() != player
+                        && player.checkSufficientResources(component.getComponentCost())) {
+                    componentsWithOwners.put(counter++, component);
+                }
+            }
+        }
 
-			component = components.get(playerSelection);
-		} while (component == null);
+        return componentsWithOwners;
+    }
 
-		return component;
-	}
+    /**
+     * Displays components that the currentPlayer does not own but ARE owned by
+     * other players, so long as the currentPlayer has sufficient resources to trade
+     * for them
+     *
+     * @param components a Map containing components available for trading
+     */
+    public static void displayComponentsForTrading(Map<Integer, Component> components) {
+        Component component;
 
-	/**
-	 * Outputs a list of components which the player can trade resources for, the
-	 * user is then prompted to select one of the list of components. If a valid
-	 * selection is made, the purchaseComponent method is invoked.
-	 *
-	 * @param player  the current player
-	 * @param scanner a scanner object
-	 */
-	public static void displayTradeMenu(Player player, Board board, Scanner scanner) {
-		Map<Integer, Component> componentsAvailable = getComponentsForTrading(player, board);
+        System.out.println();
 
-		// display components
-		outputComponentsForTrading(componentsAvailable);
+        if (components.size() == 0) {
+            System.out.println("There are no available components for you to purchase. This is either because you do not"
+                    + "have enough resources and/or there are no components owned by other players at present.");
+            return;
+        }
 
-		// get user input
-		Component playerSelection = getPlayerComponentSelection(scanner, componentsAvailable);
+        System.out.printf("%-5s %-40s %-20s %-4s\n", "REF", "COMPONENT NAME", "OWNER", "COST");
 
-		// player did not select a component - return to main main
-		if (playerSelection == null) {
-			displayMenu();
-			return;
-		}
+        for (Map.Entry<Integer, Component> componentEntry : components.entrySet()) {
+            component = componentEntry.getValue();
+            System.out.printf("%-5s %-40s %-20s %-4s\n", componentEntry.getKey(), component,
+                    component.getComponentOwner(), component.getComponentCost());
+        }
 
-		System.out.println(player + " has selected to trade with " + playerSelection.getComponentOwner() + " for "
-				+ playerSelection);
-		// process the trade
-		player.tradeComponent(playerSelection, scanner);
-	}
+    }
+
+    /**
+     * Takes a map object and uses it to prompt the user to select a valid component
+     * to perform an action on.
+     *
+     * @param scanner    a scanner object
+     * @param components a map containing components as the value
+     * @return a component object if a valid selection was made, otherwise will
+     * return null
+     */
+    public static Component getPlayerComponentSelection(Scanner scanner, Map<Integer, Component> components) {
+        String playerInput;
+        int playerSelection = -1;
+        Component component;
+
+        do {
+            System.out.printf("Input your selection (number only) or type 'end' to go back...");
+            playerInput = scanner.next();
+
+            if (playerInput.equalsIgnoreCase("end")) {
+                return null;
+            }
+
+            try {
+                playerSelection = Integer.parseInt(playerInput);
+            } catch (NumberFormatException e) {
+                // do nothing
+            }
+            System.out.println();
+
+            component = components.get(playerSelection);
+        } while (component == null);
+
+        return component;
+    }
+
+    /**
+     * Outputs a list of components which the player can trade resources for, the
+     * user is then prompted to select one of the list of components. If a valid
+     * selection is made, the purchaseComponent method is invoked.
+     *
+     * @param player  the current player
+     * @param scanner a scanner object
+     */
+    public static void displayTradeMenu(Player player, Board board, Scanner scanner) {
+        Map<Integer, Component> componentsAvailable = getComponentsForTrading(player, board);
+
+        // display components
+        displayComponentsForTrading(componentsAvailable);
+
+        // get user input
+        Component playerSelection = getPlayerComponentSelection(scanner, componentsAvailable);
+
+        // player did not select a component - return to main main
+        if (playerSelection == null) {
+            displayMenu();
+            return;
+        }
+
+        System.out.println(player + " has selected to trade with " + playerSelection.getComponentOwner() + " for "
+                + playerSelection);
+        // process the trade
+        player.tradeComponent(playerSelection, scanner);
+    }
 
 	public static void playTurn() {
 		// container for other methods
