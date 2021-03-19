@@ -444,7 +444,6 @@ public class Game {
 
         // player did not select a component - return to main main
         if (playerSelection == null) {
-            displayMenu();
             return;
         }
 
@@ -458,7 +457,7 @@ public class Game {
 		// container for other methods
 		rollDice();
 //		updatePlayerPosition();
-		displayMenu();
+//		displayMenu();
 
 	}
 
