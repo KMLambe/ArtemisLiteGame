@@ -465,7 +465,6 @@ class GameTest {
         player1.setResourceBalance(500); // manually override so that components appear
 
         Map<Integer, Component> player1ComponentsAvailable = Game.getComponentsForTrading(player1, board1);
-        Game.outputComponentsForTrading(player1ComponentsAvailable);
 
         // simulate user inputting wrong data, followed by 'end', which should return null (indicating no component selected)
         Component componentForTrade = Game.getPlayerComponentSelection(new Scanner("na end"), player1ComponentsAvailable);
