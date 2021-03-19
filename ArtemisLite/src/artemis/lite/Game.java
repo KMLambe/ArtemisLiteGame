@@ -25,6 +25,9 @@ public class Game {
 	// labels - to be used in place of hard coding strings
 	public final static String RESOURCE_NAME = "EXPERTS";
 
+	// player
+	private static Player player;
+	static Player currentPlayer;
 	
 	// board
 	private static Board board;
@@ -37,9 +40,6 @@ public class Game {
 
     public static void startGame() {
         System.out.println("Mission Brief");
-//		createBoard();
-//		createPlayers();
-//		generatePlayerOrder();
     }
 
 	/**
@@ -99,7 +99,6 @@ public class Game {
 			}
 		}
 		return numberOfPlayers;
-		
 	}
 	
 	/**
@@ -129,22 +128,36 @@ public class Game {
 	    return players;
 	}
 	
-	public static void cast() {
-		ArrayList<Player>players=createPlayers(new Scanner(System.in));
-		generatePlayerOrder(players);
-		for(Player player: players) {
-			System.out.println(player.getPlayerName());
-		}
-	}
-		
 	/**
-	 * Shuffles the order of the players
+	 * @param players
+	 * shuffles order of players
 	 */
 	public static void generatePlayerOrder(ArrayList<Player> players) {
 		Collections.shuffle(players);
 	}
 	
-
+	/**
+	 * @return 
+	 * @param players
+	 * sets the current player in the game 
+	*/
+	public static Player getNextPlayer(ArrayList<Player> players) {
+		currentPlayer = players.get((players.indexOf(currentPlayer)+1)%players.size());
+		System.out.println(currentPlayer.getPlayerName());
+		return currentPlayer;
+		//Call play turn method to run next turn 
+	}
+	
+	public static void cast() {
+		ArrayList<Player>players=createPlayers(new Scanner(System.in));
+		generatePlayerOrder(players);
+		for(Player player: players) {
+			System.out.println(player.getPlayerName());
+			getNextPlayer(players);
+		}
+	}
+		
+	
 	/**
 	 * This method simulates the rolling of two dice and returns the sum of the two
 	 * values as an integer.
@@ -229,7 +242,7 @@ public class Game {
 
 	}
 
-	public static void displayMenu() {
+	public static void displayMenu(ArrayList<Player> players) {
 		// switch statement running through a loop
 		System.out.println("1. Purchase Component");
 		System.out.println("2. Decline purchase offer to other players");
@@ -242,6 +255,8 @@ public class Game {
 		System.out.println("9. Leave game");
 
 		int playerChoice;
+		int actionPoints = 2;
+		boolean endGame = false;
 		Scanner scanner = new Scanner(System.in);
 		playerChoice = scanner.nextInt();
 
@@ -274,7 +289,7 @@ public class Game {
 				player.getResourceBalance();
 				break;
 			case 8:
-				getNextPlayer();
+				getNextPlayer(players);
 				break;
 			case 9:
 				endGame();
@@ -491,20 +506,6 @@ public class Game {
 
 		announce(updatedResourceBalanceAnnouncement);
 
-	}
-
-	/**
-	 * @return the players
-	 */
-	public static int[] getPlayers() {
-		return players;
-	}
-
-	/**
-	 * @param players the players to set
-	 */
-	public static void setPlayers(int[] players) {
-		players = players;
 	}
 
 	public static void endGame() {

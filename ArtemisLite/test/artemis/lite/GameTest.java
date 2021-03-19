@@ -181,8 +181,46 @@ class GameTest {
 				Game.generatePlayerOrder(playerstest);
 				// test that Array List still contains same amount of items
 				assertEquals(2, playerstest.size());
-		
 	}
+	
+	@Test
+	void testGetNextPlayerValid() {
+		
+		ArrayList<Player> playerstest = new ArrayList<Player>();
+		int STARTING_RESOURCES = 500;
+		int STARTING_POSITION =0;
+		String validPlayer1, validPlayer2, validPlayer3, validPlayer4;
+		Player currentPlayer;
+		
+		// player info to pass into array for player test
+				validPlayer1 = "name1";
+				validPlayer2 = "name2";
+				validPlayer3 = "name3";
+				validPlayer4 = "name4";
+				
+				playerstest.add(new Player(validPlayer1, STARTING_RESOURCES, STARTING_POSITION));
+				playerstest.add(new Player(validPlayer2, STARTING_RESOURCES, STARTING_POSITION));
+				playerstest.add(new Player(validPlayer3, STARTING_RESOURCES, STARTING_POSITION));
+				playerstest.add(new Player(validPlayer4, STARTING_RESOURCES, STARTING_POSITION));
+				
+	
+				// test that the method will get the first player
+				currentPlayer=Game.getNextPlayer(playerstest);		
+				assertEquals("name1", currentPlayer.getPlayerName());
+				// test that the method will get the second player
+				currentPlayer=Game.getNextPlayer(playerstest);		
+				assertEquals("name2", currentPlayer.getPlayerName());
+				// test that the method will get the third player
+				currentPlayer=Game.getNextPlayer(playerstest);		
+				assertEquals("name3", currentPlayer.getPlayerName());
+				// test that the method will get the fourth player
+				currentPlayer=Game.getNextPlayer(playerstest);		
+				assertEquals("name4", currentPlayer.getPlayerName());
+				// test that the method will revert back to the first player after it reaches the end of the list
+				currentPlayer=Game.getNextPlayer(playerstest);		
+				assertEquals("name1", currentPlayer.getPlayerName());
+	}
+	
     
 
     @Test
@@ -298,10 +336,6 @@ class GameTest {
         fail("Not yet implemented");
     }
 
-    @Test
-    void testGetNextPlayer() {
-        fail("Not yet implemented");
-    }
 
     @Test
     void testAllocateResourcesValidPlayer() {
