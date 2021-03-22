@@ -283,6 +283,15 @@ public class Component extends Square {
 	}
 
 	/**
+	 * Determines whether a component already has an owner or not.
+	 *
+	 * @return true if componentOwned is not null, otherwise return false
+	 */
+	public boolean isOwned() {
+		return (componentOwner != null);
+	}
+
+	/**
 	 * This method prints to screen key information about this component.
 	 */
 	@Override
