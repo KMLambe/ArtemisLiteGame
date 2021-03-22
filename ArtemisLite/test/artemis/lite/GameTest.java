@@ -482,4 +482,42 @@ class GameTest {
         fail("TBC");
     }
 
+
+    @Test
+    void testGetHighestRollerValidMultiplePlayers() {
+        Player p1 = new Player("Player1", validResourceBalance1, validCurrentBoardPosition1);
+        Player p2 = new Player("Player2", validResourceBalance1, validCurrentBoardPosition1);
+        Player p3 = new Player("Player3", validResourceBalance1, validCurrentBoardPosition1);
+        Player p4 = new Player("Player4", validResourceBalance1, validCurrentBoardPosition1);
+
+        List<Player> playerList = new ArrayList<>(Arrays.asList(p1, p2, p3, p4));
+
+        Player winner = Game.getHighestRoll(playerList);
+
+        assertTrue(playerList.contains(winner));
+        assertTrue(winner instanceof Player);
+    }
+
+    @Test
+    void testGetHighestRollerValidOnePlayer() {
+        Player p1 = new Player("Player1", validResourceBalance1, validCurrentBoardPosition1);
+
+        List<Player> playerList = new ArrayList<>(Arrays.asList(p1));
+
+        Player winner = Game.getHighestRoll(playerList);
+
+        assertEquals(p1, winner);
+    }
+
+    @Test
+    void testGetHighestRollerInvalidNoPlayers() {
+        List<Player> playerList = new ArrayList<>();
+
+        IllegalArgumentException illegalArgumentException = assertThrows(IllegalArgumentException.class, () -> {
+            Game.getHighestRoll(playerList);
+        });
+
+        assertTrue(illegalArgumentException.getMessage().equalsIgnoreCase("empty list of players"));
+    }
+
 }
