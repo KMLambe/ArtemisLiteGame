@@ -66,6 +66,8 @@ class PlayerTest {
         p2 = new Player(validPlayerName2, validResourceBalance2, validBoardPosition2);
         p3 = new Player(validPlayerName3, validResourceBalance3, validBoardPosition3);
 
+        // add players to game list of players
+        Game.setPlayers(Arrays.asList(p1, p2, p3));
 
         // setup component for trading
         p3.purchaseComponent(c3);
@@ -313,6 +315,100 @@ class PlayerTest {
         assertEquals(tradeInitiator, component.getComponentOwner());
         assertEquals(openingActionPointsTradeInitiator, tradeInitiator.getActionPoints());
         assertEquals(openingResourcesTradeInitiator, tradeInitiator.getResourceBalance());
+    }
+
+
+    @Test
+    void offerComponentToOtherPlayersValid2Yes0No() {
+        p2.setResourceBalance(400);
+        p3.setResourceBalance(500);
+
+        // make sure component is not already owned
+        assertTrue(c1.getComponentOwner() == null);
+
+        p1.offerComponentToOtherPlayers(c1, new Scanner("yes yes"));
+
+        // check that one of the other players now owns the component
+        assertTrue(c1.getComponentOwner() == p2 || c1.getComponentOwner() == p3);
+        assertFalse(c1.getComponentOwner() != p1);
+    }
+
+    @Test
+    void offerComponentToOtherPlayersValid1Yes1No() {
+        p2.setResourceBalance(400);
+        p3.setResourceBalance(500);
+
+        // make sure component is not already owned
+        assertNull(c1.getComponentOwner());
+
+        p1.offerComponentToOtherPlayers(c1, new Scanner("no yes"));
+
+        // check that the expected player now owns the component
+        assertEquals(p3, c1.getComponentOwner());
+    }
+
+    @Test
+    void offerComponentToOtherPlayersValid0Yes2No() {
+        p2.setResourceBalance(400);
+        p3.setResourceBalance(500);
+
+        // make sure component is not already owned
+        assertNull(c1.getComponentOwner());
+
+        p1.offerComponentToOtherPlayers(c1, new Scanner("no no"));
+
+        // check that the expected player now owns the component
+        assertNull(c1.getComponentOwner());
+    }
+
+    @Test
+    void offerComponentToOtherPlayersInvalidThenValidInput() {
+        p2.setResourceBalance(400);
+        p3.setResourceBalance(500);
+
+        // make sure component is not already owned
+        assertNull(c1.getComponentOwner());
+
+        // enter anything but yes or no will keep prompting the user until yes/no has been inputted
+        p1.offerComponentToOtherPlayers(c1, new Scanner("asdasd no asdasd no"));
+
+        assertNull(c1.getComponentOwner());
+    }
+
+    @Test
+    void offerComponentToOtherPlayersInvalidEmptyPlayers() {
+        // empty player list
+        Game.setPlayers(new ArrayList<Player>());
+
+        assertDoesNotThrow(() -> {
+            p1.offerComponentToOtherPlayers(c1, new Scanner(""));
+        });
+
+        assertNull(c1.getComponentOwner());
+    }
+
+    @Test
+    void offerComponentToOtherPlayersInvalidNoOtherPlayers() {
+        // game only contains the player that is about to invoke offerToOtherPlayers
+        Game.setPlayers(Arrays.asList(p1));
+
+        // shouldn't throw any errors
+        assertDoesNotThrow(() -> {
+            p1.offerComponentToOtherPlayers(c1, new Scanner(""));
+        });
+
+        assertNull(c1.getComponentOwner());
+    }
+
+
+    @Test
+    void offerComponentToOtherPlayersInvalidComponentAlreadyOwned() {
+        IllegalArgumentException illegalArgumentException = assertThrows(IllegalArgumentException.class, () -> {
+            p3.offerComponentToOtherPlayers(c3, new Scanner("yes yes"));
+        });
+
+        String expected = "Component already has an owner";
+        assertEquals(expected, illegalArgumentException.getMessage());
     }
 
 }
