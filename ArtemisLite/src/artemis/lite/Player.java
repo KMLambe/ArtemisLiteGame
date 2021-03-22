@@ -325,7 +325,63 @@ public class Player {
         Game.announce(message);
     }
 
-    public boolean offerComponentToOtherPlayers(Component component) {
+    /**
+     * This will offer the component the currentPlayer has landed on to other players (excluding currentPlayer). This method
+     * will only be called if the currentPlayer rejects the purchase of the component.
+     *
+     * @param component the component the currentPlayer has landed on
+     * @return true - if another player purchased the component; false - if the component was not purchased
+     */
+    public boolean offerComponentToOtherPlayers(Component component, Scanner scanner) {
+        if (component.isOwned()) {
+            throw new IllegalArgumentException("Component already has an owner");
+        }
+
+        List<Player> players = new ArrayList<>(Game.getPlayers()); // create a copy of the players in the game
+        List<Player> playersThatWishToPurchase = new ArrayList<Player>();
+
+        players.remove(this);
+
+        for (Player player : players) {
+            if (player.checkSufficientResources(component.getComponentCost())) {
+                System.out.println(player.getPlayerName() + " do you wish to purchase the component "
+                        + component.getSquareName() + " for " + component.getComponentCost() + " " + Game.RESOURCE_NAME + "?");
+
+                String userInput;
+                do {
+                    System.out.println("Enter yes or no... ");
+                    userInput = scanner.next();
+
+                    if (userInput.equalsIgnoreCase("yes")) {
+                        // include player in array for rolling dice
+                        playersThatWishToPurchase.add(player);
+                    } else if (userInput.equalsIgnoreCase("no")) {
+                        System.out.println(player.getPlayerName() + " does not wish to be considered in the purchase");
+                    } else {
+                        System.out.println("Invalid input");
+                    }
+
+                } while (!userInput.equalsIgnoreCase("yes") && !userInput.equalsIgnoreCase("no"));
+
+                // do while loop
+            } else {
+                System.out.println(player.getPlayerName() + " does not have enough resources to participate in the bidding...");
+            }
+            System.out.println();
+        }
+
+        if (playersThatWishToPurchase.size() > 1) {
+            Player playerWithHighestRoll = Game.getHighestRoll(playersThatWishToPurchase);
+
+            playerWithHighestRoll.purchaseComponent(component);
+
+        } else if (playersThatWishToPurchase.size() == 1) {
+            playersThatWishToPurchase.get(0).purchaseComponent(component);
+        } else {
+            Game.announce("No players wish to purchase " + component.getSquareName() + "... Therefore it remains unowned.");
+        }
+
+
         return false;
     }
 
