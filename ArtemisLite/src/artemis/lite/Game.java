@@ -25,12 +25,14 @@ public class Game {
 	// labels - to be used in place of hard coding strings
 	public final static String RESOURCE_NAME = "EXPERTS";
 
-	// player
-	private static Player player;
-	static Player currentPlayer;
-	
-	// board
-	private static Board board;
+    // player
+    private static Player player;
+    static Player currentPlayer;
+
+    private static List<Player> players = new ArrayList<Player>();
+
+    // board
+    private static Board board;
 
 	/**
 	 * @param args
@@ -118,53 +120,52 @@ public class Game {
 	        System.out.println("Enter player " + loop + " name");
 	        String playerName = scanner.next();
 
-	        while (playerNames.contains(playerName.toLowerCase())) {
-	            System.out.println("Player name already exists please enter a different name.");
-	            playerName = scanner.next();
-	        }
-	        playerNames.add(playerName.toLowerCase());
-	        players.add(new Player(playerName, STARTING_RESOURCES, STARTING_POSITION));
-	    }
-	    return players;
-	}
-	
-	/**
-	 * @param players
-	 * shuffles order of players
-	 */
-	public static void generatePlayerOrder(ArrayList<Player> players) {
-		Collections.shuffle(players);
-	}
-	
-	/**
-	 * @return 
-	 * @param players
-	 * sets the current player in the game 
-	*/
-	public static Player getNextPlayer(ArrayList<Player> players) {
-		currentPlayer = players.get((players.indexOf(currentPlayer)+1)%players.size());
-		System.out.println(currentPlayer.getPlayerName());
-		return currentPlayer;
-		//Call play turn method to run next turn 
-	}
-	
-	public static void cast() {
-		ArrayList<Player>players=createPlayers(new Scanner(System.in));
-		generatePlayerOrder(players);
-		for(Player player: players) {
-			System.out.println(player.getPlayerName());
-			getNextPlayer(players);
-		}
-	}
-		
-	
-	/**
-	 * This method simulates the rolling of two dice and returns the sum of the two
-	 * values as an integer.
-	 * 
-	 * @return sumOfDice - the sum of the two dice rolls.
-	 */
-	public static int rollDice() {
+            while (playerNames.contains(playerName.toLowerCase())) {
+                System.out.println("Player name already exists please enter a different name.");
+                playerName = scanner.next();
+            }
+            playerNames.add(playerName.toLowerCase());
+            players.add(new Player(playerName, STARTING_RESOURCES, STARTING_POSITION));
+        }
+        setPlayers(players); // updates static List<Player> players (global scope)
+        return players;
+    }
+
+    /**
+     * @param players shuffles order of players
+     */
+    public static void generatePlayerOrder(ArrayList<Player> players) {
+        Collections.shuffle(players);
+    }
+
+    /**
+     * @param players sets the current player in the game
+     * @return
+     */
+    public static Player getNextPlayer(ArrayList<Player> players) {
+        currentPlayer = players.get((players.indexOf(currentPlayer) + 1) % players.size());
+        System.out.println(currentPlayer.getPlayerName());
+        return currentPlayer;
+        //Call play turn method to run next turn
+    }
+
+    public static void cast() {
+        ArrayList<Player> players = createPlayers(new Scanner(System.in));
+        generatePlayerOrder(players);
+        for (Player player : players) {
+            System.out.println(player.getPlayerName());
+            getNextPlayer(players);
+        }
+    }
+
+
+    /**
+     * This method simulates the rolling of two dice and returns the sum of the two
+     * values as an integer.
+     *
+     * @return sumOfDice - the sum of the two dice rolls.
+     */
+    public static int rollDice() {
 
 		String rollAnnouncement;
 
@@ -507,8 +508,93 @@ public class Game {
 
 	}
 
-	public static void endGame() {
-		// needs to terminate loop of the game
-		System.out.println("The mission has failed");
-	}
+    public static void endGame() {
+        // needs to terminate loop of the game
+        System.out.println("The mission has failed");
+    }
+
+    /**
+     * This accepts a list of player objects and invokes a dice roll for them. It will return the player with the highest
+     * roll of the dice. If multiple players roll the highest number, it will roll again only for those with the highest
+     * roll. This will continue until only one player is returned.
+     *
+     * @param playersToRoll list of player objects that will be iterated through
+     * @return the player object corresponding to the player with the highest roll
+     * @throws IllegalArgumentException when the list of players inputted is empty
+     */
+    public static Player getHighestRoll(List<Player> playersToRoll) throws IllegalArgumentException {
+        if (playersToRoll.size() < 1) {
+            throw new IllegalArgumentException("Empty list of players");
+        } else if (playersToRoll.size() == 1) {
+            System.out.println("Only one player passed through...no need to roll the dice");
+            return playersToRoll.get(0);
+        }
+
+        List<Player> activeList = playersToRoll;
+        List<Player> playersWithHighestRoll = new ArrayList<>();
+        int highestRoll = -1;
+        int playerCounter = 0;
+        int roundCounter = 1;
+
+
+        // -----testing-----
+//        highestRoll = 12;
+//        playersWithHighestRoll.add(new Player("manuaLPlayer1", Game.DEFAULT_RESOURCES, Game.STARTING_POSITION));
+//        playersWithHighestRoll.add(new Player("manuaLPlayer2", Game.DEFAULT_RESOURCES, Game.STARTING_POSITION));
+
+        // -----testing-----
+
+        announce("Rolling dice to find out who rolls the highest...");
+        do {
+            // if already looped through all players then it means more than one player had highest roll
+            if (playerCounter >= activeList.size()) {
+                System.out.printf("[ROUND %s] There are %s players that rolled a %s\n", roundCounter,
+                        playersWithHighestRoll.size(), highestRoll);
+                System.out.printf("[ROUND %s] We need a winner...let's roll again!\n\n", roundCounter);
+
+                activeList.clear();
+                activeList.addAll(playersWithHighestRoll);
+
+                playerCounter = 0; // start again
+                highestRoll = -1;
+                roundCounter++;
+            }
+
+            Player player = activeList.get(playerCounter);
+
+
+            int playerRoll = Game.rollDice();
+            System.out.printf("[ROUND %s] %s rolled a %s\n\n", roundCounter, player.getPlayerName(), playerRoll);
+
+
+            if (playerRoll > highestRoll) {
+                highestRoll = playerRoll;
+
+                playersWithHighestRoll.clear();
+                playersWithHighestRoll.add(player);
+            } else if (playerRoll == highestRoll) {
+                playersWithHighestRoll.add(player);
+            }
+
+            playerCounter++;
+            //
+        } while (!(playersWithHighestRoll.size() == 1 && playerCounter >= activeList.size() && playerCounter >= playersWithHighestRoll.size()));
+
+        // only one player remains
+        Player winner = playersWithHighestRoll.get(0);
+
+        announce(winner.getPlayerName() + " wins the roll with a " + highestRoll + " [" + roundCounter +
+                " ROUND(S)]");
+
+        return winner;
+    }
+
+    // getters and setters
+    public static List<Player> getPlayers() {
+        return players;
+    }
+
+    public static void setPlayers(List<Player> players) {
+        Game.players = players;
+    }
 }
