@@ -329,7 +329,7 @@ public class Game {
 	 * 
 	 * @param players takes an arraylist of players
 	 */
-	public static void displayMenu(ArrayList<Player> players) {
+	public static void displayMenu(List<Player> players) {
 		
 		// switch statement running through a loop
 		System.out.println("1. Develop Component");
@@ -354,19 +354,19 @@ public class Game {
 		while ((actionPoints > 0) && (endGame == false)) {
 			switch (playerChoice) {
 			case 1:
-				player.develop(component);
+				//player.develop(component);
 				break;
 			case 2:
-				player.develop(system);
+				//player.develop(system);
 				break;
 			case 3:
-				displayTradeMenu(player, board, scanner);
+				//displayTradeMenu(player, board, scanner);
 				break;
 			case 4:
-				player.getOwnedComponents();
+				//player.getOwnedComponents();
 				break;
 			case 5:
-				player.getResourceBalance();
+				//player.getResourceBalance();
 				break;
 			case 6:
 				endGame(); // outside of loop
@@ -377,7 +377,7 @@ public class Game {
 		}
 
 		// loop ends run getNextPlayer
-		getNextPlayer(players);
+		//getNextPlayer(players);
 	}
 
     /**
