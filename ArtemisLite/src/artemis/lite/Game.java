@@ -8,9 +8,9 @@ import java.util.Random;
 import java.util.Scanner;
 
 /**
- * 
- * @author Peter McMahon, Gavin Taylor
- * 
+ * Creates and manages the ArtemisLite game.
+ *
+ * @author Peter McMahon, Gavin Taylor, John Young 40030361
  */
 public class Game {
 
@@ -39,21 +39,93 @@ public class Game {
 
     // board
     private static Board board;
+    private static boolean endGame = false;
 
     /**
      * @param args
      */
     public static void main(String[] args) {
-    }
+        Scanner scanner = new Scanner(System.in);
 
-    public static void startGame() {
-        System.out.println("Mission Brief");
+        setupGame(scanner);
+
+        gameLoop(scanner);
     }
 
     /**
-     *
+     * Responsible for running the setup sequence, i.e. make sure the board is created, players have been created, and
+     * randomise the player order.
      */
-    private static void createBoard(Board board) {
+    public static void setupGame(Scanner scanner) {
+
+
+        // 1. create board
+        board = new Board();
+
+        createBoard(board);
+
+        // 2. get players
+        ArrayList<Player> players = createPlayers(scanner);
+
+        // 3. shuffle players
+        generatePlayerOrder(players);
+
+        announce("Game setup complete...time to get rolling!");
+
+        // TODO - call mission brief
+    }
+
+
+    /**
+     * Responsible for handling all player interactions with the game.
+     *
+     * It handles each player's turn, enabling them to perform any permissible action so long as they have more than 0
+     * action points. When the player runs out of action points, the game moves on to the next player in the sequence.
+     *
+     * At the end of a player's turn, the currentPlayer is set to the next player in the sequence and their action points
+     * are set to the default amount (i.e. reset).
+     *
+     * The loop will end on any player's turn if a player leaves (setting endGame to true).
+     *
+     * @param scanner a scanner object
+     */
+    public static void gameLoop(Scanner scanner) {
+        // set currentplayer to the first player in the arraylist
+        Player currentPlayer = players.get(0);
+
+        while (currentPlayer.getActionPoints() > 0 && !endGame) {
+            int rollDice = rollDice();
+
+            updatePlayerPosition(currentPlayer, board, rollDice);
+
+            displayMenu(currentPlayer, scanner);
+
+            // current player's turn is over, get the nextPlayer and set to currentPlayer
+            // nextPlayer will be the currentPlayer on the next iteration of loop
+            currentPlayer = getNextPlayer(players, currentPlayer);
+            // make sure player has action points before starting loop
+            currentPlayer.setActionPoints(DEFAULT_ACTION_POINTS);
+        }
+
+        if (endGame) {
+            // TODO - add call to endGame sequence
+            System.out.println("GAME HAS ENDED");
+        }
+    }
+
+    /**
+     * Creates a virtual board for players to move around, and populates it with squares and systems. This method must
+     * be called before players are able to take a turn.
+     *
+     * @param board pass through a board object to store squares and systems
+     * @return the populated board object with squares and systems
+     * @throws IllegalArgumentException if the board object is null
+     */
+    private static Board createBoard(Board board) throws IllegalArgumentException {
+
+        if (board == null) {
+            throw new IllegalArgumentException("Board object is null");
+        }
 
         // create systems
         ArtemisSystem system1 = board.createSystem("SPACE LAUNCH SYSTEM");
@@ -84,6 +156,8 @@ public class Game {
         // systems are created
         board.displayAllSystems();
         board.displayAllSquares();
+
+        return board;
     }
 
     /**
@@ -139,7 +213,9 @@ public class Game {
     }
 
     /**
-     * @param players shuffles order of players
+     * Randomises the list of players so that player turns are not based on the order they were created.
+     *
+     * @param players list of player objects
      */
     public static void generatePlayerOrder(ArrayList<Player> players) {
         Collections.shuffle(players);
@@ -156,6 +232,9 @@ public class Game {
         return players.get((players.indexOf(currentPlayer) + 1) % players.size());
     }
 
+    /**
+     *
+     */
     public static void cast() {
         ArrayList<Player> players = createPlayers(new Scanner(System.in));
         generatePlayerOrder(players);
@@ -243,108 +322,136 @@ public class Game {
     }
 
     /**
-	 * Displays the component the current player has landed on once position is updated.
-	 * takes a user response and allows player to purchase component if user enters yes and
-	 * component is offered to other players if user enters no.
-	 * 
-	 * @param scanner
-	 * @param currentPlayer
-	 * @param component
-	 * @param board
-	 * @param players
-	 * @param purchasableComponents
-	 */
-	public static void displayPurchasableComponent(Scanner scanner, Player currentPlayer, Component component,
-			Board board, ArrayList<Player> players, List<Square> purchasableComponents) {
+     * Displays the component the current player has landed on once position is updated.
+     * takes a user response and allows player to purchase component if user enters yes and
+     * component is offered to other players if user enters no.
+     *
+     * @param scanner
+     * @param currentPlayer
+     * @param component
+     * @param board
+     * @param players
+     * @param purchasableComponents
+     */
+    public static void displayPurchasableComponent(Scanner scanner, Player currentPlayer, Component component,
+                                                   Board board, ArrayList<Player> players, List<Square> purchasableComponents) {
 
-		String response = null;
-		Square[] squares = board.getSquares();
-		Square playerPosition = squares[currentPlayer.getCurrentBoardPosition()];
+        String response = null;
+        Square[] squares = board.getSquares();
+        Square playerPosition = squares[currentPlayer.getCurrentBoardPosition()];
 
-		// purchasableComponents(currentPlayerPosition, board, currentPlayer);
+        // purchasableComponents(currentPlayerPosition, board, currentPlayer);
 
-		component.displayAllDetails();
-		System.out.println(currentPlayer + " do you want to purchase " + playerPosition + "?");
-		System.out.println("Please enter yes or no");
-		response = scanner.next();
+        component.displayAllDetails();
+        System.out.println(currentPlayer + " do you want to purchase " + playerPosition + "?");
 
-		do {
-			if (response.equalsIgnoreCase("Yes")) {
-				purchaseComponentOption(currentPlayer, board, purchasableComponents, scanner, players);
-				displayMenu(players);
-			} else if (response.equalsIgnoreCase("No")) {
-				currentPlayer.offerComponentToOtherPlayers((Component) playerPosition);
-				displayMenu(players);
-			} else {
-				System.out.println("Invalid input - please respond with yes or no");
-				response = scanner.next();
-				System.out.println();
-			}
-		} while (!response.equalsIgnoreCase("yes") || (!response.equalsIgnoreCase("no")));
+        do {
+            System.out.println("Please enter yes or no");
+            response = scanner.next();
 
-		// displayMenu(players);
-	}
+            if (response.equalsIgnoreCase("Yes")) {
+                purchaseComponentOption(currentPlayer, board, purchasableComponents, scanner, players);
+            } else if (response.equalsIgnoreCase("No")) {
+                currentPlayer.offerComponentToOtherPlayers((Component) playerPosition, scanner);
+            } else {
+                System.out.println("Invalid input");
+                System.out.println();
+            }
+        } while (!(response.equalsIgnoreCase("yes") || response.equalsIgnoreCase("no")));
+    }
 
-	/**
-	 * Allows the position of the current player to be purchased only if the component is an
-	 * instance of a square and component is not owned by another player
-	 * 
-	 * @param currentPlayer
-	 * @param board
-	 * @param purchasableComponents
-	 * @param scanner
-	 * @param players
-	 */
-	public static void purchaseComponentOption(Player currentPlayer, Board board, List<Square> purchasableComponents,
-			Scanner scanner, ArrayList<Player> players) {
+    /**
+     * Allows the position of the current player to be purchased only if the component is an
+     * instance of a square and component is not owned by another player
+     *
+     * @param currentPlayer
+     * @param board
+     * @param purchasableComponents
+     * @param scanner
+     * @param players
+     */
+    public static void purchaseComponentOption(Player currentPlayer, Board board, List<Square> purchasableComponents,
+                                               Scanner scanner, ArrayList<Player> players) {
 
-		Square[] squares = board.getSquares();
-		Square playerPosition = squares[currentPlayer.getCurrentBoardPosition()];
-		Component component;
+        Square[] squares = board.getSquares();
+        Square playerPosition = squares[currentPlayer.getCurrentBoardPosition()];
+        Component component;
 
-		// component.displayAllDetails();
+        // component.displayAllDetails();
 
-		for (Square square : board.getSquares()) {
-			if (square instanceof Component) {
-				component = (Component) square;
+        for (Square square : board.getSquares()) {
+            if (square instanceof Component) {
+                component = (Component) square;
 
-				if (currentPlayer.checkComponentIsNotOwned(component) && purchasableComponents.contains(component)) {
-					currentPlayer.purchaseComponent(component);
-				} else {
-					System.out.println("This Component is already owned by " + component.getComponentOwner());
-					displayMenu(players);
-				}
-			}
-		}
+                currentPlayer.purchaseComponent(component);
+                /*
+                Note on the below - purchaseComponent already checks if the component is owned
 
-	}
+                JY: not sure I understand what this method is doing - need to discuss
+                */
+//                if (currentPlayer.checkComponentIsNotOwned(component) && purchasableComponents.contains(component)) {
+//                } else {
+//                    System.out.println("This Component is already owned by " + component.getComponentOwner());
+//                    displayMenu(currentPlayer);
+//                }
+            }
+        }
 
-	/**
-	 * controls the number of actions a player can take per turn.
-	 * displays all the actions applicable to the current player in a menu form.
-	 * takes a user response to allow user to select an option from the menu that takes
-	 * method calls.
-	 * Once out of action points or end turn selected the loop will break and 
-	 * next player will run
-	 * 
-	 * @param players takes an arraylist of players
-	 */
-	public static void displayMenu(List<Player> players) {
-		
-		// switch statement running through a loop
-		System.out.println("1. Develop Component");
-		System.out.println("2. Develop System");
-		System.out.println("3. Trade components");
-		System.out.println("4. Show all component owners");
-		System.out.println("5. Show resource balance");
-		System.out.println("6. End turn");
-		System.out.println("7. Leave game");
+    }
 
-		int playerChoice;
-		int actionPoints = 2;
-		boolean endGame = false;
-		Scanner scanner = new Scanner(System.in);
-		playerChoice = scanner.nextInt();
+    /**
+     * controls the number of actions a player can take per turn.
+     * displays all the actions applicable to the current player in a menu form.
+     * takes a user response to allow user to select an option from the menu that takes
+     * method calls.
+     * Once out of action points or end turn selected the loop will break and
+     * next player will run
+     *
+     * @param currentPlayer takes an arraylist of players
+     */
+
+
+    public static void displayMenu(Player currentPlayer, Scanner scanner) {
+        // TODO - menu needs to be contextual...
+        //  a) purchase should not show if component is already owned
+        //  b) some positions are not components so should not be treated as a component (e.g. team bonding)
+        //  c) trade components should only show if another player owns a component, otherwise it will be blank
+        //  d) Show all component owners -> the code implemented gets the currentPlayer's components but doesn't do
+        //  	anything with it
+        //  e) Show resource balance -> the code implemented gets the resources but doesn't do anything with it
+        //  f) I would not recommend throwing an exception for an invalid input, otherwise you need to catch it and then
+        //  	display the menu again. I'd recommend outputting invalid option then display again
+        //  g) Develop Component and Develop System - these should show a list of components/systems that the current
+        //  	player can develop. The way it's coded at the minute invokes a development without asking which
+        //  h) End turn invokes getNextPlayer but this is handled by the game loop. What you should do is break out of
+        //  	the loop, or set actionPoints to zero
+        //  i) Leave game -> this calls the endGame method, but the endGame method is for dealing when the game is over,
+        //		but this is a player leaving, it should confirm the player wants to leave and then call a different method
+        //		that is specific to a player leaving -> endGame will be called by the game loop when conditions are met
+        int playerChoice;
+
+        String[] menuOptions = {
+                "...MENU...",
+                "1. Develop Component",
+                "2. Develop System",
+                "3. Trade components",
+                "4. Show all component owners",
+                "5. Show resource balance",
+                "6. End turn",
+                "7. Leave game",
+                "Selection..."
+        };
+
+        while (currentPlayer.getActionPoints() > 0 && !endGame) {
+            currentPlayer.displayTurnStats();
+
+            // loop through string array and output to screen using method
+            for (String option : menuOptions) {
+                announce(option, currentPlayer);
+            }
+
+            playerChoice = scanner.nextInt();
+            System.out.println();
 
 		// ignore - put in place to test menu functionality for
 		// displayPurchasableComponent
@@ -501,23 +608,6 @@ public class Game {
         player.tradeComponent(playerSelection, scanner);
     }
 
-    public static void playTurn() {
-        // container for other methods
-        rollDice();
-//		updatePlayerPosition();
-//		displayMenu();
-
-    }
-
-    public static void getNextPlayer() {
-        // may need to store a current player variable
-        // run a loop to move between the players in the array
-        // with an if statement to deal with when the loop moves to the last player in
-        // the array
-
-        // or could use a boolean of active player as a var for all players
-        // use a loop to change the boolean at the end of a players turn
-    }
 
     /**
      * Outputs a message to the screen for all players to view.
@@ -530,13 +620,24 @@ public class Game {
         System.out.println("\t" + message);
     }
 
-	/**
-	 * This method allocates the default number of resources once a player lands on
-	 * or passes the Recruitment square
-	 *
-	 * @param currentPlayer
-	 */
-	public static void allocateResources(Player currentPlayer) {
+    /**
+     * Outputs a message to the screen for all players to view.
+     *
+     * @param message the message to be outputted
+     * @param currentPlayer the player object representing the current player
+     */
+    public static void announce(String message, Player currentPlayer) {
+        String playerName = String.format("[%s]", currentPlayer.getPlayerName().toUpperCase());
+        System.out.printf("%s %s\n", playerName, message);
+    }
+
+    /**
+     * This method allocates the default number of resources once a player lands on
+     * or passes the Recruitment square
+     *
+     * @param currentPlayer
+     */
+    public static void allocateResources(Player currentPlayer) {
 
         String updatedResourceBalanceAnnouncement;
 
