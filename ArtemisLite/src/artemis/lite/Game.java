@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.Random;
 import java.util.Scanner;
 
+import sun.audio.AudioPlayer;
+
 /**
  * 
  * @author Peter McMahon, Gavin Taylor
@@ -157,7 +159,7 @@ public class Game {
         return players.get((players.indexOf(currentPlayer) + 1) % players.size());
     }
 
-    public static void cast() {
+    public static void cast(Player currentPlayer) {
         ArrayList<Player> players = createPlayers(new Scanner(System.in));
         generatePlayerOrder(players);
         for (Player player : players) {
@@ -273,10 +275,10 @@ public class Game {
 		do {
 			if (response.equalsIgnoreCase("Yes")) {
 				purchaseComponentOption(currentPlayer, board, purchasableComponents, scanner, players);
-				displayMenu(players);
+				displayMenu(players, currentPlayer);
 			} else if (response.equalsIgnoreCase("No")) {
 				currentPlayer.offerComponentToOtherPlayers((Component) playerPosition);
-				displayMenu(players);
+				displayMenu(players, currentPlayer);
 			} else {
 				System.out.println("Invalid input - please respond with yes or no");
 				response = scanner.next();
@@ -314,7 +316,7 @@ public class Game {
 					currentPlayer.purchaseComponent(component);
 				} else {
 					System.out.println("This Component is already owned by " + component.getComponentOwner());
-					displayMenu(players);
+					displayMenu(players, currentPlayer);
 				}
 			}
 		}
@@ -331,7 +333,7 @@ public class Game {
 	 * 
 	 * @param players takes an arraylist of players
 	 */
-	public static void displayMenu(List<Player> players) {
+	public static void displayMenu(List<Player> players, Player currentPlayer) {
 		
 		// switch statement running through a loop
 		System.out.println("1. Develop Component");
@@ -379,7 +381,7 @@ public class Game {
 		}
 
 		// loop ends run getNextPlayer
-		//getNextPlayer(players);
+		getNextPlayer(players, currentPlayer);
 	}
 
     /**
