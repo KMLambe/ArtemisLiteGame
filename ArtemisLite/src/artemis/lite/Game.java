@@ -73,13 +73,13 @@ public class Game {
 
     /**
      * Responsible for handling all player interactions with the game.
-     *
+     * <p>
      * It handles each player's turn, enabling them to perform any permissible action so long as they have more than 0
      * action points. When the player runs out of action points, the game moves on to the next player in the sequence.
-     *
+     * <p>
      * At the end of a player's turn, the currentPlayer is set to the next player in the sequence and their action points
      * are set to the default amount (i.e. reset).
-     *
+     * <p>
      * The loop will end on any player's turn if a player leaves (setting endGame to true).
      *
      * @param scanner a scanner object
@@ -230,7 +230,7 @@ public class Game {
     /**
      *
      */
-    public static void cast() {
+    public static void cast(Player currentPlayer) {
         ArrayList<Player> players = createPlayers(new Scanner(System.in));
         generatePlayerOrder(players);
         for (Player player : players) {
@@ -317,19 +317,18 @@ public class Game {
     }
 
     /**
-     * Displays the component the current player has landed on once position is updated.
-     * takes a user response and allows player to purchase component if user enters yes and
-     * component is offered to other players if user enters no.
+     * Displays the component the current player has landed on once position is
+     * updated. takes a user response and allows player to purchase component if
+     * user enters yes and component is offered to other players if user enters no.
      *
      * @param scanner
      * @param currentPlayer
      * @param component
      * @param board
      * @param players
-     * @param purchasableComponents
      */
     public static void displayPurchasableComponent(Scanner scanner, Player currentPlayer, Component component,
-                                                   Board board, ArrayList<Player> players, List<Square> purchasableComponents) {
+                                                   Board board, ArrayList<Player> players) {
 
         String response = null;
         Square[] squares = board.getSquares();
@@ -356,23 +355,23 @@ public class Game {
     }
 
     /**
-     * Allows the position of the current player to be purchased only if the component is an
-     * instance of a square and component is not owned by another player
+     * Allows the position of the current player to be purchased only if the
+     * component is an instance of a square and component is not owned by another
+     * player
      *
      * @param currentPlayer
      * @param board
-     * @param purchasableComponents
      * @param scanner
      * @param players
+     * @param component
      */
-    public static void purchaseComponentOption(Player currentPlayer, Board board, List<Square> purchasableComponents,
-                                               Scanner scanner, ArrayList<Player> players) {
+    public static void purchaseComponentOption(Player currentPlayer, Board board, Scanner scanner,
+                                               ArrayList<Player> players, Component component) {
 
         Square[] squares = board.getSquares();
         Square playerPosition = squares[currentPlayer.getCurrentBoardPosition()];
-        Component component;
 
-        // component.displayAllDetails();
+        playerPosition.displayAllDetails();
 
         for (Square square : board.getSquares()) {
             if (square instanceof Component) {
@@ -615,7 +614,7 @@ public class Game {
     /**
      * Outputs a message to the screen for all players to view.
      *
-     * @param message the message to be outputted
+     * @param message       the message to be outputted
      * @param currentPlayer the player object representing the current player
      */
     public static void announce(String message, Player currentPlayer) {
@@ -645,6 +644,52 @@ public class Game {
                 + " to their team.";
 
         announce(updatedResourceBalanceAnnouncement);
+
+    }
+
+    /**
+     * Displays to the players that the game has been won along with stats about the game
+     *
+     * @param players
+     */
+    public static void winGame(ArrayList<Player> players) {
+        // As soon as development is complete, announce the path ahead:
+        //this will be like a summary of future events at the end of a movie(an epilogue).
+        //Display the successful outcome dynamically as a sequence of headlines:
+        // e.g. in2021[...], then in 2022 [...]until finally a successful landing is achieved,
+        // with congratulations all round!  Also give the final state of play that made it possible.
+
+        int totalNumberOfExperts = 0;
+
+
+        System.out.print("Congratulations ");
+        for (int loop = 0; loop < players.size(); loop++) {
+            if (loop < players.size() - 1) {
+                System.out.print(players.get(loop).getPlayerName() + ", ");
+            } else {
+                System.out.print("and " + players.get(loop).getPlayerName() + " ");
+            }
+        }
+        System.out.print("the Artemis system has successfully launched.");
+
+        for (ArtemisSystem system : board.getSystems()) {
+//            system.displaySystemOwnerForEndGame();
+        }
+
+        for (Player player : players) {
+            totalNumberOfExperts += player.getResourceBalance();
+        }
+
+        System.out.println("There were " + totalNumberOfExperts + " experts needed to launch the Artemis Project.");
+
+
+        // Summary of future events
+
+        // Adding total number of experts number of experts committed to a component
+        // Final state of play, Remaining experts
+        // (Total amount of experts taken to win the game, remaining player experts plus all costs
+        // the shuttle successfully launched thanks to the work of getPlayer name and their experts
+        // Who choose to not get resources from other players most
 
     }
 
