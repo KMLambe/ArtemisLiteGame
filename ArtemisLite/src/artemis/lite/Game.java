@@ -9,21 +9,21 @@ import java.util.Scanner;
 
 public class Game {
 
-	private final static int MINIMUM_PLAYERS = 2;
-	private final static int MAXIMUM_PLAYERS = 4;
-	private final static int STARTING_POSITION = 0;
-	private final static int STARTING_RESOURCES = 500;
-	private final static int DEFAULT_RESOURCES = 100;
-	public final static int DEFAULT_ACTION_POINTS = 2;
-	private final static int MINIMUM_DICE_ROLL = 1;
-	private final static int MAXIMUM_DICE_ROLL = 6;
-	private final static int NUMBER_OF_DICE = 2;
-	public final static int MAXIMUM_SQUARES = 12;
-	public final static int MAXIMUM_SYSTEMS = 4;
-	public final static int MAXIMUM_NAME_LENGTH = 50;
+    private final static int MINIMUM_PLAYERS = 2;
+    private final static int MAXIMUM_PLAYERS = 4;
+    private final static int STARTING_POSITION = 0;
+    private final static int STARTING_RESOURCES = 500;
+    private final static int DEFAULT_RESOURCES = 100;
+    public final static int DEFAULT_ACTION_POINTS = 2;
+    private final static int MINIMUM_DICE_ROLL = 1;
+    private final static int MAXIMUM_DICE_ROLL = 6;
+    private final static int NUMBER_OF_DICE = 2;
+    public final static int MAXIMUM_SQUARES = 12;
+    public final static int MAXIMUM_SYSTEMS = 4;
+    public final static int MAXIMUM_NAME_LENGTH = 50;
 
-	// labels - to be used in place of hard coding strings
-	public final static String RESOURCE_NAME = "EXPERTS";
+    // labels - to be used in place of hard coding strings
+    public final static String RESOURCE_NAME = "EXPERTS";
 
     // player
 //	temporarily removed global variables to adjust scope
@@ -35,91 +35,92 @@ public class Game {
     // board
     private static Board board;
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-	}
+    /**
+     * @param args
+     */
+    public static void main(String[] args) {
+    }
 
     public static void startGame() {
         System.out.println("Mission Brief");
     }
 
-	/**
-	 *
-	 */
-	private static void createBoard(Board board) {
+    /**
+     *
+     */
+    private static void createBoard(Board board) {
 
-		// create systems
-		ArtemisSystem system1 = board.createSystem("SPACE LAUNCH SYSTEM");
-		ArtemisSystem system2 = board.createSystem("PRE-STAGING SYSTEM");
-		ArtemisSystem system3 = board.createSystem("ORION SPACECRAFT");
-		ArtemisSystem system4 = board.createSystem("GATEWAY LUNAR SYSTEM");
+        // create systems
+        ArtemisSystem system1 = board.createSystem("SPACE LAUNCH SYSTEM");
+        ArtemisSystem system2 = board.createSystem("PRE-STAGING SYSTEM");
+        ArtemisSystem system3 = board.createSystem("ORION SPACECRAFT");
+        ArtemisSystem system4 = board.createSystem("GATEWAY LUNAR SYSTEM");
 
-		// create squares and components
-		board.createSquare("RECRUITMENT");
-		// system1
-		board.createSquare("CARGO HOLD", 100, 50, 20, system1);
-		board.createSquare("EXPLORATION UPPER STAGE & CORE STAGE", 100, 50, 20, system1);
-		board.createSquare("SOLID ROCKET BOOSTERS", 100, 50, 20, system1);
-		// system2
-		board.createSquare("LUNAR ROVERS", 50, 25, 10, system2);
-		board.createSquare("SCIENCE EXPERIMENTS", 50, 25, 10, system2);
-		// non-system
-		board.createSquare("TEAM BONDING");
-		// system3
-		board.createSquare("CREW MODULE", 150, 75, 35, system3);
-		board.createSquare("SERVICE MODULE", 150, 75, 35, system3);
-		board.createSquare("LAUNCH ABORT SYSTEM", 150, 75, 35, system3);
-		// system4
-		board.createSquare("POWER AND PROPULSION ELEMENT", 200, 100, 50, system4);
-		board.createSquare("HABITATION AND LOGISTICS OUTPOST", 200, 100, 50, system4);
+        // create squares and components
+        board.createSquare("RECRUITMENT");
+        // system1
+        board.createSquare("CARGO HOLD", 100, 50, 20, system1);
+        board.createSquare("EXPLORATION UPPER STAGE & CORE STAGE", 100, 50, 20, system1);
+        board.createSquare("SOLID ROCKET BOOSTERS", 100, 50, 20, system1);
+        // system2
+        board.createSquare("LUNAR ROVERS", 50, 25, 10, system2);
+        board.createSquare("SCIENCE EXPERIMENTS", 50, 25, 10, system2);
+        // non-system
+        board.createSquare("TEAM BONDING");
+        // system3
+        board.createSquare("CREW MODULE", 150, 75, 35, system3);
+        board.createSquare("SERVICE MODULE", 150, 75, 35, system3);
+        board.createSquare("LAUNCH ABORT SYSTEM", 150, 75, 35, system3);
+        // system4
+        board.createSquare("POWER AND PROPULSION ELEMENT", 200, 100, 50, system4);
+        board.createSquare("HABITATION AND LOGISTICS OUTPOST", 200, 100, 50, system4);
 
-		// TODO - remove below display methods - temporarily here to show squares and
-		// systems are created
-		board.displayAllSystems();
-		board.displayAllSquares();
+        // TODO - remove below display methods - temporarily here to show squares and
+        // systems are created
+        board.displayAllSystems();
+        board.displayAllSquares();
+    }
 
-	}
+    /**
+     * Takes an input from the user to confirm the number of players playing
+     *
+     * @param scanner
+     * @return
+     */
+    public static int playersInTheGame(Scanner scanner) {
 
-	/**
-	 * Takes an input from the user to confirm the number of players playing
-	 * @param scanner
-	 * @return
-	 */
-	public static int playersInTheGame(Scanner scanner) {
-		
-		int numberOfPlayers=0;
-		while (numberOfPlayers < MINIMUM_PLAYERS || numberOfPlayers > MAXIMUM_PLAYERS) {
-			System.out.println("How many players are there?");
-			numberOfPlayers = scanner.nextInt();
-			
-			if (numberOfPlayers >= MINIMUM_PLAYERS && numberOfPlayers <= MAXIMUM_PLAYERS) {
-				System.out.println("There are " + numberOfPlayers + " players in the game.");
-			} else {
-				System.out.println("Invalid input please set number of players between 2-4");
-				return -1;
-			}
-		}
-		return numberOfPlayers;
-	}
-	
-	/**
-	 * Sets the player names, starting position and starting resources
-	 * @param scanner
-	 * @return
-	 */
-	public static ArrayList<Player> createPlayers(Scanner scanner) {
-	    int numberOfPlayers;
-	    do {
-	        numberOfPlayers = playersInTheGame(scanner);
-	    } while (numberOfPlayers < 0);
+        int numberOfPlayers = 0;
+        while (numberOfPlayers < MINIMUM_PLAYERS || numberOfPlayers > MAXIMUM_PLAYERS) {
+            System.out.println("How many players are there?");
+            numberOfPlayers = scanner.nextInt();
 
-	    ArrayList<String> playerNames = new ArrayList<String>(numberOfPlayers);
-	    ArrayList<Player> players = new ArrayList<>(numberOfPlayers);
-	    for (int loop = 1; loop <= numberOfPlayers; loop++) {
-	        System.out.println("Enter player " + loop + " name");
-	        String playerName = scanner.next();
+            if (numberOfPlayers >= MINIMUM_PLAYERS && numberOfPlayers <= MAXIMUM_PLAYERS) {
+                System.out.println("There are " + numberOfPlayers + " players in the game.");
+            } else {
+                System.out.println("Invalid input please set number of players between 2-4");
+                return -1;
+            }
+        }
+        return numberOfPlayers;
+    }
+
+    /**
+     * Sets the player names, starting position and starting resources
+     *
+     * @param scanner
+     * @return
+     */
+    public static ArrayList<Player> createPlayers(Scanner scanner) {
+        int numberOfPlayers;
+        do {
+            numberOfPlayers = playersInTheGame(scanner);
+        } while (numberOfPlayers < 0);
+
+        ArrayList<String> playerNames = new ArrayList<String>(numberOfPlayers);
+        ArrayList<Player> players = new ArrayList<>(numberOfPlayers);
+        for (int loop = 1; loop <= numberOfPlayers; loop++) {
+            System.out.println("Enter player " + loop + " name");
+            String playerName = scanner.next();
 
             while (playerNames.contains(playerName.toLowerCase())) {
                 System.out.println("Player name already exists please enter a different name.");
@@ -155,7 +156,7 @@ public class Game {
         generatePlayerOrder(players);
         for (Player player : players) {
             System.out.println(player.getPlayerName());
-            getNextPlayer(players);
+            getNextPlayer(players, player);
         }
     }
 
@@ -167,94 +168,86 @@ public class Game {
      * @return sumOfDice - the sum of the two dice rolls.
      */
     public static int rollDice() {
+        int dice1 = (int) (Math.random() * MAXIMUM_DICE_ROLL + 1);
+        int dice2 = (int) (Math.random() * MAXIMUM_DICE_ROLL + 1);
+        int sumOfDice = dice1 + dice2;
 
-		String rollAnnouncement;
+        return sumOfDice;
+    }
 
-		int dice1 = (int) (Math.random() * MAXIMUM_DICE_ROLL + 1); // KL - Added use of constants
-		int dice2 = (int) (Math.random() * MAXIMUM_DICE_ROLL + 1); // KL - Added use of constants
-		int sumOfDice = dice1 + dice2;
+    /**
+     * This method updates the current player's board position based on the sum of
+     * the two dice rolled during the current turn
+     *
+     * @param currentPlayer - the current player, passed as a parameter argument
+     * @param sumOfDice     - the sum of two dice returned by the rollDice() method,
+     *                      passed as a parameter argument
+     */
+    public static void updatePlayerPosition(Player currentPlayer, Board board, int sumOfDice)
+            throws IllegalArgumentException {
 
-		rollAnnouncement = "You have rolled " + dice1 + " and " + dice2 + ". Move " + sumOfDice + " spaces."; // KL
+        int movementCalculation, newBoardPosition, boardLength;
+        String positionChangeAnnouncement, squareName;
 
-		System.out.println(rollAnnouncement); // KL Question: Is this something that would instead be passed to the
-												// announcement method discussed previously?
+        if (currentPlayer == null) {
+            throw new IllegalArgumentException("Current player cannot be null");
+        } else if (board == null) {
+            throw new IllegalArgumentException("Board cannot be null");
+        } else if (sumOfDice < MINIMUM_DICE_ROLL * NUMBER_OF_DICE || sumOfDice > MAXIMUM_DICE_ROLL * NUMBER_OF_DICE) {
+            throw new IllegalArgumentException("Combined dice roll must be between "
+                    + MINIMUM_DICE_ROLL * NUMBER_OF_DICE + " and " + MAXIMUM_DICE_ROLL * NUMBER_OF_DICE);
+        }
 
-		return sumOfDice;
-	}
+        boardLength = board.getSquares().length;
 
-	/**
-	 * This method updates the current player's board position based on the sum of
-	 * the two dice rolled during the current turn
-	 * 
-	 * @param currentPlayer - the current player, passed as a parameter argument
-	 * @param sumOfDice     - the sum of two dice returned by the rollDice() method,
-	 *                      passed as a parameter argument
-	 */
-	public static void updatePlayerPosition(Player currentPlayer, Board board, int sumOfDice)
-			throws IllegalArgumentException {
+        // roll dice
+        // currentPlayerDiceRoll = Game.rollDice(); KL - this will be taken as a
+        // parameter argument
 
-		int movementCalculation, newBoardPosition, boardLength;
-		String positionChangeAnnouncement, squareName;
+        movementCalculation = currentPlayer.getCurrentBoardPosition() + sumOfDice;
+        newBoardPosition = movementCalculation % boardLength;
 
-		if (currentPlayer == null) {
-			throw new IllegalArgumentException("Current player cannot be null");
-		} else if (board == null) {
-			throw new IllegalArgumentException("Board cannot be null");
-		} else if (sumOfDice < MINIMUM_DICE_ROLL * NUMBER_OF_DICE || sumOfDice > MAXIMUM_DICE_ROLL * NUMBER_OF_DICE) {
-			throw new IllegalArgumentException("Combined dice roll must be between "
-					+ MINIMUM_DICE_ROLL * NUMBER_OF_DICE + " and " + MAXIMUM_DICE_ROLL * NUMBER_OF_DICE);
-		}
+        // update player's position
+        currentPlayer.setCurrentBoardPosition(newBoardPosition);
 
-		boardLength = board.getSquares().length;
+        // check if player landed on or passed recruitment
+        // allocate resources if condition has been met
+        if (movementCalculation > boardLength) {
+            allocateResources(currentPlayer);
+        }
 
-		// roll dice
-		// currentPlayerDiceRoll = Game.rollDice(); KL - this will be taken as a
-		// parameter argument
+        // get name of square on which player has landed
+        squareName = board.getSquares()[newBoardPosition].getSquareName();
 
-		movementCalculation = currentPlayer.getCurrentBoardPosition() + sumOfDice;
-		newBoardPosition = movementCalculation % boardLength;
+        // announce new board position
+        positionChangeAnnouncement = currentPlayer.getPlayerName() + " has landed on " + squareName;
+        announce(positionChangeAnnouncement);
 
-		// update player's position
-		currentPlayer.setCurrentBoardPosition(newBoardPosition);
+        // check if player landed on owned square
+        if (board.getSquares()[newBoardPosition] instanceof Component) {
+            Component currentComponent = (Component) board.getSquares()[newBoardPosition];
+            if (currentComponent.getComponentOwner() != null) {
+                Scanner scanner = new Scanner(System.in);
+                currentComponent.checkOwnerWantsResources(currentPlayer, scanner);
+                scanner.close();
+            } else {
+                // TO DO - offer player chance to take charge of component
+            }
+        }
 
-		// check if player landed on or passed recruitment
-		// allocate resources if condition has been met
-		if (movementCalculation > boardLength) {
-			allocateResources(currentPlayer);
-		}
+    }
 
-		// get name of square on which player has landed
-		squareName = board.getSquares()[newBoardPosition].getSquareName();
-
-		// announce new board position
-		positionChangeAnnouncement = currentPlayer.getPlayerName() + " has landed on " + squareName;
-		announce(positionChangeAnnouncement);
-
-		// check if player landed on owned square
-		if (board.getSquares()[newBoardPosition] instanceof Component) {
-			Component currentComponent = (Component) board.getSquares()[newBoardPosition];
-			if (currentComponent.getComponentOwner() != null) {
-				Scanner scanner = new Scanner(System.in);
-				currentComponent.checkOwnerWantsResources(currentPlayer, scanner);
-				scanner.close();
-			} else {
-				// TO DO - offer player chance to take charge of component
-			}
-		}
-
-	}
-
-	public static void displayMenu(ArrayList<Player> players) {
-		// switch statement running through a loop
-		System.out.println("1. Purchase Component");
-		System.out.println("2. Decline purchase offer to other players");
-		System.out.println("3. Develop Component");
-		System.out.println("4. Develop System");
-		System.out.println("5. Trade components");
-		System.out.println("6. Show all component owners");
-		System.out.println("7. Show resource balance");
-		System.out.println("8. End turn");
-		System.out.println("9. Leave game");
+    public static void displayMenu(Player currentPlayer) {
+        // switch statement running through a loop
+        System.out.println("1. Purchase Component");
+        System.out.println("2. Decline purchase offer to other players");
+        System.out.println("3. Develop Component");
+        System.out.println("4. Develop System");
+        System.out.println("5. Trade components");
+        System.out.println("6. Show all component owners");
+        System.out.println("7. Show resource balance");
+        System.out.println("8. End turn");
+        System.out.println("9. Leave game");
 
 		int playerChoice;
 		int actionPoints = 2;
@@ -262,10 +255,23 @@ public class Game {
 		Scanner scanner = new Scanner(System.in);
 		playerChoice = scanner.nextInt();
 
-		// ignore - put in place to test menu functionality for
-		// displayPurchasableComponent
-		ArtemisSystem system = (ArtemisSystem) board.getSystems()[1];
-		Component component = (Component) board.getSquares()[1];
+
+        // TODO - menu needs to be contextual...
+        //  a) purchase should not show if component is already owned
+        //  b) some positions are not components so should not be treated as a component (e.g. team bonding)
+        //  c) trade components should only show if another player owns a component, otherwise it will be blank
+        //  d) Show all component owners -> the code implemented gets the currentPlayer's components but doesn't do
+        //  	anything with it
+        //  e) Show resource balance -> the code implemented gets the resources but doesn't do anything with it
+        //  f) I would not recommend throwing an exception for an invalid input, otherwise you need to catch it and then
+        //  	display the menu again. I'd recommend outputting invalid option then display again
+        //  g) Develop Component and Develop System - these should show a list of components/systems that the current
+        //  	player can develop. The way it's coded at the minute invokes a development without asking which
+        //  h) End turn invokes getNextPlayer but this is handled by the game loop. What you should do is break out of
+        //  	the loop, or set actionPoints to zero
+        //  i) Leave game -> this calls the endGame method, but the endGame method is for dealing when the game is over,
+        //		but this is a player leaving, it should confirm the player wants to leave and then call a different method
+        //		that is specific to a player leaving -> endGame will be called by the game loop when conditions are met
 
 		while ((actionPoints > 0) && (endGame == false)) {
 			switch (playerChoice) {
@@ -301,8 +307,8 @@ public class Game {
 			}
 		}
 
-		// loop ends run getNextPlayer
-	}
+        // loop ends run getNextPlayer
+    }
 
     /**
      * shows players updated position and component details Prompts user to respond
@@ -326,13 +332,13 @@ public class Game {
         if (response.equalsIgnoreCase("Yes")) {
             player.purchaseComponent(component);
         } else if (response.equalsIgnoreCase("No")) {
-            displayMenu();
+            displayMenu(player);
         } else {
             System.out.println("Invalid input - please respond with yes or no");
             System.out.println();
         }
 
-	}
+    }
 
     /**
      * Creates an map of components which the active player can purchase. The
@@ -455,34 +461,34 @@ public class Game {
         player.tradeComponent(playerSelection, scanner);
     }
 
-	public static void playTurn() {
-		// container for other methods
-		rollDice();
+    public static void playTurn() {
+        // container for other methods
+        rollDice();
 //		updatePlayerPosition();
 //		displayMenu();
 
-	}
+    }
 
-	public static void getNextPlayer() {
-		// may need to store a current player variable
-		// run a loop to move between the players in the array
-		// with an if statement to deal with when the loop moves to the last player in
-		// the array
+    public static void getNextPlayer() {
+        // may need to store a current player variable
+        // run a loop to move between the players in the array
+        // with an if statement to deal with when the loop moves to the last player in
+        // the array
 
-		// or could use a boolean of active player as a var for all players
-		// use a loop to change the boolean at the end of a players turn
-	}
+        // or could use a boolean of active player as a var for all players
+        // use a loop to change the boolean at the end of a players turn
+    }
 
-	/**
-	 * Outputs a message to the screen for all players to view.
-	 *
-	 * @param message - the message to be outputted
-	 */
-	public static void announce(String message) {
-		System.out.println("----------------------------------");
-		System.out.println("ANNOUNCEMENT:");
-		System.out.println("\t" + message);
-	}
+    /**
+     * Outputs a message to the screen for all players to view.
+     *
+     * @param message - the message to be outputted
+     */
+    public static void announce(String message) {
+        System.out.println("----------------------------------");
+        System.out.println("ANNOUNCEMENT:");
+        System.out.println("\t" + message);
+    }
 
 	/**
 	 * This method allocates the default number of resources once a player lands on
@@ -492,22 +498,22 @@ public class Game {
 	 */
 	public static void allocateResources(Player currentPlayer) {
 
-		String updatedResourceBalanceAnnouncement;
+        String updatedResourceBalanceAnnouncement;
 
-		if (currentPlayer == null) {
-			throw new IllegalArgumentException("Current player cannot be null");
-		}
+        if (currentPlayer == null) {
+            throw new IllegalArgumentException("Current player cannot be null");
+        }
 
-		// add default resources to current player's balance
-		currentPlayer.setResourceBalance(currentPlayer.getResourceBalance() + DEFAULT_RESOURCES);
+        // add default resources to current player's balance
+        currentPlayer.setResourceBalance(currentPlayer.getResourceBalance() + DEFAULT_RESOURCES);
 
-		updatedResourceBalanceAnnouncement = "Recruitment drive! It's time for some fresh ideas. "
-				+ currentPlayer.getPlayerName() + " has added " + DEFAULT_RESOURCES + " " + RESOURCE_NAME
-				+ " to their team.";
+        updatedResourceBalanceAnnouncement = "Recruitment drive! It's time for some fresh ideas. "
+                + currentPlayer.getPlayerName() + " has added " + DEFAULT_RESOURCES + " " + RESOURCE_NAME
+                + " to their team.";
 
-		announce(updatedResourceBalanceAnnouncement);
+        announce(updatedResourceBalanceAnnouncement);
 
-	}
+    }
 
     public static void endGame() {
         // needs to terminate loop of the game
@@ -540,8 +546,8 @@ public class Game {
 
         // -----testing-----
 //        highestRoll = 12;
-//        playersWithHighestRoll.add(new Player("manuaLPlayer1", Game.DEFAULT_RESOURCES, Game.STARTING_POSITION));
-//        playersWithHighestRoll.add(new Player("manuaLPlayer2", Game.DEFAULT_RESOURCES, Game.STARTING_POSITION));
+//        playersWithHighestRoll.add(new Player("manualPlayer1", Game.DEFAULT_RESOURCES, Game.STARTING_POSITION));
+//        playersWithHighestRoll.add(new Player("manualPlayer2", Game.DEFAULT_RESOURCES, Game.STARTING_POSITION));
 
         // -----testing-----
 
