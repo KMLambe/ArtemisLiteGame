@@ -91,9 +91,9 @@ public class Game {
         while (currentPlayer.getActionPoints() > 0 && !endGame) {
             int rollDice = rollDice();
 
-            updatePlayerPosition(currentPlayer, board, rollDice);
             // let everyone know the player has moved
             announce("rolled a "+rollDice+" and moves accordingly.", currentPlayer);
+            updatePlayerPosition(currentPlayer, board, rollDice);
 
             displayMenu(currentPlayer, scanner);
 
