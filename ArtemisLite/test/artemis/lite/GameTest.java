@@ -99,16 +99,6 @@ class GameTest {
     }
 
     @Test
-    void testMain() {
-        fail("Not yet implemented");
-    }
-
-    @Test
-    void testStartGame() {
-        fail("Not yet implemented");
-    }
-
-    @Test
     void playersInTheGameValid() {
         // variables for number of players in game
         int validNumberOfPlayersLower = 2;
@@ -328,12 +318,6 @@ class GameTest {
     void testDisplayMenu() {
         fail("Not yet implemented");
     }
-
-    @Test
-    void testPlayTurn() {
-        fail("Not yet implemented");
-    }
-
 
     @Test
     void testAllocateResourcesValidPlayer() {

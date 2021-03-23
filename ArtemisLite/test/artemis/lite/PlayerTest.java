@@ -332,7 +332,7 @@ class PlayerTest {
 
         // check that one of the other players now owns the component
         assertTrue(c1.getComponentOwner() == p2 || c1.getComponentOwner() == p3);
-        assertFalse(c1.getComponentOwner() != p1);
+        assertTrue(c1.getComponentOwner() != p1);
     }
 
     @Test
