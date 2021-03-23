@@ -247,9 +247,9 @@ public class Game {
     }
 
     /**
-	 * Displays the component the current player has landed on once position is updated.
-	 * takes a user response and allows player to purchase component if user enters yes and
-	 * component is offered to other players if user enters no.
+	 * Displays the component the current player has landed on once position is
+	 * updated. takes a user response and allows player to purchase component if
+	 * user enters yes and component is offered to other players if user enters no.
 	 * 
 	 * @param scanner
 	 * @param currentPlayer
@@ -259,7 +259,7 @@ public class Game {
 	 * @param purchasableComponents
 	 */
 	public static void displayPurchasableComponent(Scanner scanner, Player currentPlayer, Component component,
-			Board board, ArrayList<Player> players, List<Square> purchasableComponents) {
+			Board board, ArrayList<Player> players) {
 
 		String response = null;
 		Square[] squares = board.getSquares();
@@ -267,14 +267,15 @@ public class Game {
 
 		// purchasableComponents(currentPlayerPosition, board, currentPlayer);
 
-		component.displayAllDetails();
+		// component.displayAllDetails();
+
 		System.out.println(currentPlayer + " do you want to purchase " + playerPosition + "?");
 		System.out.println("Please enter yes or no");
 		response = scanner.next();
 
 		do {
 			if (response.equalsIgnoreCase("Yes")) {
-				purchaseComponentOption(currentPlayer, board, purchasableComponents, scanner, players);
+				currentPlayer.purchaseComponent(component);
 				displayMenu(players, currentPlayer);
 			} else if (response.equalsIgnoreCase("No")) {
 				currentPlayer.offerComponentToOtherPlayers((Component) playerPosition);
@@ -290,8 +291,9 @@ public class Game {
 	}
 
 	/**
-	 * Allows the position of the current player to be purchased only if the component is an
-	 * instance of a square and component is not owned by another player
+	 * Allows the position of the current player to be purchased only if the
+	 * component is an instance of a square and component is not owned by another
+	 * player
 	 * 
 	 * @param currentPlayer
 	 * @param board
@@ -299,28 +301,27 @@ public class Game {
 	 * @param scanner
 	 * @param players
 	 */
-	public static void purchaseComponentOption(Player currentPlayer, Board board, List<Square> purchasableComponents,
-			Scanner scanner, ArrayList<Player> players) {
+	public static void purchaseComponentOption(Player currentPlayer, Board board, Scanner scanner,
+			ArrayList<Player> players, Component component) {
 
 		Square[] squares = board.getSquares();
 		Square playerPosition = squares[currentPlayer.getCurrentBoardPosition()];
-		Component component;
 
-		// component.displayAllDetails();
+		playerPosition.displayAllDetails();
 
 		for (Square square : board.getSquares()) {
 			if (square instanceof Component) {
 				component = (Component) square;
-
-				if (currentPlayer.checkComponentIsNotOwned(component) && purchasableComponents.contains(component)) {
-					currentPlayer.purchaseComponent(component);
+				
+				if (currentPlayer.checkComponentIsNotOwned(component)) {
+					displayPurchasableComponent(scanner, currentPlayer, component, board, players);
 				} else {
 					System.out.println("This Component is already owned by " + component.getComponentOwner());
 					displayMenu(players, currentPlayer);
 				}
 			}
-		}
 
+		}
 	}
 
 	/**
