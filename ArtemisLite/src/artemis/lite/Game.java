@@ -7,6 +7,11 @@ import java.util.Collections;
 import java.util.Random;
 import java.util.Scanner;
 
+/**
+ * 
+ * @author Peter McMahon, Gavin Taylor
+ * 
+ */
 public class Game {
 
     private final static int MINIMUM_PLAYERS = 2;
@@ -237,17 +242,103 @@ public class Game {
 
     }
 
-    public static void displayMenu(Player currentPlayer) {
-        // switch statement running through a loop
-        System.out.println("1. Purchase Component");
-        System.out.println("2. Decline purchase offer to other players");
-        System.out.println("3. Develop Component");
-        System.out.println("4. Develop System");
-        System.out.println("5. Trade components");
-        System.out.println("6. Show all component owners");
-        System.out.println("7. Show resource balance");
-        System.out.println("8. End turn");
-        System.out.println("9. Leave game");
+    /**
+	 * Displays the component the current player has landed on once position is updated.
+	 * takes a user response and allows player to purchase component if user enters yes and
+	 * component is offered to other players if user enters no.
+	 * 
+	 * @param scanner
+	 * @param currentPlayer
+	 * @param component
+	 * @param board
+	 * @param players
+	 * @param purchasableComponents
+	 */
+	public static void displayPurchasableComponent(Scanner scanner, Player currentPlayer, Component component,
+			Board board, ArrayList<Player> players, List<Square> purchasableComponents) {
+
+		String response = null;
+		Square[] squares = board.getSquares();
+		Square playerPosition = squares[currentPlayer.getCurrentBoardPosition()];
+
+		// purchasableComponents(currentPlayerPosition, board, currentPlayer);
+
+		component.displayAllDetails();
+		System.out.println(currentPlayer + " do you want to purchase " + playerPosition + "?");
+		System.out.println("Please enter yes or no");
+		response = scanner.next();
+
+		do {
+			if (response.equalsIgnoreCase("Yes")) {
+				purchaseComponentOption(currentPlayer, board, purchasableComponents, scanner, players);
+				displayMenu(players);
+			} else if (response.equalsIgnoreCase("No")) {
+				currentPlayer.offerComponentToOtherPlayers((Component) playerPosition);
+				displayMenu(players);
+			} else {
+				System.out.println("Invalid input - please respond with yes or no");
+				response = scanner.next();
+				System.out.println();
+			}
+		} while (!response.equalsIgnoreCase("yes") || (!response.equalsIgnoreCase("no")));
+
+		// displayMenu(players);
+	}
+
+	/**
+	 * Allows the position of the current player to be purchased only if the component is an
+	 * instance of a square and component is not owned by another player
+	 * 
+	 * @param currentPlayer
+	 * @param board
+	 * @param purchasableComponents
+	 * @param scanner
+	 * @param players
+	 */
+	public static void purchaseComponentOption(Player currentPlayer, Board board, List<Square> purchasableComponents,
+			Scanner scanner, ArrayList<Player> players) {
+
+		Square[] squares = board.getSquares();
+		Square playerPosition = squares[currentPlayer.getCurrentBoardPosition()];
+		Component component;
+
+		// component.displayAllDetails();
+
+		for (Square square : board.getSquares()) {
+			if (square instanceof Component) {
+				component = (Component) square;
+
+				if (currentPlayer.checkComponentIsNotOwned(component) && purchasableComponents.contains(component)) {
+					currentPlayer.purchaseComponent(component);
+				} else {
+					System.out.println("This Component is already owned by " + component.getComponentOwner());
+					displayMenu(players);
+				}
+			}
+		}
+
+	}
+
+	/**
+	 * controls the number of actions a player can take per turn.
+	 * displays all the actions applicable to the current player in a menu form.
+	 * takes a user response to allow user to select an option from the menu that takes
+	 * method calls.
+	 * Once out of action points or end turn selected the loop will break and 
+	 * next player will run
+	 * 
+	 * @param players takes an arraylist of players
+	 */
+	public static void displayMenu(ArrayList<Player> players) {
+		
+		// switch statement running through a loop
+		System.out.println("1. Develop Component");
+		System.out.println("2. Develop System");
+		System.out.println("3. Trade components");
+		System.out.println("4. Show all component owners");
+		System.out.println("5. Show resource balance");
+		System.out.println("6. End turn");
+		System.out.println("7. Leave game");
 
 		int playerChoice;
 		int actionPoints = 2;
@@ -255,90 +346,39 @@ public class Game {
 		Scanner scanner = new Scanner(System.in);
 		playerChoice = scanner.nextInt();
 
-
-        // TODO - menu needs to be contextual...
-        //  a) purchase should not show if component is already owned
-        //  b) some positions are not components so should not be treated as a component (e.g. team bonding)
-        //  c) trade components should only show if another player owns a component, otherwise it will be blank
-        //  d) Show all component owners -> the code implemented gets the currentPlayer's components but doesn't do
-        //  	anything with it
-        //  e) Show resource balance -> the code implemented gets the resources but doesn't do anything with it
-        //  f) I would not recommend throwing an exception for an invalid input, otherwise you need to catch it and then
-        //  	display the menu again. I'd recommend outputting invalid option then display again
-        //  g) Develop Component and Develop System - these should show a list of components/systems that the current
-        //  	player can develop. The way it's coded at the minute invokes a development without asking which
-        //  h) End turn invokes getNextPlayer but this is handled by the game loop. What you should do is break out of
-        //  	the loop, or set actionPoints to zero
-        //  i) Leave game -> this calls the endGame method, but the endGame method is for dealing when the game is over,
-        //		but this is a player leaving, it should confirm the player wants to leave and then call a different method
-        //		that is specific to a player leaving -> endGame will be called by the game loop when conditions are met
+		// ignore - put in place to test menu functionality for
+		// displayPurchasableComponent
+		ArtemisSystem system = (ArtemisSystem) board.getSystems()[1];
+		Component component = (Component) board.getSquares()[1];
 
 		while ((actionPoints > 0) && (endGame == false)) {
 			switch (playerChoice) {
 			case 1:
-				displayPurchasableComponent(scanner);
-				break;
-			case 2:
-				player.offerComponentToOtherPlayers(component);
-				break;
-			case 3:
 				player.develop(component);
 				break;
-			case 4:
+			case 2:
 				player.develop(system);
 				break;
-			case 5:
+			case 3:
 				displayTradeMenu(player, board, scanner);
 				break;
-			case 6:
+			case 4:
 				player.getOwnedComponents();
 				break;
-			case 7:
+			case 5:
 				player.getResourceBalance();
 				break;
-			case 8:
-				getNextPlayer(players);
-				break;
-			case 9:
-				endGame();
+			case 6:
+				endGame(); // outside of loop
 				break;
 			default:
 				throw new IllegalArgumentException("Invalid option - please try again");
 			}
 		}
 
-        // loop ends run getNextPlayer
-    }
-
-    /**
-     * shows players updated position and component details Prompts user to respond
-     * to question with yes or no: if yes then player can then purchase component
-     * through the method being passed if no then menu is displayed again
-     *
-     * @param scanner
-     */
-    public static void displayPurchasableComponent(Scanner scanner) {
-
-        String response;
-
-        // ignore as put in place to test functionality
-        Player player = new Player("Peter", DEFAULT_RESOURCES, 2);
-        Component component = (Component) board.getSquares()[2];
-
-        component.displayAllDetails();
-        System.out.println("Do you want to purchase Component?");
-        response = scanner.next();
-
-        if (response.equalsIgnoreCase("Yes")) {
-            player.purchaseComponent(component);
-        } else if (response.equalsIgnoreCase("No")) {
-            displayMenu(player);
-        } else {
-            System.out.println("Invalid input - please respond with yes or no");
-            System.out.println();
-        }
-
-    }
+		// loop ends run getNextPlayer
+		getNextPlayer(players);
+	}
 
     /**
      * Creates an map of components which the active player can purchase. The
