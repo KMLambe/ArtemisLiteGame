@@ -334,7 +334,7 @@ public class Game {
         Square[] squares = board.getSquares();
         Square playerPosition = squares[currentPlayer.getCurrentBoardPosition()];
 
-        // purchasableComponents(currentPlayerPosition, board, currentPlayer);
+//         purchasableComponents(currentPlayerPosition, board, currentPlayer);
 
         component.displayAllDetails();
         System.out.println(currentPlayer + " do you want to purchase " + playerPosition + "?");
@@ -344,7 +344,7 @@ public class Game {
             response = scanner.next();
 
             if (response.equalsIgnoreCase("Yes")) {
-                purchaseComponentOption(currentPlayer, board, purchasableComponents, scanner, players);
+//                purchaseComponentOption(currentPlayer, board, purchasableComponents, scanner, players);
             } else if (response.equalsIgnoreCase("No")) {
                 currentPlayer.offerComponentToOtherPlayers((Component) playerPosition, scanner);
             } else {
