@@ -92,6 +92,8 @@ public class Game {
             int rollDice = rollDice();
 
             updatePlayerPosition(currentPlayer, board, rollDice);
+            // let everyone know the player has moved
+            announce("rolled a "+rollDice+" and moves accordingly.", currentPlayer);
 
             displayMenu(currentPlayer, scanner);
 
