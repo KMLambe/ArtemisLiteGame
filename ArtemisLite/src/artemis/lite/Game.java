@@ -26,8 +26,9 @@ public class Game {
 	public final static String RESOURCE_NAME = "EXPERTS";
 
     // player
-    private static Player player;
-    static Player currentPlayer;
+//	temporarily removed global variables to adjust scope
+//    private static Player player;
+//    static Player currentPlayer;
 
     private static List<Player> players = new ArrayList<Player>();
 
@@ -139,14 +140,14 @@ public class Game {
     }
 
     /**
-     * @param players sets the current player in the game
-     * @return
+     * Returns the next player object in the players list.
+     *
+     * @param players       list of players in the game
+     * @param currentPlayer the current player object
+     * @return player object that represents the next player
      */
-    public static Player getNextPlayer(ArrayList<Player> players) {
-        currentPlayer = players.get((players.indexOf(currentPlayer) + 1) % players.size());
-        System.out.println(currentPlayer.getPlayerName());
-        return currentPlayer;
-        //Call play turn method to run next turn
+    public static Player getNextPlayer(List<Player> players, Player currentPlayer) {
+        return players.get((players.indexOf(currentPlayer) + 1) % players.size());
     }
 
     public static void cast() {
