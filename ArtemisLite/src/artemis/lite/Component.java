@@ -3,6 +3,8 @@
  */
 package artemis.lite;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -20,6 +22,13 @@ public class Component extends Square {
 	 */
 	private final int MINIMUM_DEVELOPMENT_LEVEL = 0;
 	private final int MAXIMUM_DEVELOPMENT_LEVEL = 4;
+	private final static int MINOR_DEVELOPMENT_ADDITIONAL_PURCHASE_COST = 10;
+	private final static int MAJOR_DEVELOPMENT_ADDITIONAL_PURCHASE_COST = 20;
+	private final static int MINOR_DEVELOPMENT_ADDITIONAL_DEVELOPMENT_COST = 10;
+	private final static int MAJOR_DEVELOPMENT_ADDITIONAL_DEVELOPMENT_COST = 20;
+	private final static int MAXIMUM_COST_TO_DEVELOP = 999999;
+	private final static int INCREASE_COST_OF_LANDING_MINOR_DEVELOPMENT = 10;
+	private final static int INCREASE_COST_OF_LANDING_MAJOR_DEVELOPMENT = 20;
 
 	private int developmentStage;
 
@@ -28,20 +37,8 @@ public class Component extends Square {
 	private int costForLanding;
 	private Player componentOwner;
 	private ArtemisSystem componentSystem;
-
-	// TODO - reevaluate how to implement cost for development stages
-	
-	private int costForLandingAtDevelopmentStage0; // NEW - this will be zero
-	private int costForLandingAtDevelopmentStage1; // NEW
-	private int costForLandingAtDevelopmentStage2; // NEW
-	private int costForLandingAtDevelopmentStage3; // NEW
-	private int costForLandingAtDevelopmentStage4; // NEW
-
-	private int costToDevelopAtDevelopmentStage0; // NEW
-	private int costToDevelopAtDevelopmentStage1; // NEW
-	private int costToDevelopAtDevelopmentStage2; // NEW
-	private int costToDevelopAtDevelopmentStage3; // NEW
-	private int costToDevelopAtDevelopmentStage4; // NEW - this will not be possible in the game (set to huge number?)
+	private Map<Integer, DevelopmentStage> developmentStageNamesMap;
+	private int totalResourcesDevotedToComponent;
 
 	/**
 	 * Default constructor
@@ -69,58 +66,110 @@ public class Component extends Square {
 		this.costToDevelop = costToDevelop;
 		this.costForLanding = costForLanding;
 		setComponentSystem(componentSystem);
+
+		developmentStageNamesMap = new HashMap<Integer, DevelopmentStage>();
+		developmentStageNamesMap.put(0, DevelopmentStage.ANALYSING_REQUIREMENTS);
+		developmentStageNamesMap.put(1, DevelopmentStage.DESIGNING);
+		developmentStageNamesMap.put(2, DevelopmentStage.BUILDING);
+		developmentStageNamesMap.put(3, DevelopmentStage.TESTING);
+		developmentStageNamesMap.put(4, DevelopmentStage.MAINTAINING);
+
+		totalResourcesDevotedToComponent = 0;
+
 	}
 
 	/**
 	 * This method facilitates the development of the component to the next stage
-	 *
+	 * Component development stages must be between
+	 * {@value #MINIMUM_DEVELOPMENT_LEVEL} and {@value #MAXIMUM_DEVELOPMENT_LEVEL}
+	 * inclusive
+	 * 
 	 * @param currentPlayer
 	 * @throws IllegalArgumentException
 	 */
-	public void developComponent(Player currentPlayer) throws IllegalArgumentException {
+	public void developComponent() {
 
-		if (!this.checkFullyDeveloped() && componentSystem.getSystemOwner() == currentPlayer
-				&& currentPlayer.getResourceBalance() >= costToDevelop) {
+		Player currentPlayer = this.getComponentOwner();
+		String developmentAnnouncement = null;
+		int actionPointsToDeduct = 1;
+
+		if (!this.checkFullyDeveloped() && currentPlayer != null && currentPlayer.getResourceBalance() >= costToDevelop
+				&& currentPlayer.checkHasActionPoints()) {
 
 			// deduct development fee from current player
-			currentPlayer.setResourceBalance(currentPlayer.getResourceBalance() - costToDevelop);
+			currentPlayer.updateResources(-costToDevelop);
+
+			// add to total number of resources devoted to this component across the game
+			updateTotalResourcesDevotedToComponent(costToDevelop);
+
+			// deduct action point
+			currentPlayer.consumeActionPoint(actionPointsToDeduct);
 
 			// increase the development level to the next stage
-			this.developmentStage++;
+			incrementDevelopmentStage();
 
 			// check new development level and adjust cost for landing
 			// and also check and adjust cost to develop
-			switch (this.developmentStage) {
+			if (developmentStage < (MAXIMUM_DEVELOPMENT_LEVEL - 1)) {
+
+				increaseCostToPurchase(MINOR_DEVELOPMENT_ADDITIONAL_PURCHASE_COST);
+				increaseCostOfLanding(INCREASE_COST_OF_LANDING_MINOR_DEVELOPMENT);
+				increaseCostToDevelop(MINOR_DEVELOPMENT_ADDITIONAL_DEVELOPMENT_COST);
+
+			} else if (developmentStage == (MAXIMUM_DEVELOPMENT_LEVEL - 1)) {
+
+				increaseCostToPurchase(MINOR_DEVELOPMENT_ADDITIONAL_PURCHASE_COST);
+				increaseCostOfLanding(INCREASE_COST_OF_LANDING_MINOR_DEVELOPMENT);
+				increaseCostToDevelop(MAJOR_DEVELOPMENT_ADDITIONAL_DEVELOPMENT_COST);
+
+			} else if (developmentStage == MAXIMUM_DEVELOPMENT_LEVEL) {
+
+				increaseCostToPurchase(MAJOR_DEVELOPMENT_ADDITIONAL_PURCHASE_COST);
+				increaseCostOfLanding(INCREASE_COST_OF_LANDING_MAJOR_DEVELOPMENT);
+				setCostToDevelopToMaximum();
+
+			}
+
+			// determine announcement to output to players
+
+			switch (developmentStage) {
 			case 1:
-				this.setCostForLanding(costForLandingAtDevelopmentStage1);
-				this.setCostToDevelop(costToDevelopAtDevelopmentStage1);
+				developmentAnnouncement = this.getSquareName() + " has advanced to the "
+						+ developmentStageNamesMap.get(1) + " stage.";
 				break;
 			case 2:
-				this.setCostForLanding(costForLandingAtDevelopmentStage2);
-				this.setCostToDevelop(costToDevelopAtDevelopmentStage2);
+				developmentAnnouncement = this.getSquareName() + " has advanced to the "
+						+ developmentStageNamesMap.get(2) + " stage.";
 				break;
 			case 3:
-				this.setCostForLanding(costForLandingAtDevelopmentStage3);
-				this.setCostToDevelop(costToDevelopAtDevelopmentStage3);
+				developmentAnnouncement = this.getSquareName() + " has advanced to the "
+						+ developmentStageNamesMap.get(3) + " stage.";
 				break;
 			case 4:
-				this.setCostForLanding(costForLandingAtDevelopmentStage4);
-				this.setCostToDevelop(costToDevelopAtDevelopmentStage4); // Should be impossible to develop here
-//				this.setFullyDeveloped(true);
+				developmentAnnouncement = this.getSquareName() + " has advanced to the "
+						+ developmentStageNamesMap.get(4) + " stage.";
 				break;
 			default:
 				// nothing happens
 			}
 
+			// announce development
+			Game.announce(developmentAnnouncement);
+
+			// additional announcement if fully developed
+			if (checkFullyDeveloped()) {
+				String fullyDevelopedAnnouncement = this.getSquareName()
+						+ " has advanced to the maximum development level and can be developed no further.";
+				Game.announce(fullyDevelopedAnnouncement);
+			}
+
 		} else {
-			throw new IllegalArgumentException();
+			System.out.println("ERROR - Component cannot be developed.");
 		}
 
 	}
 
 	public boolean checkOwnerWantsResources(Player currentPlayer, Scanner scanner) {
-
-		// TODO - implement tests
 
 		String ownerResponse;
 		boolean decision = false;
@@ -181,6 +230,50 @@ public class Component extends Square {
 					+ Game.RESOURCE_NAME + ".");
 			Game.announce(ownerDeclinesResources);
 		}
+	}
+
+	public void increaseCostToPurchase(int amountToIncreaseCostToPurchase) {
+		componentCost += amountToIncreaseCostToPurchase;
+	}
+
+	public void increaseCostOfLanding(int amountToIncreaseCostForLanding) {
+		costForLanding += amountToIncreaseCostForLanding;
+	}
+
+	public void increaseCostToDevelop(int amountToIncreaseCostToDevelop) {
+		costToDevelop += amountToIncreaseCostToDevelop;
+	}
+
+	public void incrementDevelopmentStage() {
+		developmentStage++;
+	}
+
+	public void setCostToDevelopToMaximum() {
+		costToDevelop = MAXIMUM_COST_TO_DEVELOP;
+	}
+
+	/**
+	 * @return the totalResourcesDevotedToComponent
+	 */
+	public int getTotalExpertsDevotedToComponent() {
+		return totalResourcesDevotedToComponent;
+	}
+
+	/**
+	 * @param totalResourcesDevotedToComponent the totalResourcesDevotedToComponent
+	 *                                         to set
+	 */
+	public void setTotalExpertsDevotedToComponent(int totalExpertsDevotedToComponent) {
+		this.totalResourcesDevotedToComponent = totalExpertsDevotedToComponent;
+	}
+
+	public void updateTotalResourcesDevotedToComponent(int numberOfResources) {
+		this.totalResourcesDevotedToComponent += numberOfResources;
+	}
+
+	public void displayTotalResourcesDevotedToComponent() {
+		System.out.println("A total of " + totalResourcesDevotedToComponent + Game.RESOURCE_NAME
+				+ " have been devoted to the completion of " + this.getSquareName());
 	}
 
 	/**
@@ -296,18 +389,25 @@ public class Component extends Square {
 	 */
 	@Override
 	public void displayAllDetails() {
-		System.out.println("Name: \t" + this.getSquareName());
-		System.out.println("Position: \t" + this.getSquarePosition());
-		System.out.println("Development Stage: \t" + developmentStage);
-		System.out.println("Component Cost: \t" + componentCost);
+		System.out.println("----------------------------------");
+		System.out.println("Component Name:      \t" + this.getSquareName());
+		System.out.println("Position:            \t" + this.getSquarePosition());
+		System.out.println("Development Stage:   \t" + this.developmentStage + " - "
+				+ developmentStageNamesMap.get(this.developmentStage));
+		System.out.println("Component Cost:      \t" + this.componentCost);
 		if (this.checkFullyDeveloped()) {
-			System.out.println("Cost to Develop to Next Stage: \tThis component is at the maximum development stage!");
+			System.out.println("Cost to Develop: \tThis component is at the maximum development stage!");
 		} else {
-			System.out.println("Cost to Develop to Next Stage: \t" + costToDevelop);
+			System.out.println("Cost to Develop: \t" + costToDevelop);
 		}
-		System.out.println("Cost for Landing: \t" + costForLanding);
-		System.out.println("Component Owner: \t" + componentOwner.getPlayerName());
-		System.out.println("Component System: \t" + componentSystem.getSystemName());
+		System.out.println("Cost for Landing:    \t" + costForLanding);
+		if (componentOwner != null) {
+			System.out.println("Component Owner: \t" + componentOwner.getPlayerName());
+		} else {
+			System.out.println("Component Owner: \tThis component is currently unowned");
+		}
+
+		System.out.println("Component System:    \t" + componentSystem.getSystemName());
 	}
 
 }

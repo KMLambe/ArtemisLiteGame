@@ -38,6 +38,9 @@ class ComponentTest {
 	// test scanner
 	Scanner scannerAffirmative = new Scanner("Yes");
 	Scanner scannerNegative = new Scanner("No");
+	
+	// test system
+	ArtemisSystem testSystem1;
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -68,7 +71,7 @@ class ComponentTest {
 		validCostForLanding = 20;
 
 		validPlayerName1 = "validPlayerName1";
-		validResourceBalance1 = 100;
+		validResourceBalance1 = 1000;
 		validCurrentBoardPosition1 = 1;
 
 		validPlayerName2 = "validPlayerName2";
@@ -122,11 +125,15 @@ class ComponentTest {
 		// set the owner
 		testComponent.setComponentOwner(player1);
 		
+		testSystem1 = system1;
+		system1.setSystemOwner(player1);
+		
 	}
 
 	@Test
-	void testComponent() {
-		fail("Not yet implemented");
+	void testComponentDefaultConstructor() {
+		testComponent = new Component();
+		assertNotNull(testComponent);
 	}
 
 	@Test
@@ -135,8 +142,218 @@ class ComponentTest {
 	}
 
 	@Test
-	void testDevelopComponent() {
-		fail("Not yet implemented");
+	void testDevelopComponentMinorDevelopmentValid() {
+
+		int actualDevelopmentStage;
+		int expectedDevelopmentStage = 1;
+
+		int actualResourceBalance;
+		int expectedResourceBalance = 950;
+
+		int actualCostForLanding;
+		int expectedCostForLanding = 30;
+
+		int actualCostToDevelop;
+		int expectedCostToDevelop = 60;
+		
+		int actualCostToPurchase;
+		int expectedCostToPurchase = 110;
+		
+		int actualActionPoints;
+		int expectedActionPoints = 1;
+
+		// develop component to stage 1
+		testComponent.developComponent();
+
+		// check that component has been developed to stage 1
+		actualDevelopmentStage = testComponent.getDevelopmentStage();
+		assertEquals(expectedDevelopmentStage, actualDevelopmentStage);
+
+		// check that player has been deducted development cost
+		actualResourceBalance = player1.getResourceBalance();
+		assertEquals(expectedResourceBalance, actualResourceBalance);
+		
+		// check that player has been deducted action point
+		actualActionPoints = player1.getActionPoints();
+		assertEquals(expectedActionPoints, actualActionPoints);
+
+		// check that cost for landing has been updated
+		actualCostForLanding = testComponent.getCostForLanding();
+		assertEquals(expectedCostForLanding, actualCostForLanding);
+
+		// check that cost to develop has been updated
+		actualCostToDevelop = testComponent.getCostToDevelop();
+		assertEquals(expectedCostToDevelop, actualCostToDevelop);
+		
+		// check that purchase cost has been updated
+		actualCostToPurchase = testComponent.getComponentCost();
+		assertEquals(expectedCostToPurchase, actualCostToPurchase);
+
+	}
+	
+	@Test
+	void testDevelopComponentMajorDevelopmentValid() {
+
+		int actualDevelopmentStage;
+		int expectedDevelopmentStage = 4;
+
+		int actualResourceBalance;
+		int expectedResourceBalance = 730;
+
+		int actualCostForLanding;
+		int expectedCostForLanding = 70;
+
+		int actualCostToDevelop;
+		int expectedCostToDevelop = 999999;
+		
+		int actualCostToPurchase;
+		int expectedCostToPurchase = 150;
+		
+		int actualActionPoints;
+		int expectedActionPoints = 6;
+		
+		// set action points to sufficient level for test purposes
+		player1.setActionPoints(10);
+
+		// develop component to stage 1 (minor development)
+		testComponent.developComponent();
+		// develop component to stage 2 (minor development)
+		testComponent.developComponent();
+		// develop component to stage 3 (minor development)
+		testComponent.developComponent();
+		// develop component to stage 4 (major development)
+		testComponent.developComponent();
+
+		// check that component has been developed to stage 4
+		actualDevelopmentStage = testComponent.getDevelopmentStage();
+		assertEquals(expectedDevelopmentStage, actualDevelopmentStage);
+
+		// check that player has been deducted development cost
+		actualResourceBalance = player1.getResourceBalance();
+		assertEquals(expectedResourceBalance, actualResourceBalance);
+		
+		// check that player has been deducted action points
+		actualActionPoints = player1.getActionPoints();
+		assertEquals(expectedActionPoints, actualActionPoints);
+
+		// check that cost for landing has been updated
+		actualCostForLanding = testComponent.getCostForLanding();
+		assertEquals(expectedCostForLanding, actualCostForLanding);
+
+		// check that cost to develop has been updated
+		actualCostToDevelop = testComponent.getCostToDevelop();
+		assertEquals(expectedCostToDevelop, actualCostToDevelop);
+		
+		// check that purchase cost has been updated
+		actualCostToPurchase = testComponent.getComponentCost();
+		assertEquals(expectedCostToPurchase, actualCostToPurchase);
+
+	}
+	
+	@Test
+	void testDevelopComponentAlreadyFullyDevelopedInvalid() {
+		
+		int actualDevelopmentStage;
+		int expectedDevelopmentStage = 4;
+		
+		int actualResourceBalance;
+		int expectedResourceBalance = 1000;
+
+		int actualCostForLanding;
+		int expectedCostForLanding = 20;
+
+		int actualCostToDevelop;
+		int expectedCostToDevelop = 50;
+		
+		int actualCostToPurchase;
+		int expectedCostToPurchase = 100;
+		
+		int actualActionPoints;
+		int expectedActionPoints = 2;
+		
+		// set component to maximum development stage
+		testComponent.setDevelopmentStage(4);
+		
+		// attempt to develop component - this should be unsuccessful as cannot develop beyond maximum stage
+		testComponent.developComponent();
+		
+		// check development stage has NOT been increased
+		actualDevelopmentStage = testComponent.getDevelopmentStage();
+		assertEquals(expectedDevelopmentStage,actualDevelopmentStage);
+		
+		// check that player has NOT been deducted development cost
+		actualResourceBalance = player1.getResourceBalance();
+		assertEquals(expectedResourceBalance, actualResourceBalance);
+		
+		// check that player has NOT been deducted action points
+		actualActionPoints = player1.getActionPoints();
+		assertEquals(expectedActionPoints, actualActionPoints);
+
+		// check that cost for landing has NOT been updated
+		actualCostForLanding = testComponent.getCostForLanding();
+		assertEquals(expectedCostForLanding, actualCostForLanding);
+
+		// check that cost to develop has NOT been updated
+		actualCostToDevelop = testComponent.getCostToDevelop();
+		assertEquals(expectedCostToDevelop, actualCostToDevelop);
+		
+		// check that purchase cost has NOT been updated
+		actualCostToPurchase = testComponent.getComponentCost();
+		assertEquals(expectedCostToPurchase, actualCostToPurchase);
+		
+	}
+	
+	@Test
+	void testDevelopComponentInsufficientActionPointsInvalid() {
+		
+		int actualDevelopmentStage;
+		int expectedDevelopmentStage = 0;
+		
+		int actualResourceBalance;
+		int expectedResourceBalance = 1000;
+
+		int actualCostForLanding;
+		int expectedCostForLanding = 20;
+
+		int actualCostToDevelop;
+		int expectedCostToDevelop = 50;
+		
+		int actualCostToPurchase;
+		int expectedCostToPurchase = 100;
+		
+		int actualActionPoints;
+		int expectedActionPoints = 0;
+		
+		// set action points to zero for test purposes
+		player1.setActionPoints(0);
+		
+		// attempt to develop component - this should be unsuccessful as cannot develop beyond maximum stage
+		testComponent.developComponent();
+		
+		// check development stage has NOT been increased
+		actualDevelopmentStage = testComponent.getDevelopmentStage();
+		assertEquals(expectedDevelopmentStage,actualDevelopmentStage);
+		
+		// check that player has NOT been deducted development cost
+		actualResourceBalance = player1.getResourceBalance();
+		assertEquals(expectedResourceBalance, actualResourceBalance);
+		
+		// check that player has NOT been deducted action points
+		actualActionPoints = player1.getActionPoints();
+		assertEquals(expectedActionPoints, actualActionPoints);
+
+		// check that cost for landing has NOT been updated
+		actualCostForLanding = testComponent.getCostForLanding();
+		assertEquals(expectedCostForLanding, actualCostForLanding);
+
+		// check that cost to develop has NOT been updated
+		actualCostToDevelop = testComponent.getCostToDevelop();
+		assertEquals(expectedCostToDevelop, actualCostToDevelop);
+		
+		// check that purchase cost has NOT been updated
+		actualCostToPurchase = testComponent.getComponentCost();
+		assertEquals(expectedCostToPurchase, actualCostToPurchase);
+		
 	}
 
 	@Test
@@ -178,7 +395,7 @@ class ComponentTest {
 	void testChargePlayerForLandingAffirmativeTransferResources() {
 		
 		int expectedResourceBalanceCurrentPlayer = 180;
-		int expectedResourceBalanceComponentOwner = 120;
+		int expectedResourceBalanceComponentOwner = 1020;
 		
 		// transfer resources
 		testComponent.chargePlayerForLanding(player2, true);
@@ -205,7 +422,7 @@ class ComponentTest {
 	void testChargePlayerForLandingNegativeNoTransferAndGameContinues() {
 		
 		int expectedResourceBalanceCurrentPlayer = 200;
-		int expectedResourceBalanceComponentOwner = 100;
+		int expectedResourceBalanceComponentOwner = 1000;
 		
 		// transfer resources
 		testComponent.chargePlayerForLanding(player2, false);
@@ -220,7 +437,17 @@ class ComponentTest {
 
 	@Test
 	void testCheckFullyDeveloped() {
-		fail("Not yet implemented");
+		// set component to maximum development stage for testing purposes
+		testComponent.setDevelopmentStage(4);
+		
+		// run the check
+		assertTrue(testComponent.checkFullyDeveloped());
+		
+		// set component to no longer be fully developed for testing purposes
+		testComponent.setDevelopmentStage(3);
+		
+		// run the check
+		assertFalse(testComponent.checkFullyDeveloped());
 	}
 
 	@Test

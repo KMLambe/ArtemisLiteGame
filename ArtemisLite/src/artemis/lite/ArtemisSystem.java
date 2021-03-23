@@ -13,7 +13,6 @@ public class ArtemisSystem {
 
     private String systemName;
     private Player systemOwner;
-    private boolean fullyDeveloped;
     private ArrayList<Component> componentsInSystem = new ArrayList<>();
 
     /**
@@ -50,6 +49,24 @@ public class ArtemisSystem {
 
         this.systemName = systemName;
     }
+    
+    /**
+     * This method checks if all components in this Artemis System are developed 
+     * @return - the method returns true if all components are developed, otherwise it returns false
+     */
+    public boolean checkFullyDeveloped() {
+    	
+    	int fullyDevelopedCounter = 0;
+    	
+    	for (Component component : componentsInSystem) {
+    		if (component.checkFullyDeveloped()) {
+    			fullyDevelopedCounter++;
+    		}
+    	}
+    	
+    	return fullyDevelopedCounter == componentsInSystem.size();
+    	
+    }
 
     /**
      * @return the systemOwner
@@ -63,20 +80,6 @@ public class ArtemisSystem {
      */
     public void setSystemOwner(Player systemOwner) {
         this.systemOwner = systemOwner;
-    }
-
-    /**
-     * @return the fullyDeveloped
-     */
-    public boolean isFullyDeveloped() {
-        return fullyDeveloped;
-    }
-
-    /**
-     * @param fullyDeveloped the fullyDeveloped to set
-     */
-    public void setFullyDeveloped(boolean fullyDeveloped) {
-        this.fullyDeveloped = fullyDeveloped;
     }
 
     /**
@@ -102,21 +105,21 @@ public class ArtemisSystem {
 
     public void displayAllDetails() {
 
-        System.out.println("System name:\t" + this.systemName);
+        System.out.println("System name:           \t" + systemName);
 
-        if (this.systemOwner.getPlayerName().length() > 0) {
-            System.out.println("System owner:\t" + this.systemOwner.getPlayerName());
+        if (systemOwner != null) {
+            System.out.println("System owner:     \t" + systemOwner.getPlayerName());
         } else {
-            System.out.println("This system is currently unowned.");
+            System.out.println("System owner:     \t This system is currently unowned.");
         }
 
-        if (this.fullyDeveloped) {
-            System.out.println("This system is fully developed. That's a big step towards the completion of the Artemis project.");
+        if (checkFullyDeveloped()) {
+            System.out.println("Development Status:\t This system is fully developed. That's a big step towards the completion of the Artemis project.");
         } else {
 
 			int totalDeveloped = 0;
 			
-			for (Component component : this.componentsInSystem) {
+			for (Component component : componentsInSystem) {
 				if (component.checkFullyDeveloped()) {
 					System.out.println(component.getSquareName() + " is fully developed.");
 					totalDeveloped++;
@@ -125,7 +128,7 @@ public class ArtemisSystem {
 				}
 			}
 			
-			System.out.println(totalDeveloped + " out of " + this.componentsInSystem.size() + " components in this system are fully developed.");
+			System.out.println(totalDeveloped + " out of " + componentsInSystem.size() + " components in this system are fully developed.");
 			
 		}
 		
