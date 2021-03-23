@@ -139,7 +139,8 @@ public class Game {
     }
 
     /**
-     * @param players shuffles order of players
+     * @param players 
+     * shuffles order of players
      */
     public static void generatePlayerOrder(ArrayList<Player> players) {
         Collections.shuffle(players);
@@ -161,8 +162,9 @@ public class Game {
         generatePlayerOrder(players);
         for (Player player : players) {
             System.out.println(player.getPlayerName());
-            getNextPlayer(players, player);
         }
+            getNextPlayer(players, player);
+        
     }
 
 
@@ -509,15 +511,50 @@ public class Game {
 
     }
 
-    public static void getNextPlayer() {
-        // may need to store a current player variable
-        // run a loop to move between the players in the array
-        // with an if statement to deal with when the loop moves to the last player in
-        // the array
+    /**
+	 * Displays to the players that the game has been won along with stats about the game
+	 */
+	public static void winGame(ArrayList<Player> players){
+		// As soon as development is complete, announce the path ahead: 
+		//this will be like a summary of future events at the end of a movie(an epilogue).  
+		//Display the successful outcome dynamically as a sequence of headlines: 
+		// e.g. in2021[...], then in 2022 [...]until finally a successful landing is achieved,
+		// with congratulations all round!  Also give the final state of play that made it possible.
+		
+		int totalNumberOfExperts = 0;
+		
+		
+		    System.out.print("Congratulations ");
+		for(int loop=0; loop< players.size(); loop++) { 
+			if(loop<players.size()-1) {
+				System.out.print(players.get(loop).getPlayerName() + ", ");
+		} else {
+			System.out.print("and " + players.get(loop).getPlayerName() + " ");
+		}
+		}
+			System.out.print("the Artemis system has successfully launched.");
+			
+			for(ArtemisSystem system: board.getSystems()) {
+				system.displaySystemOwnerForEndGame();
+			}
+			
+			for(Player player:players) {
+				totalNumberOfExperts += player.getResourceBalance();
+			}
+			
+			System.out.println("There were " +totalNumberOfExperts + " experts needed to launch the Artemis Project.");
+			
+			
+		// Summary of future events 
+		
+		// Adding total number of experts number of experts committed to a component
+		// Final state of play, Remaining experts 
+		// (Total amount of experts taken to win the game, remaining player experts plus all costs
+		// the shuttle successfully launched thanks to the work of getPlayer name and their experts	
+		// Who choose to not get resources from other players most
+			
+	}
 
-        // or could use a boolean of active player as a var for all players
-        // use a loop to change the boolean at the end of a players turn
-    }
 
     /**
      * Outputs a message to the screen for all players to view.

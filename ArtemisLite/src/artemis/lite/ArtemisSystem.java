@@ -101,6 +101,13 @@ public class ArtemisSystem {
             component.setComponentSystem(this);
         }
     }
+    
+    /**
+     * Method to print out the owner of the system for win game
+     */
+    public void displaySystemOwnerForEndGame() {
+    	System.out.println(this.systemName + " was fully develop by " + this.systemOwner);
+    }
 
 
     public void displayAllDetails() {
