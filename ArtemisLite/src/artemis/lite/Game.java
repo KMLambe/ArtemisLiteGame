@@ -301,7 +301,7 @@ public class Game {
         squareName = board.getSquares()[newBoardPosition].getSquareName();
 
         // announce new board position
-        positionChangeAnnouncement = " has landed on " + squareName;
+        positionChangeAnnouncement = "has landed on " + squareName;
         announce(positionChangeAnnouncement, currentPlayer);
 
         // check if player landed on owned square
