@@ -1,11 +1,6 @@
 package artemis.lite;
 
 import java.util.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Random;
-import java.util.Scanner;
 
 /**
  * Creates and manages the ArtemisLite game.
@@ -453,39 +448,36 @@ public class Game {
             playerChoice = scanner.nextInt();
             System.out.println();
 
-		// ignore - put in place to test menu functionality for
-		// displayPurchasableComponent
-		ArtemisSystem system = (ArtemisSystem) board.getSystems()[1];
-		Component component = (Component) board.getSquares()[1];
-
-		while ((actionPoints > 0) && (endGame == false)) {
-			switch (playerChoice) {
-			case 1:
-				//player.develop(component);
-				break;
-			case 2:
-				//player.develop(system);
-				break;
-			case 3:
-				//displayTradeMenu(player, board, scanner);
-				break;
-			case 4:
-				//player.getOwnedComponents();
-				break;
-			case 5:
-				//player.getResourceBalance();
-				break;
-			case 6:
-				endGame(); // outside of loop
-				break;
-			default:
-				throw new IllegalArgumentException("Invalid option - please try again");
-			}
-		}
-
-		// loop ends run getNextPlayer
-		//getNextPlayer(players);
-	}
+            switch (playerChoice) {
+                case 1:
+                    announce("wants to develop a component they own", currentPlayer);
+                    break;
+                case 2:
+                    announce("wants to develop a system they own", currentPlayer);
+                    break;
+                case 3:
+                    announce("wants to trade resources for another player's component", currentPlayer);
+                    break;
+                case 4:
+                    announce("wants to see all component owners", currentPlayer); // JY: not sure i understand this one
+                    break;
+                case 5:
+                    announce("wants to view their resource balance", currentPlayer);
+                    break;
+                case 6:
+                    announce("has ended their turn", currentPlayer);
+                    currentPlayer.setActionPoints(0);
+                    break;
+                case 7:
+                    announce("has left the game", currentPlayer);
+                    System.out.println("GAME OVER");
+                    endGame = true;
+                    break;
+                default:
+                    announce("Invalid option inputted", currentPlayer);
+            }
+        }
+    }
 
     /**
      * Creates an map of components which the active player can purchase. The
