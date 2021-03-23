@@ -197,6 +197,8 @@ public class Player {
         consumeActionPoint(1);
         // update player resources
         updateResources(-component.getComponentCost());
+        // update count of resources devoted to component (for end game notification)
+        component.updateTotalResourcesDevotedToComponent(component.getComponentCost()); // TODO - incorporate into testing
         // add component to player's components
         addComponent(component);
         // update component owned
@@ -402,7 +404,7 @@ public class Player {
      *
      * @param resources - the amount to add/subtract from the current resources
      */
-    private int updateResources(int resources) {
+    public int updateResources(int resources) {
         int newBalance = this.getResourceBalance() + resources;
         setResourceBalance(newBalance);
 
