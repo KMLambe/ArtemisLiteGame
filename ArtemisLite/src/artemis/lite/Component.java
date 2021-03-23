@@ -169,6 +169,14 @@ public class Component extends Square {
 
 	}
 
+	/**
+	 * Asks component owners if they wish to receive resources when another player lands on a component they own.
+	 * The component owner may decide to accept or decline their right to receive a fee
+	 * and their response is returned as either true or false
+	 * @param currentPlayer - the current player who has landed on an owned component
+	 * @param scanner - allows the component owner to register their response
+	 * @return
+	 */
 	public boolean checkOwnerWantsResources(Player currentPlayer, Scanner scanner) {
 
 		String ownerResponse;
@@ -216,6 +224,7 @@ public class Component extends Square {
 	 * component
 	 *
 	 * @param currentPlayer - the current player
+	 * @param ownerResponse - the component owner's decision as to whether they wish to receive resources or not. This is the result of the checkOwnerWantsResources() method.
 	 */
 	public void chargePlayerForLanding(Player currentPlayer, boolean ownerResponse) {
 
@@ -232,22 +241,41 @@ public class Component extends Square {
 		}
 	}
 
+	/**
+	 * Increases the cost to purchase a component by the amount passed as a parameter argument
+	 * @param amountToIncreaseCostToPurchase - the amount by which the cost to purchase will be increased
+	 */
 	public void increaseCostToPurchase(int amountToIncreaseCostToPurchase) {
 		componentCost += amountToIncreaseCostToPurchase;
 	}
 
+	/**
+	 * Increases the landing fee of a component by the amount passed as a parameter argument
+	 * @param amountToIncreaseCostForLanding - the amount by which the cost to purchase will be increased
+	 */
 	public void increaseCostOfLanding(int amountToIncreaseCostForLanding) {
 		costForLanding += amountToIncreaseCostForLanding;
 	}
 
+	/**
+	 * Increases the cost to develop a component by the amount passed as a parameter argument
+	 * @param costToDevelop - the amount by which the cost to develop will be increased
+	 */
 	public void increaseCostToDevelop(int amountToIncreaseCostToDevelop) {
 		costToDevelop += amountToIncreaseCostToDevelop;
 	}
 
+	/**
+	 * Increases the component's development stage by 1.
+	 */
 	public void incrementDevelopmentStage() {
 		developmentStage++;
 	}
 
+	/**
+	 * Sets the component's cost to develop to {@value #MAXIMUM_COST_TO_DEVELOP}
+	 * This is intended as a protection when a component has already reached the maximum development stage.
+	 */
 	public void setCostToDevelopToMaximum() {
 		costToDevelop = MAXIMUM_COST_TO_DEVELOP;
 	}
@@ -267,10 +295,19 @@ public class Component extends Square {
 		this.totalResourcesDevotedToComponent = totalExpertsDevotedToComponent;
 	}
 
+	/**
+	 * Updates the total resources devoted to a component by the value passed as a parameter argument.
+	 * totalResourcesDevotedToComponent is intended to be a counter of all resources expended (including purchases, trades and developments) spent on this component throughout the game.
+	 * @param numberOfResources - the value by which the total will be updated.
+	 */
 	public void updateTotalResourcesDevotedToComponent(int numberOfResources) {
 		this.totalResourcesDevotedToComponent += numberOfResources;
 	}
 
+	/**
+	 * Displays to screen the total resources devoted to this component across the current game's lifetime.
+	 * Intended as a support method for post-game epilogue.
+	 */
 	public void displayTotalResourcesDevotedToComponent() {
 		System.out.println("A total of " + totalResourcesDevotedToComponent + Game.RESOURCE_NAME
 				+ " have been devoted to the completion of " + this.getSquareName());

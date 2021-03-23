@@ -4,6 +4,7 @@
 package artemis.lite;
 
 /**
+ * Outlines the various possible stages of development for components.
  * @author Kieran Lambe 40040696
  *
  */

@@ -110,6 +110,9 @@ public class ArtemisSystem {
     }
 
 
+   /**
+    * Displays to screen information about this Artemis System
+    */
     public void displayAllDetails() {
 
         System.out.println("System name:           \t" + systemName);
