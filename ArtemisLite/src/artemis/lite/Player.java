@@ -534,4 +534,14 @@ public class Player {
     public String toString() {
         return playerName;
     }
+
+    /**
+     * Outputs the player's current resources and action points. This is used to provide an update at the start of
+     * each player's turn.
+     */
+    public void displayTurnStats() {
+        System.out.printf("\n%15s STATS UPDATE\n", playerName.toUpperCase());
+        System.out.printf("%15s %6s\n", Game.RESOURCE_NAME, resourceBalance);
+        System.out.printf("%15s %6s\n\n", "ACTION POINTS", actionPoints);
+    }
 }
