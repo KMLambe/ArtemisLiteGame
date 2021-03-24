@@ -98,7 +98,7 @@ public class Game {
 		currentPlayer.purchaseComponent(board.getSquares()[2]);
 		currentPlayer.purchaseComponent(board.getSquares()[3]);
 		*/
-		board.getSystems()[0].setSystemOwner(currentPlayer);
+		//board.getSystems()[0].setSystemOwner(currentPlayer);
 		
 
 		while (currentPlayer.getActionPoints() > 0 && !endGame) {
@@ -307,7 +307,7 @@ public class Game {
 
 		// check if player landed on or passed recruitment
 		// allocate resources if condition has been met
-		if (movementCalculation > boardLength) {
+		if (movementCalculation >= boardLength) {
 			allocateResources(currentPlayer);
 		}
 

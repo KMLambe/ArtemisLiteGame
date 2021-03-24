@@ -129,7 +129,7 @@ public class Player {
      * @param system the object to be added
      * @throws NullPointerException if system is null
      */
-    private void addSystem(ArtemisSystem system) throws NullPointerException {
+    public void addSystem(ArtemisSystem system) throws NullPointerException {
         if (system == null) {
             throw new NullPointerException("Cannot add null to player's owned systems");
         }
