@@ -103,8 +103,8 @@ public class ArtemisSystem {
     }
     
     /**
-     * TEST TEST TEST
-     * @return
+     * This method checks if all components contained in this Artemis System are owned and returns the result as a boolean.
+     * @return - the method returns true if all components in the system are owned, otherwise it returns false.
      */
     public boolean checkSystemIsOwned() {
     	
