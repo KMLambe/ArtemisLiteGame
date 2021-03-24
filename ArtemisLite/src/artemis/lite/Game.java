@@ -5,149 +5,164 @@ import java.util.*;
 /**
  * Creates and manages the ArtemisLite game.
  *
- * @author Peter McMahon, Gavin Taylor, John Young 40030361
+ * @author Peter McMahon
+ * @author Gavin Taylor
+ * @author John Young 40030361
+ * @author Kieran Lambe 40040696
  */
 public class Game {
 
-    private final static int MINIMUM_PLAYERS = 2;
-    private final static int MAXIMUM_PLAYERS = 4;
-    private final static int STARTING_POSITION = 0;
-    private final static int STARTING_RESOURCES = 500;
-    private final static int DEFAULT_RESOURCES = 100;
-    public final static int DEFAULT_ACTION_POINTS = 2;
-    private final static int MINIMUM_DICE_ROLL = 1;
-    private final static int MAXIMUM_DICE_ROLL = 6;
-    private final static int NUMBER_OF_DICE = 2;
-    public final static int MAXIMUM_SQUARES = 12;
-    public final static int MAXIMUM_SYSTEMS = 4;
-    public final static int MAXIMUM_NAME_LENGTH = 50;
+	private final static int MINIMUM_PLAYERS = 2;
+	private final static int MAXIMUM_PLAYERS = 4;
+	private final static int STARTING_POSITION = 0;
+	private final static int STARTING_RESOURCES = 500;
+	private final static int DEFAULT_RESOURCES = 100;
+	public final static int DEFAULT_ACTION_POINTS = 2;
+	private final static int MINIMUM_DICE_ROLL = 1;
+	private final static int MAXIMUM_DICE_ROLL = 6;
+	private final static int NUMBER_OF_DICE = 2;
+	public final static int MAXIMUM_SQUARES = 12;
+	public final static int MAXIMUM_SYSTEMS = 4;
+	public final static int MAXIMUM_NAME_LENGTH = 50;
 
-    // labels - to be used in place of hard coding strings
-    public final static String RESOURCE_NAME = "EXPERTS";
+	// labels - to be used in place of hard coding strings
+	public final static String RESOURCE_NAME = "EXPERTS";
 
-    // player
+	// player
 //	temporarily removed global variables to adjust scope
 //    private static Player player;
 //    static Player currentPlayer;
 
-    private static List<Player> players = new ArrayList<Player>();
+	private static List<Player> players = new ArrayList<Player>();
 
-    // board
-    private static Board board;
-    private static boolean endGame = false;
+	// board
+	private static Board board;
+	private static boolean endGame = false;
 
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);
 
-        setupGame(scanner);
+		setupGame(scanner);
 
-        gameLoop(scanner);
-    }
+		gameLoop(scanner);
+	}
 
-    /**
-     * Responsible for running the setup sequence, i.e. make sure the board is created, players have been created, and
-     * randomise the player order.
-     */
-    public static void setupGame(Scanner scanner) {
+	/**
+	 * Responsible for running the setup sequence, i.e. make sure the board is
+	 * created, players have been created, and randomise the player order.
+	 */
+	public static void setupGame(Scanner scanner) {
 
+		// 1. create board
+		board = new Board();
 
-        // 1. create board
-        board = new Board();
+		createBoard(board);
 
-        createBoard(board);
+		// 2. get players
+		ArrayList<Player> players = createPlayers(scanner);
 
-        // 2. get players
-        ArrayList<Player> players = createPlayers(scanner);
+		// 3. shuffle players
+		generatePlayerOrder(players);
 
-        // 3. shuffle players
-        generatePlayerOrder(players);
+		announce("Game setup complete...time to get rolling!");
 
-        announce("Game setup complete...time to get rolling!");
+		// TODO - call mission brief
+	}
 
-        // TODO - call mission brief
-    }
+	/**
+	 * Responsible for handling all player interactions with the game.
+	 * <p>
+	 * It handles each player's turn, enabling them to perform any permissible
+	 * action so long as they have more than 0 action points. When the player runs
+	 * out of action points, the game moves on to the next player in the sequence.
+	 * <p>
+	 * At the end of a player's turn, the currentPlayer is set to the next player in
+	 * the sequence and their action points are set to the default amount (i.e.
+	 * reset).
+	 * <p>
+	 * The loop will end on any player's turn if a player leaves (setting endGame to
+	 * true).
+	 *
+	 * @param scanner a scanner object
+	 */
+	public static void gameLoop(Scanner scanner) {
+		// set currentplayer to the first player in the arraylist
+		Player currentPlayer = players.get(0);
 
+		// AD HOC TEST DATA USED TO TEST DEVELOP COMPONENTS MENU - KL
+		// TODO - remove
+		/*
+		 * currentPlayer.setActionPoints(5); currentPlayer.setResourceBalance(1000);
+		 * currentPlayer.purchaseComponent(board.getSquares()[1]);
+		 * currentPlayer.purchaseComponent(board.getSquares()[2]);
+		 * currentPlayer.purchaseComponent(board.getSquares()[3]);
+		 */
+		// board.getSystems()[0].setSystemOwner(currentPlayer);
 
-    /**
-     * Responsible for handling all player interactions with the game.
-     * <p>
-     * It handles each player's turn, enabling them to perform any permissible action so long as they have more than 0
-     * action points. When the player runs out of action points, the game moves on to the next player in the sequence.
-     * <p>
-     * At the end of a player's turn, the currentPlayer is set to the next player in the sequence and their action points
-     * are set to the default amount (i.e. reset).
-     * <p>
-     * The loop will end on any player's turn if a player leaves (setting endGame to true).
-     *
-     * @param scanner a scanner object
-     */
-    public static void gameLoop(Scanner scanner) {
-        // set currentplayer to the first player in the arraylist
-        Player currentPlayer = players.get(0);
+		while (currentPlayer.getActionPoints() > 0 && !endGame) {
+			int rollDice = rollDice();
 
-        while (currentPlayer.getActionPoints() > 0 && !endGame) {
-            int rollDice = rollDice();
+			// let everyone know the player has moved
+			announce("rolled a " + rollDice + " and moves accordingly.", currentPlayer);
+			updatePlayerPosition(currentPlayer, board, rollDice);
 
-            // let everyone know the player has moved
-            announce("rolled a "+rollDice+" and moves accordingly.", currentPlayer);
-            updatePlayerPosition(currentPlayer, board, rollDice);
+			displayMenu(currentPlayer, scanner);
 
-            displayMenu(currentPlayer, scanner);
+			// current player's turn is over, get the nextPlayer and set to currentPlayer
+			// nextPlayer will be the currentPlayer on the next iteration of loop
+			currentPlayer = getNextPlayer(players, currentPlayer);
+			// make sure player has action points before starting loop
+			currentPlayer.setActionPoints(DEFAULT_ACTION_POINTS);
+		}
 
-            // current player's turn is over, get the nextPlayer and set to currentPlayer
-            // nextPlayer will be the currentPlayer on the next iteration of loop
-            currentPlayer = getNextPlayer(players, currentPlayer);
-            // make sure player has action points before starting loop
-            currentPlayer.setActionPoints(DEFAULT_ACTION_POINTS);
-        }
+		if (endGame) {
+			// TODO - add call to endGame sequence
+			System.out.println("GAME HAS ENDED");
+		}
+	}
 
-        if (endGame) {
-            // TODO - add call to endGame sequence
-            System.out.println("GAME HAS ENDED");
-        }
-    }
+	/**
+	 * Creates a virtual board for players to move around, and populates it with
+	 * squares and systems. This method must be called before players are able to
+	 * take a turn.
+	 *
+	 * @param board pass through a board object to store squares and systems
+	 * @return the populated board object with squares and systems
+	 * @throws IllegalArgumentException if the board object is null
+	 */
+	private static Board createBoard(Board board) throws IllegalArgumentException {
 
-    /**
-     * Creates a virtual board for players to move around, and populates it with squares and systems. This method must
-     * be called before players are able to take a turn.
-     *
-     * @param board pass through a board object to store squares and systems
-     * @return the populated board object with squares and systems
-     * @throws IllegalArgumentException if the board object is null
-     */
-    private static Board createBoard(Board board) throws IllegalArgumentException {
+		if (board == null) {
+			throw new IllegalArgumentException("Board object is null");
+		}
 
-        if (board == null) {
-            throw new IllegalArgumentException("Board object is null");
-        }
+		// create systems
+		ArtemisSystem system1 = board.createSystem("SPACE LAUNCH SYSTEM");
+		ArtemisSystem system2 = board.createSystem("PRE-STAGING SYSTEM");
+		ArtemisSystem system3 = board.createSystem("ORION SPACECRAFT");
+		ArtemisSystem system4 = board.createSystem("GATEWAY LUNAR SYSTEM");
 
-        // create systems
-        ArtemisSystem system1 = board.createSystem("SPACE LAUNCH SYSTEM");
-        ArtemisSystem system2 = board.createSystem("PRE-STAGING SYSTEM");
-        ArtemisSystem system3 = board.createSystem("ORION SPACECRAFT");
-        ArtemisSystem system4 = board.createSystem("GATEWAY LUNAR SYSTEM");
-
-        // create squares and components
-        board.createSquare("RECRUITMENT");
-        // system1
-        board.createSquare("CARGO HOLD", 100, 50, 20, system1);
-        board.createSquare("EXPLORATION UPPER STAGE & CORE STAGE", 100, 50, 20, system1);
-        board.createSquare("SOLID ROCKET BOOSTERS", 100, 50, 20, system1);
-        // system2
-        board.createSquare("LUNAR ROVERS", 50, 25, 10, system2);
-        board.createSquare("SCIENCE EXPERIMENTS", 50, 25, 10, system2);
-        // non-system
-        board.createSquare("TEAM BONDING");
-        // system3
-        board.createSquare("CREW MODULE", 150, 75, 35, system3);
-        board.createSquare("SERVICE MODULE", 150, 75, 35, system3);
-        board.createSquare("LAUNCH ABORT SYSTEM", 150, 75, 35, system3);
-        // system4
-        board.createSquare("POWER AND PROPULSION ELEMENT", 200, 100, 50, system4);
-        board.createSquare("HABITATION AND LOGISTICS OUTPOST", 200, 100, 50, system4);
+		// create squares and components
+		board.createSquare("RECRUITMENT");
+		// system1
+		board.createSquare("CARGO HOLD", 100, 50, 20, system1);
+		board.createSquare("EXPLORATION UPPER STAGE & CORE STAGE", 100, 50, 20, system1);
+		board.createSquare("SOLID ROCKET BOOSTERS", 100, 50, 20, system1);
+		// system2
+		board.createSquare("LUNAR ROVERS", 50, 25, 10, system2);
+		board.createSquare("SCIENCE EXPERIMENTS", 50, 25, 10, system2);
+		// non-system
+		board.createSquare("TEAM BONDING");
+		// system3
+		board.createSquare("CREW MODULE", 150, 75, 35, system3);
+		board.createSquare("SERVICE MODULE", 150, 75, 35, system3);
+		board.createSquare("LAUNCH ABORT SYSTEM", 150, 75, 35, system3);
+		// system4
+		board.createSquare("POWER AND PROPULSION ELEMENT", 200, 100, 50, system4);
+		board.createSquare("HABITATION AND LOGISTICS OUTPOST", 200, 100, 50, system4);
 
         // TODO - remove below display methods - temporarily here to show squares and
         // systems are created
@@ -426,16 +441,9 @@ public class Game {
         //		that is specific to a player leaving -> endGame will be called by the game loop when conditions are met
         int playerChoice;
 
-        String[] menuOptions = {
-                "...MENU...",
-                "1. Develop Component",
-                "2. Trade components",
-                "3. Display board status",
-                "4. Display my components",
-                "5. End turn",
-                "6. Leave game",
-                "Selection..."
-        };
+		String[] menuOptions = { "...MENU...", "1. Develop Component", "2. Develop System", "3. Trade components",
+				"4. Show all component owners", "5. Show resource balance", "6. End turn", "7. Leave game",
+				"Selection..." };
 
         while (currentPlayer.getActionPoints() > 0 && !endGame) {
             currentPlayer.displayTurnStats();
@@ -448,36 +456,38 @@ public class Game {
             playerChoice = scanner.nextInt();
             System.out.println();
 
-            switch (playerChoice) {
-                case 1:
-                    announce("wants to develop a component they own", currentPlayer);
-                    break;
-                case 2:
-                    subMenuTrade(currentPlayer, scanner);
-                    break;
-                case 3:
-                    announce("wants to trade resources for another player's component", currentPlayer);
-                    break;
-                case 4:
-                    announce("wants to see all component owners", currentPlayer); // JY: not sure i understand this one
-                    break;
-                case 5:
-                    announce("wants to view their resource balance", currentPlayer);
-                    break;
-                case 6:
-                    announce("has ended their turn", currentPlayer);
-                    currentPlayer.setActionPoints(0);
-                    break;
-                case 6:
-                    announce("has left the game", currentPlayer);
-                    System.out.println("GAME OVER");
-                    endGame = true;
-                    break;
-                default:
-                    announce("Invalid option inputted", currentPlayer);
-            }
-        }
-    }
+			switch (playerChoice) {
+			case 1:
+				announce("wants to develop a component they own", currentPlayer);
+				displayDevelopComponentMenu(currentPlayer, scanner);
+				break;
+			case 2:
+                subMenuTrade(currentPlayer, scanner);
+				announce("wants to develop a system they own", currentPlayer);
+				break;
+			case 3:
+				announce("wants to trade resources for another player's component", currentPlayer);
+				break;
+			case 4:
+				announce("wants to see all component owners", currentPlayer); // JY: not sure i understand this one
+				break;
+			case 5:
+				announce("wants to view their resource balance", currentPlayer);
+				break;
+			case 6:
+				announce("has ended their turn", currentPlayer);
+				currentPlayer.setActionPoints(0);
+				break;
+			case 7:
+				announce("has left the game", currentPlayer);
+				System.out.println("GAME OVER");
+				endGame = true;
+				break;
+			default:
+				announce("Invalid option inputted", currentPlayer);
+			}
+		}
+	}
 
     /**
      * Displays components the player can trade for, captures their input and initiates the trade sequence.
@@ -525,7 +535,7 @@ public class Game {
      *
      * @param player the current player
      * @param board  the board object which contains the squares and systems
-     * @return an map of identifiers and components that the player can trade for
+     * @return a map of identifiers and components that the player can trade for
      */
     public static Map<Integer, Component> getComponentsForTrading(Player player, Board board) {
         Map<Integer, Component> componentsWithOwners = new HashMap<Integer, Component>();
@@ -638,6 +648,72 @@ public class Game {
         player.tradeComponent(playerSelection, scanner);
     }
 
+	/**
+	 * This method prints to screen a menu of components that can be developed
+	 *
+	 * @param components - a HashMap of Components with associated Integer keys
+	 *                   representing menu numbers
+	 */
+	public static void displayComponentsPlayerCanDevelop(Map<Integer, Component> components) {
+
+		Component component;
+
+		System.out.println();
+
+		if (components.size() == 0) {
+			announce("You do not own any Artemis Systems containing components available for development");
+			return;
+		}
+
+		System.out.printf("%-5s %-40s %-30s %-20s %-30s %-25s\n", "REF", "COMPONENT NAME", "SYSTEM", "OWNER",
+				"DEVELOPMENT STAGE", Game.RESOURCE_NAME + " REQUIRED TO DEVELOP");
+
+		for (Map.Entry<Integer, Component> componentEntry : components.entrySet()) {
+			component = componentEntry.getValue();
+			System.out.printf("%-5s %-40s %-30s %-20s %-30s %-25s\n", componentEntry.getKey(), component,
+					component.getComponentSystem().getSystemName(), component.getComponentOwner(),
+					component.getDevelopmentStage() + " - "
+							+ component.getDevelopmentStageNamesMap().get(component.getDevelopmentStage()),
+					component.getCostToDevelop());
+		}
+
+		System.out.println();
+
+	}
+
+	/**
+	 * Outputs a list of components the player can develop. The user is then
+	 * prompted to select one from the list of components. If a valid selection is
+	 * made, the developComponent method is invoked.
+	 *
+	 * @param player
+	 * @param scanner
+	 */
+	public static void displayDevelopComponentMenu(Player player, Scanner scanner) {
+
+		Map<Integer, Component> componentsAvailable = player.getOwnedComponentsThatCanBeDeveloped();
+
+		// display components
+		displayComponentsPlayerCanDevelop(componentsAvailable);
+
+		// if no components are available then return to menu
+		if (componentsAvailable.size() == 0) {
+			return;
+		}
+
+		// get user input
+		Component playerSelection = getPlayerComponentSelection(scanner, componentsAvailable);
+
+		// player did not select a component - return to main main
+		if (playerSelection == null) {
+			return;
+		}
+
+		System.out.println(player + " has decided to develop  " + playerSelection + ".");
+
+		// process the development
+		playerSelection.developComponent();
+	}
 
     /**
      * Outputs a message to the screen for all players to view.

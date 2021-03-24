@@ -4,6 +4,8 @@
 package artemis.lite;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * @author Kieran Lambe 40040696, John Young 40030361
@@ -100,6 +102,38 @@ public class ArtemisSystem {
         if (!component.getComponentSystem().equals(this)) {
             component.setComponentSystem(this);
         }
+    }
+    
+    /**
+     * This method checks if all components contained in this Artemis System are owned by a single player and returns the result as a boolean.
+     * @return - the method returns true if all components in the system are owned, otherwise it returns false.
+     */
+    public boolean checkSystemIsOwnedByOnePlayer() {
+    	
+    	boolean ownedByOnePlayer = false;
+    	List<Player> componentOwners = new ArrayList<Player>();
+    	
+    	int counter = 0;
+    	
+    	for (Component component : componentsInSystem) {
+    		if (component.isOwned()) {
+    			// add component owners to list
+    			componentOwners.add(component.getComponentOwner());
+    			counter++;
+    		}
+    	}
+    	
+    	// continue if all components in system are owned
+    	if (counter == componentsInSystem.size()) {
+    		
+        	// convert list to HashSet since all values must be distinct in HashSet
+        	HashSet<Player> componentOwnersSet = new HashSet<Player>(componentOwners);
+        	
+        	// if HashSet contains only one value then one player must own all components in system
+        	ownedByOnePlayer = (componentOwnersSet.size()==1);
+    	}
+    	
+    	return ownedByOnePlayer;
     }
     
     /**

@@ -2,7 +2,9 @@ package artemis.lite;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -18,6 +20,7 @@ public class Player {
     private int actionPoints = Game.DEFAULT_ACTION_POINTS;
     private List<Component> ownedComponents = new ArrayList<>();
     private List<ArtemisSystem> ownedSystems = new ArrayList<>();
+    private int CountOfTimesPlayerDeclinedResources;
 
 
     /**
@@ -97,6 +100,26 @@ public class Player {
         // can only be removed if it does not already exist
         ownedComponents.remove(component);
     }
+    
+    /**
+     * This method determines which of the player's owned components can be developed and adds them to a HashMap.
+     * @return - the method returns a HashMap of the owned components that can be developed.
+     */
+    public Map<Integer,Component> getOwnedComponentsThatCanBeDeveloped() {
+    	
+    	Map<Integer,Component> componentsThatCanBeDeveloped = new HashMap<Integer,Component>();
+    	
+    	int menuNumber = 1;
+    	
+    	for (Component component : ownedComponents) {
+    		if (component.checkComponentCanBeDeveloped()) {
+    			componentsThatCanBeDeveloped.put(menuNumber++, component);
+    		}
+    	}
+    	
+    	return componentsThatCanBeDeveloped;
+    	
+    }
 
     // TODO - additional validation
     // TODO - game announcement
@@ -107,7 +130,7 @@ public class Player {
      * @param system the object to be added
      * @throws NullPointerException if system is null
      */
-    private void addSystem(ArtemisSystem system) throws NullPointerException {
+    public void addSystem(ArtemisSystem system) throws NullPointerException {
         if (system == null) {
             throw new NullPointerException("Cannot add null to player's owned systems");
         }
@@ -400,6 +423,15 @@ public class Player {
     }
 
     /**
+     * This method increments the variable countOfTimesPlayerDeclinedResources by 1.
+     * This counter is intended to be included in the post-game information as an indication of how 'selfless'
+     * the player was over the course of the game.
+     */
+    public void incrementCountOfTimesPlayerDeclinedResources() {
+    	CountOfTimesPlayerDeclinedResources++;
+    }
+    
+    /**
      * Updates the current resources to reflect the change
      *
      * @param resources - the amount to add/subtract from the current resources
@@ -544,4 +576,18 @@ public class Player {
         System.out.printf("%15s %6s\n", Game.RESOURCE_NAME, resourceBalance);
         System.out.printf("%15s %6s\n\n", "ACTION POINTS", actionPoints);
     }
+
+	/**
+	 * @return the countOfTimesPlayerDeclinedResources
+	 */
+	public int getCountOfTimesPlayerDeclinedResources() {
+		return CountOfTimesPlayerDeclinedResources;
+	}
+
+	/**
+	 * @param countOfTimesPlayerDeclinedResources the countOfTimesPlayerDeclinedResources to set
+	 */
+	public void setCountOfTimesPlayerDeclinedResources(int countOfTimesPlayerDeclinedResources) {
+		CountOfTimesPlayerDeclinedResources = countOfTimesPlayerDeclinedResources;
+	}
 }
