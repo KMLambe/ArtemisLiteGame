@@ -428,6 +428,11 @@ public class Component extends Square {
 	 */
 	public void setComponentOwner(Player componentOwner) {
 		this.componentOwner = componentOwner;
+		
+		if (componentSystem.checkSystemIsOwnedByOnePlayer()) {
+			
+		}
+		
 	}
 
 	/**

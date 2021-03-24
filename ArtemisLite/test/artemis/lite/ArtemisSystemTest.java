@@ -9,6 +9,13 @@ class ArtemisSystemTest {
 
 	// test board
 	Board board1;
+	
+	// test players
+	Player player1, player2;
+	
+	// variables for player
+	String validPlayerName1, validPlayerName2;
+	int validResourceBalance1,validResourceBalance2, validCurrentBoardPosition1,validCurrentBoardPosition2;
 
 	// variables for test systems, squares and components
 	String validSystemName1, validSystemName2, validSystemName3, validSystemName4;
@@ -81,8 +88,18 @@ class ArtemisSystemTest {
 		testComponent2 = (Component) board1.getSquares()[2];
 		testComponent3 = (Component) board1.getSquares()[3];
 
+		validPlayerName1 = "validPlayerName1";
+		validResourceBalance1 = 1000;
+		validCurrentBoardPosition1 = 1;
+		
+		validPlayerName2 = "validPlayerName2";
+		validResourceBalance2 = 2000;
+		validCurrentBoardPosition2 = 2;
 		
 		testSystem1 = system1;
+		
+		player1 = new Player(validPlayerName1, validResourceBalance1, validCurrentBoardPosition1);
+		player2 = new Player(validPlayerName2, validResourceBalance2, validCurrentBoardPosition2);
 		
 	}
 
@@ -122,6 +139,44 @@ class ArtemisSystemTest {
 		// all components in system have been set to fully developed - true expected
 		assertTrue(testSystem1.checkFullyDeveloped());
 
+	}
+	
+	@Test
+	void testCheckSystemIsOwnedByOnePlayer() {
+		
+		// set player1 to own all components in system
+		testComponent1.setComponentOwner(player1);
+		testComponent2.setComponentOwner(player1);
+		testComponent3.setComponentOwner(player1);
+		
+		/*
+		 * Included for visualisation purposes
+		 *  
+		for (Component component : testSystem1.getComponentsInSystem()) {
+		System.out.println(component.getSquareName() + " - " + component.getComponentOwner());
+		}
+		*/
+		
+		// expect true
+		boolean actualValue = testSystem1.checkSystemIsOwnedByOnePlayer();
+		assertTrue(actualValue);
+		
+		// set player2 as owner of one of the components
+		testComponent2.setComponentOwner(player2);
+		
+		// now expect false
+		actualValue = testSystem1.checkSystemIsOwnedByOnePlayer();
+		
+		assertFalse(actualValue);
+		
+		/*
+		 * Included for visualisation purposes
+		 *  
+		for (Component component : testSystem1.getComponentsInSystem()) {
+		System.out.println(component.getSquareName() + " - " + component.getComponentOwner());
+		}
+		*/
+		
 	}
 
 	@Test

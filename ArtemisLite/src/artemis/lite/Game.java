@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * Creates and manages the ArtemisLite game.
  *
- * @author Peter McMahon, Gavin Taylor, John Young 40030361
+ * @author Peter McMahon, Gavin Taylor, John Young 40030361, Kieran Lambe 40040696
  */
 public class Game {
 
