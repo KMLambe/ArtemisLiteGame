@@ -38,6 +38,7 @@ public class Component extends Square {
 	private Player componentOwner;
 	private ArtemisSystem componentSystem;
 	private Map<Integer, DevelopmentStage> developmentStageNamesMap;
+
 	private int totalResourcesDevotedToComponent;
 
 	/**
@@ -170,14 +171,17 @@ public class Component extends Square {
 	}
 
 	/**
-	 * Asks component owners if they wish to receive resources when another player lands on a component they own.
-	 * The component owner may decide to accept or decline their right to receive a fee
-	 * and their response is returned as either true or false
-	 * @param currentPlayer - the current player who has landed on an owned component
-	 * @param scanner - allows the component owner to register their response
+	 * Asks component owners if they wish to receive resources when another player
+	 * lands on a component they own. The component owner may decide to accept or
+	 * decline their right to receive a fee and their response is returned as either
+	 * true or false
+	 * 
+	 * @param currentPlayer - the current player who has landed on an owned
+	 *                      component
+	 * @param scanner       - allows the component owner to register their response
 	 * @return
 	 */
-	public boolean checkOwnerWantsResources(Player currentPlayer, Scanner scanner) {
+	public void checkOwnerWantsResources(Player currentPlayer, Scanner scanner) {
 
 		String ownerResponse;
 		boolean decision = false;
@@ -216,7 +220,8 @@ public class Component extends Square {
 
 		// scanner.close();
 
-		return decision;
+		// call chargePlayerForLanding method
+		chargePlayerForLanding(currentPlayer, decision);
 	}
 
 	/**
@@ -224,7 +229,9 @@ public class Component extends Square {
 	 * component
 	 *
 	 * @param currentPlayer - the current player
-	 * @param ownerResponse - the component owner's decision as to whether they wish to receive resources or not. This is the result of the checkOwnerWantsResources() method.
+	 * @param ownerResponse - the component owner's decision as to whether they wish
+	 *                      to receive resources or not. This is the result of the
+	 *                      checkOwnerWantsResources() method.
 	 */
 	public void chargePlayerForLanding(Player currentPlayer, boolean ownerResponse) {
 
@@ -242,24 +249,33 @@ public class Component extends Square {
 	}
 
 	/**
-	 * Increases the cost to purchase a component by the amount passed as a parameter argument
-	 * @param amountToIncreaseCostToPurchase - the amount by which the cost to purchase will be increased
+	 * Increases the cost to purchase a component by the amount passed as a
+	 * parameter argument
+	 * 
+	 * @param amountToIncreaseCostToPurchase - the amount by which the cost to
+	 *                                       purchase will be increased
 	 */
 	public void increaseCostToPurchase(int amountToIncreaseCostToPurchase) {
 		componentCost += amountToIncreaseCostToPurchase;
 	}
 
 	/**
-	 * Increases the landing fee of a component by the amount passed as a parameter argument
-	 * @param amountToIncreaseCostForLanding - the amount by which the cost to purchase will be increased
+	 * Increases the landing fee of a component by the amount passed as a parameter
+	 * argument
+	 * 
+	 * @param amountToIncreaseCostForLanding - the amount by which the cost to
+	 *                                       purchase will be increased
 	 */
 	public void increaseCostOfLanding(int amountToIncreaseCostForLanding) {
 		costForLanding += amountToIncreaseCostForLanding;
 	}
 
 	/**
-	 * Increases the cost to develop a component by the amount passed as a parameter argument
-	 * @param costToDevelop - the amount by which the cost to develop will be increased
+	 * Increases the cost to develop a component by the amount passed as a parameter
+	 * argument
+	 * 
+	 * @param costToDevelop - the amount by which the cost to develop will be
+	 *                      increased
 	 */
 	public void increaseCostToDevelop(int amountToIncreaseCostToDevelop) {
 		costToDevelop += amountToIncreaseCostToDevelop;
@@ -274,7 +290,8 @@ public class Component extends Square {
 
 	/**
 	 * Sets the component's cost to develop to {@value #MAXIMUM_COST_TO_DEVELOP}
-	 * This is intended as a protection when a component has already reached the maximum development stage.
+	 * This is intended as a protection when a component has already reached the
+	 * maximum development stage.
 	 */
 	public void setCostToDevelopToMaximum() {
 		costToDevelop = MAXIMUM_COST_TO_DEVELOP;
@@ -296,8 +313,11 @@ public class Component extends Square {
 	}
 
 	/**
-	 * Updates the total resources devoted to a component by the value passed as a parameter argument.
-	 * totalResourcesDevotedToComponent is intended to be a counter of all resources expended (including purchases, trades and developments) spent on this component throughout the game.
+	 * Updates the total resources devoted to a component by the value passed as a
+	 * parameter argument. totalResourcesDevotedToComponent is intended to be a
+	 * counter of all resources expended (including purchases, trades and
+	 * developments) spent on this component throughout the game.
+	 * 
 	 * @param numberOfResources - the value by which the total will be updated.
 	 */
 	public void updateTotalResourcesDevotedToComponent(int numberOfResources) {
@@ -305,12 +325,29 @@ public class Component extends Square {
 	}
 
 	/**
-	 * Displays to screen the total resources devoted to this component across the current game's lifetime.
-	 * Intended as a support method for post-game epilogue.
+	 * Displays to screen the total resources devoted to this component across the
+	 * current game's lifetime. Intended as a support method for post-game epilogue.
 	 */
 	public void displayTotalResourcesDevotedToComponent() {
 		System.out.println("A total of " + totalResourcesDevotedToComponent + Game.RESOURCE_NAME
 				+ " have been devoted to the completion of " + this.getSquareName());
+	}
+
+	/**
+	 * Checks if a component meets the criteria to permit development i.e. 1) it is
+	 * owned by a player 2) its owner also owns the system in which the component is
+	 * located, and 3) the development stage is above or equal to
+	 * {@value #MINIMUM_DEVELOPMENT_LEVEL} and less than
+	 * {@value #MAXIMUM_DEVELOPMENT_LEVEL}
+	 * @return - this method returns true if the component can be developed, false
+	 *         if otherwise.
+	 */
+	public boolean checkComponentCanBeDeveloped() {
+		 return (componentOwner != null && componentOwner.equals(componentSystem.getSystemOwner())
+			&& developmentStage >= MINIMUM_DEVELOPMENT_LEVEL && developmentStage < MAXIMUM_DEVELOPMENT_LEVEL);
+		
+		//return (componentOwner != null && componentOwner.getOwnedSystems().contains(componentSystem)
+			//	&& developmentStage >= MINIMUM_DEVELOPMENT_LEVEL && developmentStage < MAXIMUM_DEVELOPMENT_LEVEL);
 	}
 
 	/**
@@ -446,5 +483,13 @@ public class Component extends Square {
 
 		System.out.println("Component System:    \t" + componentSystem.getSystemName());
 	}
+	
+	/**
+	 * @return the developmentStageNamesMap
+	 */
+	public Map<Integer, DevelopmentStage> getDevelopmentStageNamesMap() {
+		return developmentStageNamesMap;
+	}
+
 
 }

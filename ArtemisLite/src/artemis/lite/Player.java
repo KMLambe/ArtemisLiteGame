@@ -2,7 +2,9 @@ package artemis.lite;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -96,6 +98,26 @@ public class Player {
 
         // can only be removed if it does not already exist
         ownedComponents.remove(component);
+    }
+    
+    /**
+     * This method determines which of the player's owned components can be developed and adds them to a HashMap.
+     * @return - the method returns a HashMap of the owned components that can be developed.
+     */
+    public Map<Integer,Component> getOwnedComponentsThatCanBeDeveloped() {
+    	
+    	Map<Integer,Component> componentsThatCanBeDeveloped = new HashMap<Integer,Component>();
+    	
+    	int menuNumber = 1;
+    	
+    	for (Component component : ownedComponents) {
+    		if (component.checkComponentCanBeDeveloped()) {
+    			componentsThatCanBeDeveloped.put(menuNumber++, component);
+    		}
+    	}
+    	
+    	return componentsThatCanBeDeveloped;
+    	
     }
 
     // TODO - additional validation

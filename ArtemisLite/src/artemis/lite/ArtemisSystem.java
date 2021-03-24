@@ -103,6 +103,23 @@ public class ArtemisSystem {
     }
     
     /**
+     * TEST TEST TEST
+     * @return
+     */
+    public boolean checkSystemIsOwned() {
+    	
+    	int counter = 0;
+    	
+    	for (Component component : componentsInSystem) {
+    		if (component.isOwned()) {
+    			counter++;
+    		}
+    	}
+    	
+    	return counter == componentsInSystem.size();
+    }
+    
+    /**
      * Method to print out the owner of the system for win game
      */
     public void displaySystemOwnerForEndGame() {

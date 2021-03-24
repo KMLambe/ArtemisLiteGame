@@ -41,6 +41,9 @@ class ComponentTest {
 	
 	// test system
 	ArtemisSystem testSystem1;
+	
+	// test development stage values
+	int developmentStageValidLower, developmentStageValidMid, developmentStageValidUpper, developmentStageInvalidLower, developmentStageInvalidUpper;
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -127,6 +130,12 @@ class ComponentTest {
 		
 		testSystem1 = system1;
 		system1.setSystemOwner(player1);
+		
+		// set development stage values
+		developmentStageValidLower = 0;
+		developmentStageValidUpper = 4;
+		developmentStageInvalidLower = -1;
+		developmentStageInvalidUpper = 5;
 		
 	}
 
@@ -356,6 +365,9 @@ class ComponentTest {
 		
 	}
 
+	/*
+	 * COMMENTED OUT - changed checkOwnerWantsResources to call chargePlayerForLanding. This test is now out of date.
+	 * 
 	@Test
 	void testCheckOwnerWantsResourcesAffirmative() {
 
@@ -369,7 +381,10 @@ class ComponentTest {
 		assertEquals(expectedOwnerResponse, actualOwnerResponse);
 
 	}
+	*/
 	
+	/*
+	 *  COMMENTED OUT - changed checkOwnerWantsResources to call chargePlayerForLanding. This test is now out of date.
 	@Test
 	void testCheckOwnerWantsResourcesNegative() {
 
@@ -390,7 +405,7 @@ class ComponentTest {
 		assertEquals(expectedResult, actualResult);
 
 	}
-
+*/
 	@Test
 	void testChargePlayerForLandingAffirmativeTransferResources() {
 		
@@ -448,6 +463,58 @@ class ComponentTest {
 		
 		// run the check
 		assertFalse(testComponent.checkFullyDeveloped());
+	}
+	
+	@Test
+	void testCheckComponentCanBeDevelopedValid() {
+
+		// component is within development range and its owner also owns the system. Expect method to return true
+		assertTrue(testComponent.checkComponentCanBeDeveloped());
+		
+	}
+	
+	@Test
+	void testCheckComponentCanBeDevelopedInvalidComponentOwnerDoesNotOwnSystem() {
+
+		// reset system ownership for testing purposes
+		testSystem1.setSystemOwner(null);
+		
+		// component is within development however its owner does not own the system. Expect method to return false
+		assertFalse(testComponent.checkComponentCanBeDeveloped());
+		
+	}
+	
+	@Test
+	void testCheckComponentCanBeDevelopedInvalidComponentOwnerIsNull() {
+
+		// set component owner to null for testing purposes
+		testComponent.setComponentOwner(null);
+		
+		// Expect method to return false as component owner is null
+		assertFalse(testComponent.checkComponentCanBeDeveloped());
+		
+	}
+	
+	@Test
+	void testCheckComponentCanBeDevelopedInvalidOutsideDevelopmentRangeLower() {
+
+		// set component owner to invalid development stage for testing purposes
+		testComponent.setDevelopmentStage(developmentStageInvalidLower);
+		
+		// Expect method to return false as component owner is null
+		assertFalse(testComponent.checkComponentCanBeDeveloped());
+		
+	}
+	
+	@Test
+	void testCheckComponentCanBeDevelopedInvalidOutsideDevelopmentRangeUpper() {
+
+		// set component owner to invalid development stage for testing purposes
+		testComponent.setDevelopmentStage(developmentStageInvalidUpper);
+		
+		// Expect method to return false as component owner is null
+		assertFalse(testComponent.checkComponentCanBeDeveloped());
+		
 	}
 
 	@Test
