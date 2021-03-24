@@ -434,4 +434,17 @@ class PlayerTest {
 		assertTrue(map.containsValue(c3));
 
 	}
+	
+	@Test
+	void testIncrementCountOfTimesPlayerDeclinedResources() {
+    
+		// set initial test count
+		p1.setCountOfTimesPlayerDeclinedResources(4);
+		
+		// increment the value
+		p1.incrementCountOfTimesPlayerDeclinedResources();
+		
+		// check that the value is as expected
+		assertEquals(5, p1.getCountOfTimesPlayerDeclinedResources());
+    }
 }

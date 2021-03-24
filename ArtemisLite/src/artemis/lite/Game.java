@@ -5,7 +5,8 @@ import java.util.*;
 /**
  * Creates and manages the ArtemisLite game.
  *
- * @author Peter McMahon, Gavin Taylor, John Young 40030361, Kieran Lambe 40040696
+ * @author Peter McMahon, Gavin Taylor, John Young 40030361, Kieran Lambe
+ *         40040696
  */
 public class Game {
 
@@ -88,18 +89,16 @@ public class Game {
 	public static void gameLoop(Scanner scanner) {
 		// set currentplayer to the first player in the arraylist
 		Player currentPlayer = players.get(0);
-		
+
 		// AD HOC TEST DATA USED TO TEST DEVELOP COMPONENTS MENU - KL
 		// TODO - remove
 		/*
-		currentPlayer.setActionPoints(5);
-		currentPlayer.setResourceBalance(1000);
-		currentPlayer.purchaseComponent(board.getSquares()[1]);
-		currentPlayer.purchaseComponent(board.getSquares()[2]);
-		currentPlayer.purchaseComponent(board.getSquares()[3]);
-		*/
-		//board.getSystems()[0].setSystemOwner(currentPlayer);
-		
+		 * currentPlayer.setActionPoints(5); currentPlayer.setResourceBalance(1000);
+		 * currentPlayer.purchaseComponent(board.getSquares()[1]);
+		 * currentPlayer.purchaseComponent(board.getSquares()[2]);
+		 * currentPlayer.purchaseComponent(board.getSquares()[3]);
+		 */
+		// board.getSystems()[0].setSystemOwner(currentPlayer);
 
 		while (currentPlayer.getActionPoints() > 0 && !endGame) {
 			int rollDice = rollDice();
@@ -633,7 +632,6 @@ public class Game {
 
 		System.out.println();
 
-		
 		if (components.size() == 0) {
 			announce("You do not own any Artemis Systems containing components available for development");
 			return;
@@ -644,14 +642,15 @@ public class Game {
 
 		for (Map.Entry<Integer, Component> componentEntry : components.entrySet()) {
 			component = componentEntry.getValue();
-			System.out.printf("%-5s %-40s %-30s %-20s %-30s %-25s\n", componentEntry.getKey(), component, component.getComponentSystem().getSystemName(),
-					component.getComponentOwner(), component.getDevelopmentStage() + " - " +
-					component.getDevelopmentStageNamesMap().get(component.getDevelopmentStage()),
+			System.out.printf("%-5s %-40s %-30s %-20s %-30s %-25s\n", componentEntry.getKey(), component,
+					component.getComponentSystem().getSystemName(), component.getComponentOwner(),
+					component.getDevelopmentStage() + " - "
+							+ component.getDevelopmentStageNamesMap().get(component.getDevelopmentStage()),
 					component.getCostToDevelop());
 		}
-		
+
 		System.out.println();
-		
+
 	}
 
 	/**
@@ -665,10 +664,10 @@ public class Game {
 	public static void displayDevelopComponentMenu(Player player, Scanner scanner) {
 
 		Map<Integer, Component> componentsAvailable = player.getOwnedComponentsThatCanBeDeveloped();
-		
+
 		// display components
 		displayComponentsPlayerCanDevelop(componentsAvailable);
-		
+
 		// if no components are available then return to menu
 		if (componentsAvailable.size() == 0) {
 			return;
@@ -742,6 +741,7 @@ public class Game {
 	 * @param players
 	 */
 	public static void winGame(ArrayList<Player> players) {
+
 		// As soon as development is complete, announce the path ahead:
 		// this will be like a summary of future events at the end of a movie(an
 		// epilogue).
@@ -781,8 +781,114 @@ public class Game {
 		// all costs
 		// the shuttle successfully launched thanks to the work of getPlayer name and
 		// their experts
-		// Who choose to not get resources from other players most
 
+		// KL COMPLETED (PENDING PLAYTESTING): WHO DECLINED RESOURCES ON THE MOST
+		// OCCASIONS
+		// i.e. who put the needs of the project above their own
+
+		// get the sorted list
+		List<Player> listOfPlayersSortedByTimesDeclinedResources = sortPlayersByCounterOfTimesDeclinedResources(
+				players);
+		// display the sorted list
+		displayTimesDeclinedResourcesStats(listOfPlayersSortedByTimesDeclinedResources);
+
+	}
+
+	/**
+	 * This post-game method sorts the final list of players according to how many
+	 * times they declined resources from other players during the course of the
+	 * game. It uses the CompareByCounterOfTimesPlayerDeclinedResources comparator
+	 * to perform the sort and returns a sorted ArrayList of Player objects.
+	 * 
+	 * @param playerList - the list of players at the end of the game
+	 * @return sortedList - the sorted list of players, ranked from most times
+	 *         declined resources to least times
+	 */
+	public static List<Player> sortPlayersByCounterOfTimesDeclinedResources(List<Player> playerList) {
+
+		List<Player> sortedList = playerList;
+
+		if (playerList == null) {
+			throw new NullPointerException("Error: Player list cannot be null");
+		}
+
+		// perform the sort
+		if (playerList.size() <= MAXIMUM_PLAYERS && playerList.size() >= MINIMUM_PLAYERS) {
+			CompareByCounterOfTimesPlayerDeclinedResources compareByNumberOfTimesDeclinedResources = new CompareByCounterOfTimesPlayerDeclinedResources();
+			Collections.sort(playerList, compareByNumberOfTimesDeclinedResources);
+		} else {
+			System.out.println("Error: The player list must be between " + MINIMUM_PLAYERS + " and " + MAXIMUM_PLAYERS
+					+ " (inclusive)");
+		}
+
+		return sortedList;
+
+	}
+
+	/**
+	 * This post-game method displays to screen all player names alongside a count
+	 * of how many times they declined resources over the course of the game.
+	 * 
+	 * TODO - make more flexible by taking comparator as parameter argument etc. Could be used to display other endgame stats.
+	 * 
+	 * @param playerList
+	 */
+	public static void displayTimesDeclinedResourcesStats(List<Player> playerList) {
+
+		// column headers
+		System.out.printf("%-20s %-10s\n", "PLAYER", "NUMBER OF TIMES DECLINED RESOURCES");
+
+		// print stats to screen
+		for (Player player : playerList) {
+			System.out.printf("%-20s %-10s\n", player.getPlayerName(), player.getCountOfTimesPlayerDeclinedResources());
+		}
+
+		// display player(s) who declined most often
+		String nameOfPlayersWithMostDeclines = null;
+		String messageText, additionalText;
+		int mostTimesDeclinedNumber,numberOfPlayersWithHighestNumberOfDeclines, playersAddedToText;
+		CompareByCounterOfTimesPlayerDeclinedResources declineResourcesComparator = new CompareByCounterOfTimesPlayerDeclinedResources();
+		
+		mostTimesDeclinedNumber = Collections.min(playerList,
+				 declineResourcesComparator).getCountOfTimesPlayerDeclinedResources();
+		
+		if (mostTimesDeclinedNumber > 0) {
+			numberOfPlayersWithHighestNumberOfDeclines = 0;
+			
+			for (Player player : playerList) {
+				if (player.getCountOfTimesPlayerDeclinedResources() == mostTimesDeclinedNumber) {
+					numberOfPlayersWithHighestNumberOfDeclines++;
+				}
+			}
+			
+			playersAddedToText = 0;
+
+			for (int loop = 0; loop < playerList.size(); loop++) {
+				Player player = playerList.get(loop);
+				if (player.getCountOfTimesPlayerDeclinedResources() == mostTimesDeclinedNumber
+						&& nameOfPlayersWithMostDeclines == null) {
+					nameOfPlayersWithMostDeclines = player.getPlayerName();
+					playersAddedToText++;
+				} else if (player.getCountOfTimesPlayerDeclinedResources() == mostTimesDeclinedNumber
+						&& nameOfPlayersWithMostDeclines.length() > 0 && playersAddedToText == numberOfPlayersWithHighestNumberOfDeclines -1) {
+					additionalText = " and " + player.getPlayerName();
+					nameOfPlayersWithMostDeclines += additionalText;
+					playersAddedToText++;
+				} else if (player.getCountOfTimesPlayerDeclinedResources() == mostTimesDeclinedNumber) {
+					additionalText = ", " + player.getPlayerName();
+					nameOfPlayersWithMostDeclines += additionalText;
+					playersAddedToText++;
+				}
+			}
+			
+			messageText = nameOfPlayersWithMostDeclines + " declined " + RESOURCE_NAME + " on the most occasions.";
+			
+			System.out.println("\n"+messageText);
+		} else {
+			System.out.println("At no point in the game did a player refuse to accept resources");
+		}
+		
+		
 	}
 
 	public static void endGame() {

@@ -9,10 +9,11 @@ import java.util.*;
 
 class GameTest {
 
-	// test player
-	Player player1;
-	String validPlayerName1;
-	int validResourceBalance1, validCurrentBoardPosition1;
+	// test players
+	Player player1,player2,player3,player4;
+	String validPlayerName1,validPlayerName2,validPlayerName3,validPlayerName4;
+	int validResourceBalance1, validCurrentBoardPosition1,validCurrentBoardPosition2,validCurrentBoardPosition3,validCurrentBoardPosition4;
+	int validCounterOfTimesPlayerDeclinedResources1,validCounterOfTimesPlayerDeclinedResources2,validCounterOfTimesPlayerDeclinedResources3,validCounterOfTimesPlayerDeclinedResources4;
 
 	// test board
 	Board board1;
@@ -66,6 +67,13 @@ class GameTest {
 		validResourceBalance1 = 100;
 		validCurrentBoardPosition1 = 1;
 
+		validPlayerName2 = "validPlayerName2";
+		validCurrentBoardPosition2 = 2;
+		validPlayerName3 = "validPlayerName3";
+		validCurrentBoardPosition2 = 3;
+		validPlayerName4 = "validPlayerName4";
+		validCurrentBoardPosition2 = 4;
+		
 		// create test systems
 		ArtemisSystem system1 = board1.createSystem(validSystemName1);
 		ArtemisSystem system2 = board1.createSystem(validSystemName2);
@@ -97,8 +105,17 @@ class GameTest {
 		validDiceRollLower = 2;
 		validDiceRollMid = 8;
 		validDiceRollUpper = 12;
+		
+		// declined resources counters
+		validCounterOfTimesPlayerDeclinedResources1 = 1;
+		validCounterOfTimesPlayerDeclinedResources2 = 2;
+		validCounterOfTimesPlayerDeclinedResources3 = 3;
+		validCounterOfTimesPlayerDeclinedResources4 = 4;
 
 		player1 = new Player(validPlayerName1, validResourceBalance1, validCurrentBoardPosition1);
+		player2 = new Player(validPlayerName2, validResourceBalance1, validCurrentBoardPosition2);
+		player3 = new Player(validPlayerName3, validResourceBalance1, validCurrentBoardPosition3);
+		player4 = new Player(validPlayerName4, validResourceBalance1, validCurrentBoardPosition4);
 
 		testComponent1 = (Component) board1.getSquares()[1];
 		testComponent2 = (Component) board1.getSquares()[2];
@@ -543,6 +560,54 @@ class GameTest {
 		}
 
 
+	}
+	
+	@Test
+	void testSortPlayersByCounterOfTimesDeclinedResourcesValid() {
+		
+		// update values of players' counters
+		player1.setCountOfTimesPlayerDeclinedResources(validCounterOfTimesPlayerDeclinedResources4); // most times declined resources
+		player2.setCountOfTimesPlayerDeclinedResources(validCounterOfTimesPlayerDeclinedResources2);
+		player3.setCountOfTimesPlayerDeclinedResources(validCounterOfTimesPlayerDeclinedResources3);
+		player4.setCountOfTimesPlayerDeclinedResources(validCounterOfTimesPlayerDeclinedResources1); // least times declined resources
+		
+		// group players in list for testing purposes
+		ArrayList<Player> playerList = new ArrayList<Player>();
+		playerList.add(player1);
+		playerList.add(player2);
+		playerList.add(player3);
+		playerList.add(player4);
+		
+		// perform the sort
+		List<Player> sortedList = Game.sortPlayersByCounterOfTimesDeclinedResources(playerList);
+		
+		// check that array list contains expected number of objects
+		assertEquals(4, sortedList.size());
+		
+		// check that the order is as expected
+		assertEquals(player1,sortedList.get(0));
+		assertEquals(player3,sortedList.get(1));
+		assertEquals(player2,sortedList.get(2));
+		assertEquals(player4,sortedList.get(3));
+		
+		// checking display method
+		Game.displayTimesDeclinedResourcesStats(sortedList);
+	}
+	
+	@Test
+	void testSortPlayersByCounterOfTimesDeclinedResourcesInvalidNullList() {
+		
+		// create null list
+		ArrayList<Player> emptyPlayerList = null;
+		
+		// perform the sort - expected exception
+		Exception exception = assertThrows(NullPointerException.class, ()->{
+		Game.sortPlayersByCounterOfTimesDeclinedResources(emptyPlayerList);
+		});
+		
+		// check that message is as expected
+		assertTrue(exception.getMessage().contains("cannot be null"));
+		
 	}
 
 }

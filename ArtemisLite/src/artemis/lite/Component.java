@@ -213,6 +213,8 @@ public class Component extends Square {
 			} else if (ownerResponse.equalsIgnoreCase("Yes")) {
 				decision = true;
 			} else {
+				// owner has declined resources, update counter
+				componentOwner.incrementCountOfTimesPlayerDeclinedResources();
 				decision = false;
 			}
 

@@ -20,6 +20,7 @@ public class Player {
     private int actionPoints = Game.DEFAULT_ACTION_POINTS;
     private List<Component> ownedComponents = new ArrayList<>();
     private List<ArtemisSystem> ownedSystems = new ArrayList<>();
+    private int CountOfTimesPlayerDeclinedResources;
 
 
     /**
@@ -422,6 +423,15 @@ public class Player {
     }
 
     /**
+     * This method increments the variable countOfTimesPlayerDeclinedResources by 1.
+     * This counter is intended to be included in the post-game information as an indication of how 'selfless'
+     * the player was over the course of the game.
+     */
+    public void incrementCountOfTimesPlayerDeclinedResources() {
+    	CountOfTimesPlayerDeclinedResources++;
+    }
+    
+    /**
      * Updates the current resources to reflect the change
      *
      * @param resources - the amount to add/subtract from the current resources
@@ -566,4 +576,18 @@ public class Player {
         System.out.printf("%15s %6s\n", Game.RESOURCE_NAME, resourceBalance);
         System.out.printf("%15s %6s\n\n", "ACTION POINTS", actionPoints);
     }
+
+	/**
+	 * @return the countOfTimesPlayerDeclinedResources
+	 */
+	public int getCountOfTimesPlayerDeclinedResources() {
+		return CountOfTimesPlayerDeclinedResources;
+	}
+
+	/**
+	 * @param countOfTimesPlayerDeclinedResources the countOfTimesPlayerDeclinedResources to set
+	 */
+	public void setCountOfTimesPlayerDeclinedResources(int countOfTimesPlayerDeclinedResources) {
+		CountOfTimesPlayerDeclinedResources = countOfTimesPlayerDeclinedResources;
+	}
 }
