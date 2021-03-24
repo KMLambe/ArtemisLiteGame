@@ -99,6 +99,7 @@ public class Game {
 		 * currentPlayer.purchaseComponent(board.getSquares()[1]);
 		 * currentPlayer.purchaseComponent(board.getSquares()[2]);
 		 * currentPlayer.purchaseComponent(board.getSquares()[3]);
+		 * players.get(1).purchaseComponent(board.getSquares()[3]);
 		 */
 		// board.getSystems()[0].setSystemOwner(currentPlayer);
 
@@ -453,15 +454,8 @@ public class Game {
 		// loop when conditions are met
 		int playerChoice;
 
-		String[] menuOptions = { 
-				"...MENU...",
-				"1. Develop Component",
-                "2. Trade components",
-                "3. Display board status",
-                "4. Display my components",
-                "5. End turn",
-                "6. Leave game",
-				"Selection..." };
+		String[] menuOptions = { "...MENU...", "1. Develop Component", "2. Trade components", "3. Display board status",
+				"4. Display my components", "5. End turn", "6. Leave game", "Selection..." };
 
 		while (currentPlayer.getActionPoints() > 0 && !endGame) {
 			currentPlayer.displayTurnStats();
@@ -505,44 +499,45 @@ public class Game {
 			}
 		}
 	}
-	
+
 	/**
-     * Displays components the player can trade for, captures their input and initiates the trade sequence.
-     *
-     * @param currentPlayer the player object of the current player
-     * @param scanner       a scanner object
-     */
-    private static void subMenuTrade(Player currentPlayer, Scanner scanner) {
-        announce("you can trade for the following components...\n", currentPlayer);
+	 * Displays components the player can trade for, captures their input and
+	 * initiates the trade sequence.
+	 *
+	 * @param currentPlayer the player object of the current player
+	 * @param scanner       a scanner object
+	 */
+	private static void subMenuTrade(Player currentPlayer, Scanner scanner) {
+		announce("you can trade for the following components...\n", currentPlayer);
 
-        Map<Integer, Component> componentsForTrading = getComponentsForTrading(currentPlayer, board);
+		Map<Integer, Component> componentsForTrading = getComponentsForTrading(currentPlayer, board);
 
-        displayComponentsForTrading(componentsForTrading);
+		displayComponentsForTrading(componentsForTrading);
 
-        String userInput;
-        boolean validInput;
+		String userInput;
+		boolean validInput;
 
-        do {
-            announce("input the REF of the component you wish to trade for", currentPlayer);
-            userInput = scanner.next();
+		do {
+			announce("input the REF of the component you wish to trade for", currentPlayer);
+			userInput = scanner.next();
 
-            try {
-                validInput = componentsForTrading.containsKey(Integer.parseInt(userInput));
-            } catch (NumberFormatException numberFormatException) {
-                validInput = false;
-            }
+			try {
+				validInput = componentsForTrading.containsKey(Integer.parseInt(userInput));
+			} catch (NumberFormatException numberFormatException) {
+				validInput = false;
+			}
 
-            if (!validInput) {
-                System.out.println("Invalid input");
-            }
+			if (!validInput) {
+				System.out.println("Invalid input");
+			}
 
-        } while (!validInput);
+		} while (!validInput);
 
-        Component selectedComponent = componentsForTrading.get(Integer.parseInt(userInput));
+		Component selectedComponent = componentsForTrading.get(Integer.parseInt(userInput));
 
-        // initiate trade with component owner
-        currentPlayer.tradeComponent(selectedComponent, scanner);
-    }
+		// initiate trade with component owner
+		currentPlayer.tradeComponent(selectedComponent, scanner);
+	}
 
 	/**
 	 * Creates an map of components which the active player can purchase. The
