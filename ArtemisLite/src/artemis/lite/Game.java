@@ -5,8 +5,10 @@ import java.util.*;
 /**
  * Creates and manages the ArtemisLite game.
  *
- * @author Peter McMahon, Gavin Taylor, John Young 40030361, Kieran Lambe
- *         40040696
+ * @author Peter McMahon
+ * @author Gavin Taylor
+ * @author John Young 40030361
+ * @author Kieran Lambe 40040696
  */
 public class Game {
 
@@ -451,8 +453,14 @@ public class Game {
 		// loop when conditions are met
 		int playerChoice;
 
-		String[] menuOptions = { "...MENU...", "1. Develop Component", "2. Develop System", "3. Trade components",
-				"4. Show all component owners", "5. Show resource balance", "6. End turn", "7. Leave game",
+		String[] menuOptions = { 
+				"...MENU...",
+				"1. Develop Component",
+                "2. Trade components",
+                "3. Display board status",
+                "4. Display my components",
+                "5. End turn",
+                "6. Leave game",
 				"Selection..." };
 
 		while (currentPlayer.getActionPoints() > 0 && !endGame) {
@@ -472,7 +480,7 @@ public class Game {
 				displayDevelopComponentMenu(currentPlayer, scanner);
 				break;
 			case 2:
-				announce("wants to develop a system they own", currentPlayer);
+				subMenuTrade(currentPlayer, scanner);
 				break;
 			case 3:
 				announce("wants to trade resources for another player's component", currentPlayer);
@@ -497,6 +505,44 @@ public class Game {
 			}
 		}
 	}
+	
+	/**
+     * Displays components the player can trade for, captures their input and initiates the trade sequence.
+     *
+     * @param currentPlayer the player object of the current player
+     * @param scanner       a scanner object
+     */
+    private static void subMenuTrade(Player currentPlayer, Scanner scanner) {
+        announce("you can trade for the following components...\n", currentPlayer);
+
+        Map<Integer, Component> componentsForTrading = getComponentsForTrading(currentPlayer, board);
+
+        displayComponentsForTrading(componentsForTrading);
+
+        String userInput;
+        boolean validInput;
+
+        do {
+            announce("input the REF of the component you wish to trade for", currentPlayer);
+            userInput = scanner.next();
+
+            try {
+                validInput = componentsForTrading.containsKey(Integer.parseInt(userInput));
+            } catch (NumberFormatException numberFormatException) {
+                validInput = false;
+            }
+
+            if (!validInput) {
+                System.out.println("Invalid input");
+            }
+
+        } while (!validInput);
+
+        Component selectedComponent = componentsForTrading.get(Integer.parseInt(userInput));
+
+        // initiate trade with component owner
+        currentPlayer.tradeComponent(selectedComponent, scanner);
+    }
 
 	/**
 	 * Creates an map of components which the active player can purchase. The
@@ -829,7 +875,8 @@ public class Game {
 	 * This post-game method displays to screen all player names alongside a count
 	 * of how many times they declined resources over the course of the game.
 	 * 
-	 * TODO - make more flexible by taking comparator as parameter argument etc. Could be used to display other endgame stats.
+	 * TODO - make more flexible by taking comparator as parameter argument etc.
+	 * Could be used to display other endgame stats.
 	 * 
 	 * @param playerList
 	 */
@@ -846,21 +893,21 @@ public class Game {
 		// display player(s) who declined most often
 		String nameOfPlayersWithMostDeclines = null;
 		String messageText, additionalText;
-		int mostTimesDeclinedNumber,numberOfPlayersWithHighestNumberOfDeclines, playersAddedToText;
+		int mostTimesDeclinedNumber, numberOfPlayersWithHighestNumberOfDeclines, playersAddedToText;
 		CompareByCounterOfTimesPlayerDeclinedResources declineResourcesComparator = new CompareByCounterOfTimesPlayerDeclinedResources();
-		
-		mostTimesDeclinedNumber = Collections.min(playerList,
-				 declineResourcesComparator).getCountOfTimesPlayerDeclinedResources();
-		
+
+		mostTimesDeclinedNumber = Collections.min(playerList, declineResourcesComparator)
+				.getCountOfTimesPlayerDeclinedResources();
+
 		if (mostTimesDeclinedNumber > 0) {
 			numberOfPlayersWithHighestNumberOfDeclines = 0;
-			
+
 			for (Player player : playerList) {
 				if (player.getCountOfTimesPlayerDeclinedResources() == mostTimesDeclinedNumber) {
 					numberOfPlayersWithHighestNumberOfDeclines++;
 				}
 			}
-			
+
 			playersAddedToText = 0;
 
 			for (int loop = 0; loop < playerList.size(); loop++) {
@@ -870,7 +917,8 @@ public class Game {
 					nameOfPlayersWithMostDeclines = player.getPlayerName();
 					playersAddedToText++;
 				} else if (player.getCountOfTimesPlayerDeclinedResources() == mostTimesDeclinedNumber
-						&& nameOfPlayersWithMostDeclines.length() > 0 && playersAddedToText == numberOfPlayersWithHighestNumberOfDeclines -1) {
+						&& nameOfPlayersWithMostDeclines.length() > 0
+						&& playersAddedToText == numberOfPlayersWithHighestNumberOfDeclines - 1) {
 					additionalText = " and " + player.getPlayerName();
 					nameOfPlayersWithMostDeclines += additionalText;
 					playersAddedToText++;
@@ -880,15 +928,14 @@ public class Game {
 					playersAddedToText++;
 				}
 			}
-			
+
 			messageText = nameOfPlayersWithMostDeclines + " declined " + RESOURCE_NAME + " on the most occasions.";
-			
-			System.out.println("\n"+messageText);
+
+			System.out.println("\n" + messageText);
 		} else {
 			System.out.println("At no point in the game did a player refuse to accept resources");
 		}
-		
-		
+
 	}
 
 	public static void endGame() {
