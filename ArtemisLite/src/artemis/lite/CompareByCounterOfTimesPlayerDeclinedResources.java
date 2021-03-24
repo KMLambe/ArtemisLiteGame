@@ -6,7 +6,8 @@ package artemis.lite;
 import java.util.Comparator;
 
 /**
- * @author kmlam
+ * This class allows Player objects to be compared according to the number of times they declined resources - high to low.
+ * @author Kieran Lambe 40040696
  *
  */
 public class CompareByCounterOfTimesPlayerDeclinedResources implements Comparator<Player> {
