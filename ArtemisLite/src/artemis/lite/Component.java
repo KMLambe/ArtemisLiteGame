@@ -239,7 +239,11 @@ public class Component extends Square {
 
 		if (ownerResponse == true) {
 			if (currentPlayer.getResourceBalance() < costForLanding) {
-				Game.endGame();
+				try {
+					Game.endGame(null, currentPlayer);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 			} else {
 				currentPlayer.transferResources(componentOwner, costForLanding);
 			}
