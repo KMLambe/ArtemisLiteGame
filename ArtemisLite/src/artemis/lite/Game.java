@@ -120,7 +120,12 @@ public class Game {
 		}
 
 		if (endGame) {
-			// TODO - add call to endGame sequence
+			try {
+				endGame(players, currentPlayer);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			System.out.println("GAME HAS ENDED");
 		}
 	}
@@ -491,8 +496,13 @@ public class Game {
 				break;
 			case 7:
 				announce("has left the game", currentPlayer);
-				System.out.println("GAME OVER");
-				endGame = true;
+				// System.out.println("GAME OVER");
+				try {
+					endGame(players, currentPlayer);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				break;
 			default:
 				announce("Invalid option inputted", currentPlayer);
@@ -933,9 +943,76 @@ public class Game {
 
 	}
 
-	public static void endGame() {
-		// needs to terminate loop of the game
-		System.out.println("The mission has failed");
+	/**
+	 * This end of game method gives the final state of play when the game has
+	 * ended. It displays to screen the final resources available to players before game ended, 
+	 * owned components and systems and player who refused to accept resources most.
+	 * 
+	 * @param players
+	 * @param currentPlayer
+	 * @throws InterruptedException
+	 */
+	public static void endGame(List<Player> players, Player currentPlayer) throws InterruptedException {
+		
+		// TODO create dialogue for game ending
+		// TODO why did game end - did player leave by choice or due to lack of resources - complete
+		// TODO Show all Components owned before end of game
+		// TODO show all systems owned before end of game
+		// TODO Final state of play - Player details and remaining experts
+		// TODO Who choose to not get resources from other players most - complete
+		
+		Thread thread = new Thread();
+		int totalNumberOfExperts = 0;
+		
+		// print generic response for mission failure and announce end of game
+		announce("Houston... we've had a problem");
+		System.out.println("MISSION ABORTED!");
+		thread.sleep(1000);
+
+		// loop through the players to find the player with no resources left and print
+		// message to screen
+		if (currentPlayer.getResourceBalance() <= 0) {
+			System.out.println("Mission has failed due to " + currentPlayer + " running out of " + RESOURCE_NAME);
+		} else {
+			System.out.println(currentPlayer.getPlayerName() + " has chosen to abort the mission");
+		}
+		thread.sleep(1000);
+	
+		// loop through players to get resources required to win game
+		for (Player player : players) {
+			totalNumberOfExperts += player.getResourceBalance();
+		}
+		System.out.println("There were " + totalNumberOfExperts + " experts needed to launch the Artemis Project.");
+		thread.sleep(1000);
+		
+		System.out.printf("\n%-20s %-10s\n", "PLAYER", "REMAINING RESOURCES");
+		System.out.println("-----------------------------------------");
+		for (Player player : players) {
+			System.out.printf("%-20s %-10s\n", player.getPlayerName(), player.getResourceBalance());
+		}
+		thread.sleep(1000);
+		
+		System.out.printf("\n%-20s %-10s\n", "PLAYER", "OWNED COMPONENTS");
+		System.out.println("-----------------------------------------");
+		for (Player player : players) {
+			System.out.printf("\n%-20s %-10s\n", player.getPlayerName(), player.getOwnedComponents());
+		}
+		thread.sleep(1000);
+		
+		System.out.printf("\n%-20s %-10s\n", "PLAYER", "OWNED SYSTEMS");
+		System.out.println("-----------------------------------------");
+		for (Player player : players) {
+			System.out.printf("\n%-20s %-10s\n", player.getPlayerName(), player.getOwnedSystems());
+		}
+		thread.sleep(1000);
+		
+		// get the sorted list
+		System.out.println();
+		List<Player> listOfPlayersSortedByTimesDeclinedResources = sortPlayersByCounterOfTimesDeclinedResources(
+				players);
+		// display the sorted list
+		displayTimesDeclinedResourcesStats(listOfPlayersSortedByTimesDeclinedResources);
+		
 	}
 
 	/**
