@@ -338,6 +338,14 @@ public class Component extends Square {
 				componentSystem.getSystemName(),
 				developmentStage + " - " + developmentStageNamesMap.get(this.developmentStage));
 	}
+	
+	/**
+	 * Outputs to screen the following information about the component: name, system and total resources devoted over the course of the game.
+	 */
+	public void displayNameSystemAndTotalResourcesDevoted() {
+		System.out.printf("%-40s %-30s %-30s\n", getSquareName(),
+				componentSystem.getSystemName(), totalResourcesDevotedToComponent);
+	}
 
 	/**
 	 * Displays to screen the total resources devoted to this component across the

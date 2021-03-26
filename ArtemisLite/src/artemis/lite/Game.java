@@ -94,13 +94,13 @@ public class Game {
 
 		// AD HOC TEST DATA USED TO TEST DEVELOP COMPONENTS MENU - KL
 		// TODO - remove
-		/*
+		
 		 currentPlayer.setActionPoints(5); currentPlayer.setResourceBalance(1000);
 		 currentPlayer.purchaseComponent(board.getSquares()[1]);
 		 currentPlayer.purchaseComponent(board.getSquares()[2]);
 		 currentPlayer.purchaseComponent(board.getSquares()[3]);
 		 // players.get(1).purchaseComponent(board.getSquares()[3]);
-		*/
+		
 		// board.getSystems()[0].setSystemOwner(currentPlayer);
 
 		while (currentPlayer.getActionPoints() > 0 && !endGame) {
@@ -704,6 +704,26 @@ public class Game {
 		System.out.println();
 
 	}
+	
+	/**
+	 * Sorts the board's components according to the number of resources devoted.
+	 */
+	public static void sortComponentsByTotalResourcesDevoted() {
+		
+		List<Component> gameComponents = new ArrayList<>();
+		
+		for (Square square : board.getSquares()) {
+			if (square instanceof Component) {
+				Component component = (Component) square;
+				gameComponents.add(component);
+			}
+		}
+		
+		Collections.sort(gameComponents,new CompareByCounterOfResourcesDevoted());
+		
+		displayAllComponentsNameSystemResourcesDevoted(gameComponents);
+		
+	}
 
 	/**
 	 * Outputs a list of components the player can develop. The user is then
@@ -827,7 +847,6 @@ public class Game {
 
 		// Summary of future events
 
-		// Adding total number of experts number of experts committed to a component
 		// Final state of play, Remaining experts
 		// (Total amount of experts taken to win the game, remaining player experts plus
 		// all costs
@@ -843,6 +862,10 @@ public class Game {
 				players);
 		// display the sorted list
 		displayTimesDeclinedResourcesStats(listOfPlayersSortedByTimesDeclinedResources);
+		
+		// KL COMPLETED (PENDING PLAYTESTING) Sort and display board components according total number of experts number of experts committed over the course of the game
+		sortComponentsByTotalResourcesDevoted();
+		
 
 	}
 
@@ -875,6 +898,15 @@ public class Game {
 
 		return sortedList;
 
+	}
+	
+	public static void displayAllComponentsNameSystemResourcesDevoted(List<Component> componentList) {
+		
+		System.out.printf("%-40s %-30s %-30s\n", "COMPONENT", "SYSTEM", "TOTAL " + Game.RESOURCE_NAME + " DEVOTED");
+		
+		for (Component component : componentList) {
+			component.displayNameSystemAndTotalResourcesDevoted();
+		}
 	}
 	
 	/**
