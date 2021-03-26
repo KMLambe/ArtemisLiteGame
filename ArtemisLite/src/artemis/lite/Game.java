@@ -190,7 +190,7 @@ public class Game {
 		while (numberOfPlayers < MINIMUM_PLAYERS || numberOfPlayers > MAXIMUM_PLAYERS) {
 			System.out.println("How many players are there?");
 			  try{
-	                return numberOfPlayers = scanner.nextInt();
+	                numberOfPlayers = scanner.nextInt();
 	          } catch (InputMismatchException e){
 	                System.out.println("Input Mismatch! Please enter Numbers");
 	                scanner.next();
