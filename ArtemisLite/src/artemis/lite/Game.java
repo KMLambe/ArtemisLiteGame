@@ -94,13 +94,13 @@ public class Game {
 
 		// AD HOC TEST DATA USED TO TEST DEVELOP COMPONENTS MENU - KL
 		// TODO - remove
-		
+		/*
 		 currentPlayer.setActionPoints(5); currentPlayer.setResourceBalance(1000);
 		 currentPlayer.purchaseComponent(board.getSquares()[1]);
 		 currentPlayer.purchaseComponent(board.getSquares()[2]);
 		 currentPlayer.purchaseComponent(board.getSquares()[3]);
 		 // players.get(1).purchaseComponent(board.getSquares()[3]);
-		
+		*/
 		// board.getSystems()[0].setSystemOwner(currentPlayer);
 
 		while (currentPlayer.getActionPoints() > 0 && !endGame) {
