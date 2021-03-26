@@ -819,7 +819,6 @@ public class Game {
 	 * @param players
 	 */
 	public static void winGame(ArrayList<Player> players) {
-
 		// As soon as development is complete, announce the path ahead:
 		// this will be like a summary of future events at the end of a movie(an
 		// epilogue).
@@ -828,6 +827,8 @@ public class Game {
 		// achieved,
 		// with congratulations all round! Also give the final state of play that made
 		// it possible.
+		try {
+		Thread thread = new Thread();
 		int totalNumberOfExperts = 0;
 		
 		System.out.print("Congratulations ");
@@ -838,15 +839,32 @@ public class Game {
 				System.out.print("and " + players.get(loop).getPlayerName() + " ");
 			}
 		}
-		System.out.print("the Artemis system has successfully launched.");
-
+		System.out.print("the Artemis system has successfully launched.\n");
+		thread.sleep(2000);
+		
 		for (ArtemisSystem system : board.getSystems()) {
              system.displaySystemOwnerForEndGame();
+             thread.sleep(2000);
 		}
 		
+		for (Square square : board.getSquares()) {
+			if (square instanceof Component) {
+				Component component = (Component) square;
+				totalNumberOfExperts+=component.getTotalExpertsDevotedToComponent();
+			}
+		}
+
+		for (Player player : players) {
+			totalNumberOfExperts += player.getResourceBalance();
+		}
+		
+		System.out.println("\n\nThere were " + totalNumberOfExperts + " experts needed to launch the Artemis Project.\n");
+		thread.sleep(2000);
 		// KL COMPLETED (PENDING PLAYTESTING) Sort and display board components according total number of experts number of experts committed over the course of the game
 				sortComponentsByTotalResourcesDevoted();
-
+				
+				System.out.println("\n");
+				thread.sleep(5000);
 		// get the sorted list
 				List<Player> listOfPlayersSortedByTimesDeclinedResources = sortPlayersByCounterOfTimesDeclinedResources(
 						players);
@@ -854,16 +872,20 @@ public class Game {
 				displayTimesDeclinedResourcesStats(listOfPlayersSortedByTimesDeclinedResources);
 
 		
-		for (Player player : players) {
-			totalNumberOfExperts += player.getResourceBalance();
-		}
-
-		System.out.println("There were " + totalNumberOfExperts + " experts needed to launch the Artemis Project.");
-	
-		System.out.println("In 2021 the crew module has successfully landed on the Moon and Orion has been sent on its journey around the Moon");
-		System.out.println("In 2022 the first test flight with crew takes off to check critical systems and then returns back to Earth.");
-        System.out.println("In 2023 science investigations and technology experiments through a variety of robotic and human activities on the surface and in orbit around the Moon begin.");
-        System.out.println("In 2024 NASA have succesfully landed the first woman on the Moon establishing a permanent human presence as part of the project.");
+				System.out.println("\n");
+				thread.sleep(2000);
+				
+		announce("In 2021");
+		System.out.println("The crew module has successfully landed on the Moon and Orion has been sent on its journey around the Moon.");
+		thread.sleep(2000);
+		announce("In 2022");
+		System.out.println("The first test flight with crew takes off to check critical systems and then returns back to Earth.");
+		thread.sleep(2000);
+		announce("In 2023");
+		System.out.println("Science investigations and technology experiments through a variety of robotic and human activities on the surface and in orbit around the Moon begin.");
+		thread.sleep(2000);
+		announce("In 2024");
+		System.out.println("NASA have succesfully landed the first woman on the Moon establishing a permanent human presence as part of the project.");
 		
 		
 		// Summary of future events
@@ -877,6 +899,13 @@ public class Game {
 		// KL COMPLETED (PENDING PLAYTESTING): WHO DECLINED RESOURCES ON THE MOST
 		// OCCASIONS
 		// i.e. who put the needs of the project above their own
+		
+		thread.interrupt();
+		} catch (InterruptedException e) {
+			System.out.println("Thread interrupted");
+		}
+	}
+
 	}
 
 	/**

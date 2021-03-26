@@ -140,7 +140,7 @@ public class ArtemisSystem {
      * Method to print out the owner of the system for win game
      */
     public void displaySystemOwnerForEndGame() {
-    	System.out.print(this.systemName + " was managed and fully develop by " + this.systemOwner +" with the help of their experts.");
+    	System.out.print("\n" + this.systemName + " was managed and fully develop by " + this.systemOwner +" with the help of their experts.");
     }
 
    /**
