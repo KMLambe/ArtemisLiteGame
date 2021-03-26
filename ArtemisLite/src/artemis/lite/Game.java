@@ -906,7 +906,7 @@ public class Game {
 		}
 	}
 
-	}
+	
 
 	/**
 	 * This post-game method sorts the final list of players according to how many
