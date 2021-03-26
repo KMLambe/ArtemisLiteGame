@@ -189,7 +189,13 @@ public class Game {
 		int numberOfPlayers = 0;
 		while (numberOfPlayers < MINIMUM_PLAYERS || numberOfPlayers > MAXIMUM_PLAYERS) {
 			System.out.println("How many players are there?");
-			numberOfPlayers = scanner.nextInt();
+			  try{
+	                return numberOfPlayers = scanner.nextInt();
+	          } catch (InputMismatchException e){
+	                System.out.println("Input Mismatch! Please enter Numbers");
+	                scanner.next();
+	                playersInTheGame(scanner);
+	          }
 
 			if (numberOfPlayers >= MINIMUM_PLAYERS && numberOfPlayers <= MAXIMUM_PLAYERS) {
 				System.out.println("There are " + numberOfPlayers + " players in the game.");
@@ -801,9 +807,8 @@ public class Game {
 		// achieved,
 		// with congratulations all round! Also give the final state of play that made
 		// it possible.
-
 		int totalNumberOfExperts = 0;
-
+		
 		System.out.print("Congratulations ");
 		for (int loop = 0; loop < players.size(); loop++) {
 			if (loop < players.size() - 1) {
@@ -815,15 +820,28 @@ public class Game {
 		System.out.print("the Artemis system has successfully launched.");
 
 		for (ArtemisSystem system : board.getSystems()) {
-//            system.displaySystemOwnerForEndGame();
+             system.displaySystemOwnerForEndGame();
 		}
 
+		// get the sorted list
+				List<Player> listOfPlayersSortedByTimesDeclinedResources = sortPlayersByCounterOfTimesDeclinedResources(
+						players);
+		// display the sorted list
+				displayTimesDeclinedResourcesStats(listOfPlayersSortedByTimesDeclinedResources);
+
+		
 		for (Player player : players) {
 			totalNumberOfExperts += player.getResourceBalance();
 		}
 
 		System.out.println("There were " + totalNumberOfExperts + " experts needed to launch the Artemis Project.");
-
+	
+		System.out.println("In 2021 the crew module has successfully landed on the Moon and Orion has been sent on its journey around the Moon");
+		System.out.println("In 2022 the first test flight with crew takes off to check critical systems and then returns back to Earth.");
+        System.out.println("In 2023 science investigations and technology experiments through a variety of robotic and human activities on the surface and in orbit around the Moon begin.");
+        System.out.println("In 2024 NASA have succesfully landed the first woman on the Moon establishing a permanent human presence as part of the project.");
+		
+		
 		// Summary of future events
 
 		// Adding total number of experts number of experts committed to a component
@@ -836,13 +854,6 @@ public class Game {
 		// KL COMPLETED (PENDING PLAYTESTING): WHO DECLINED RESOURCES ON THE MOST
 		// OCCASIONS
 		// i.e. who put the needs of the project above their own
-
-		// get the sorted list
-		List<Player> listOfPlayersSortedByTimesDeclinedResources = sortPlayersByCounterOfTimesDeclinedResources(
-				players);
-		// display the sorted list
-		displayTimesDeclinedResourcesStats(listOfPlayersSortedByTimesDeclinedResources);
-
 	}
 
 	/**
