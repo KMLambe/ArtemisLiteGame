@@ -236,23 +236,22 @@ public class Component extends Square {
 	 *                      checkOwnerWantsResources() method.
 	 */
 	public void chargePlayerForLanding(Player currentPlayer, boolean ownerResponse) {
-
-		if (ownerResponse == true) {
-			if (currentPlayer.getResourceBalance() < costForLanding) {
-				try {
-					Game.endGame(null, currentPlayer);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-			} else {
-				currentPlayer.transferResources(componentOwner, costForLanding);
-			}
-		} else {
-			String ownerDeclinesResources = (getComponentOwner().getPlayerName() + " has decided not to request "
-					+ Game.RESOURCE_NAME + ".");
-			Game.announce(ownerDeclinesResources);
-		}
-	}
+        if (ownerResponse == true) {
+            if (currentPlayer.getResourceBalance() < costForLanding) {
+                try {
+                    Game.endGame(null, currentPlayer); // KL - this leads to a null pointer exception. We'll need to think about how endgame is triggered - boolean being toggled?
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                currentPlayer.transferResources(componentOwner, costForLanding);
+            }
+        } else {
+            String ownerDeclinesResources = (getComponentOwner().getPlayerName() + " has decided not to request "
+                    + Game.RESOURCE_NAME + ".");
+            Game.announce(ownerDeclinesResources);
+        }
+    }
 
 	/**
 	 * Increases the cost to purchase a component by the amount passed as a
@@ -328,6 +327,16 @@ public class Component extends Square {
 	 */
 	public void updateTotalResourcesDevotedToComponent(int numberOfResources) {
 		this.totalResourcesDevotedToComponent += numberOfResources;
+	}
+	
+	/**
+	 * Outputs to screen the following information about the component: position,
+	 * name, system in which the component is contained, and development stage.
+	 */
+	public void displaySquarePositionNameSystemAndDevelopmentStage() {
+		System.out.printf("%-12s %-40s %-30s %-30s\n", getSquarePosition(), getSquareName(),
+				componentSystem.getSystemName(),
+				developmentStage + " - " + developmentStageNamesMap.get(this.developmentStage));
 	}
 
 	/**

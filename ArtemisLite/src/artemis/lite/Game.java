@@ -11,7 +11,7 @@ import java.util.*;
  * @author Kieran Lambe 40040696
  */
 public class Game {
-
+	
 	private final static int MINIMUM_PLAYERS = 2;
 	private final static int MAXIMUM_PLAYERS = 4;
 	private final static int STARTING_POSITION = 0;
@@ -95,12 +95,12 @@ public class Game {
 		// AD HOC TEST DATA USED TO TEST DEVELOP COMPONENTS MENU - KL
 		// TODO - remove
 		/*
-		 * currentPlayer.setActionPoints(5); currentPlayer.setResourceBalance(1000);
-		 * currentPlayer.purchaseComponent(board.getSquares()[1]);
-		 * currentPlayer.purchaseComponent(board.getSquares()[2]);
-		 * currentPlayer.purchaseComponent(board.getSquares()[3]);
-		 * players.get(1).purchaseComponent(board.getSquares()[3]);
-		 */
+		 currentPlayer.setActionPoints(5); currentPlayer.setResourceBalance(1000);
+		 currentPlayer.purchaseComponent(board.getSquares()[1]);
+		 currentPlayer.purchaseComponent(board.getSquares()[2]);
+		 currentPlayer.purchaseComponent(board.getSquares()[3]);
+		 // players.get(1).purchaseComponent(board.getSquares()[3]);
+		*/
 		// board.getSystems()[0].setSystemOwner(currentPlayer);
 
 		while (currentPlayer.getActionPoints() > 0 && !endGame) {
@@ -485,7 +485,8 @@ public class Game {
 				announce("wants to trade resources for another player's component", currentPlayer);
 				break;
 			case 4:
-				announce("wants to see all component owners", currentPlayer); // JY: not sure i understand this one
+				announce("wants to see their components", currentPlayer);
+				displayPlayerComponents(currentPlayer);
 				break;
 			case 5:
 				announce("wants to view their resource balance", currentPlayer);
@@ -874,6 +875,26 @@ public class Game {
 
 		return sortedList;
 
+	}
+	
+	/**
+	 * Displays key information about the player's owned components
+	 * 
+	 * @param player
+	 */
+	public static void displayPlayerComponents(Player player) {
+
+		if (player.getOwnedComponents().isEmpty()) {
+			Game.announce("does not own any components", player);
+		} else {
+			Game.announce("owns the following components:\n", player);
+
+			System.out.printf("%-12s %-40s %-30s %-30s\n", "POSITION", "NAME", "SYSTEM", "DEVELOPMENT STAGE");
+
+			for (Component component : player.getOwnedComponents()) {
+				component.displaySquarePositionNameSystemAndDevelopmentStage();
+			}
+		}
 	}
 
 	/**
