@@ -38,6 +38,7 @@ public class Game {
 	// board
 	private static Board board;
 	private static boolean endGame = false;
+	private static boolean game Finished = false;
 
 	/**
 	 * @param args
@@ -347,6 +348,37 @@ public class Game {
 	}
 
 	/**
+	 * Allows the position of the current player to be purchased only if the
+	 * component is an instance of a square and component is not owned by another
+	 * player
+	 *
+	 * @param currentPlayer
+	 * @param playerPosition
+	 * @param scanner
+	 */
+	public static void checkIfSquareIsPurchasable(Player currentPlayer, Scanner scanner) {
+
+		Square[] squares = board.getSquares();
+		Square playerPosition = squares[currentPlayer.getCurrentBoardPosition()];
+
+		playerPosition.displayAllDetails();
+		if (playerPosition instanceof Component) {
+			Component component = (Component) playerPosition;
+			// currentPlayer.purchaseComponent(component);
+
+			if (component.getComponentOwner() == null) {
+				displayComponentIfPurchasable(scanner, currentPlayer, playerPosition);
+			} else if (component.getComponentOwner() != null) {
+				component.checkOwnerWantsResources(currentPlayer, scanner);
+				scanner.close();
+			} else {
+				announce(currentPlayer.getPlayerName() + " has decided not to purchase " + component);
+				currentPlayer.offerComponentToOtherPlayers(component, scanner);
+			}
+		}
+	}
+
+	/**
 	 * Displays the component the current player has landed on once position is
 	 * updated. takes a user response and allows player to purchase component if
 	 * user enters yes and component is offered to other players if user enters no.
@@ -357,73 +389,29 @@ public class Game {
 	 * @param board
 	 * @param players
 	 */
-	public static void displayPurchasableComponent(Scanner scanner, Player currentPlayer, Component component,
-			Board board, ArrayList<Player> players) {
+	public static void displayComponentIfPurchasable(Scanner scanner, Player currentPlayer, Square playerPosition) {
 
 		String response = null;
-		Square[] squares = board.getSquares();
-		Square playerPosition = squares[currentPlayer.getCurrentBoardPosition()];
 
-//         purchasableComponents(currentPlayerPosition, board, currentPlayer);
-
-		component.displayAllDetails();
 		System.out.println(currentPlayer + " do you want to purchase " + playerPosition + "?");
+		System.out.println("Please enter yes or no");
+		response = scanner.next();
+
+		// TODO still a problem with this loop for an invalid input
 
 		do {
-			System.out.println("Please enter yes or no");
-			response = scanner.next();
-
+			// System.out.println("Please enter yes or no");
+			// response = scanner.next();
 			if (response.equalsIgnoreCase("Yes")) {
-//                purchaseComponentOption(currentPlayer, board, purchasableComponents, scanner, players);
+				currentPlayer.purchaseComponent(playerPosition);
 			} else if (response.equalsIgnoreCase("No")) {
 				currentPlayer.offerComponentToOtherPlayers((Component) playerPosition, scanner);
 			} else {
-				System.out.println("Invalid input");
-				System.out.println();
+				announce("INVALID INPUT");
+				displayComponentIfPurchasable(scanner, currentPlayer, playerPosition);
 			}
-		} while (!(response.equalsIgnoreCase("yes") || response.equalsIgnoreCase("no")));
+		} while (!(response.equalsIgnoreCase("yes") || !response.equalsIgnoreCase("no")));
 	}
-
-	/**
-	 * Allows the position of the current player to be purchased only if the
-	 * component is an instance of a square and component is not owned by another
-	 * player
-	 *
-	 * @param currentPlayer
-	 * @param board
-	 * @param scanner
-	 * @param players
-	 * @param component
-	 */
-	public static void purchaseComponentOption(Player currentPlayer, Board board, Scanner scanner,
-			ArrayList<Player> players, Component component) {
-
-		Square[] squares = board.getSquares();
-		Square playerPosition = squares[currentPlayer.getCurrentBoardPosition()];
-
-		playerPosition.displayAllDetails();
-
-		for (Square square : board.getSquares()) {
-			if (square instanceof Component) {
-				component = (Component) square;
-
-				currentPlayer.purchaseComponent(component);
-				/*
-				 * Note on the below - purchaseComponent already checks if the component is
-				 * owned
-				 * 
-				 * JY: not sure I understand what this method is doing - need to discuss
-				 */
-//                if (currentPlayer.checkComponentIsNotOwned(component) && purchasableComponents.contains(component)) {
-//                } else {
-//                    System.out.println("This Component is already owned by " + component.getComponentOwner());
-//                    displayMenu(currentPlayer);
-//                }
-			}
-		}
-
-	}
-
 	/**
 	 * controls the number of actions a player can take per turn. displays all the
 	 * actions applicable to the current player in a menu form. takes a user
@@ -504,12 +492,8 @@ public class Game {
 			case 7:
 				announce("has left the game", currentPlayer);
 				// System.out.println("GAME OVER");
-				try {
-					endGame(players, currentPlayer);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				leaveGameMenuOption(currentPlayer, scanner);
+				gameFinished = true;
 				break;
 			default:
 				announce("Invalid option inputted", currentPlayer);
@@ -1033,6 +1017,98 @@ public class Game {
 			System.out.println("At no point in the game did a player refuse to accept resources");
 		}
 
+	}
+	
+	/**
+	 * This end of game method gives the final state of play when the game has
+	 * ended. It displays to screen the final resources available to players before
+	 * game ended, owned components and systems and player who refused to accept
+	 * resources most.
+	 * 
+	 * @param players
+	 * @param currentPlayer
+	 * @param scanner
+	 * @throws InterruptedException
+	 */
+	public static void leaveGameMenuOption(Player currentPlayer, Scanner scanner) {
+
+		// TODO create dialogue for game ending
+		// TODO why did game end - did player leave by choice or due to lack of
+		// resources - complete
+		// TODO Show all Components owned before end of game
+		// TODO show all systems owned before end of game
+		// TODO Final state of play - Player details and remaining experts
+		// TODO Who choose to not get resources from other players most - complete
+
+		
+			Thread thread = new Thread();
+			int totalNumberOfExperts = 0;
+			String response;
+
+			announce(currentPlayer + " has asked to leave...");
+			System.out.println("Are you sure you want to leave the game?");
+			System.out.println("enter yes or no");
+			response = scanner.next();
+
+			if (response.equalsIgnoreCase("yes")) {
+				announce("has left the game", currentPlayer);
+			} else if (response.equalsIgnoreCase("no")) {
+				// displayMenu(currentPlayer, scanner);
+			} else {
+				System.out.println("invalid");
+			}
+			
+			try {
+
+			// print generic response for mission failure and announce end of game
+			announce("Houston... we've had a problem");
+			System.out.println("MISSION ABORTED!");
+			thread.sleep(1000);
+
+			// message to screen
+			System.out.println(currentPlayer.getPlayerName() + " has chosen to abort the mission");
+			thread.sleep(1000);
+
+			// loop through players to get resources required to win game
+			for (Player player : players) {
+				totalNumberOfExperts += player.getResourceBalance();
+			}
+			System.out.println("There were " + totalNumberOfExperts + " experts needed to launch the Artemis Project.");
+			thread.sleep(1000);
+
+			System.out.printf("\n%-20s %-10s\n", "PLAYER", "REMAINING RESOURCES");
+			System.out.println("-----------------------------------------");
+			for (Player player : players) {
+				System.out.printf("%-20s %-10s\n", player.getPlayerName(), player.getResourceBalance());
+			}
+			thread.sleep(1000);
+
+			System.out.printf("\n%-20s %-10s\n", "PLAYER", "OWNED COMPONENTS");
+			System.out.println("-----------------------------------------");
+			for (Player player : players) {
+				System.out.printf("\n%-20s %-10s\n", player.getPlayerName(), player.getOwnedComponents());
+			}
+			thread.sleep(1000);
+
+			System.out.printf("\n%-20s %-10s\n", "PLAYER", "OWNED SYSTEMS");
+			System.out.println("-----------------------------------------");
+			for (Player player : players) {
+				System.out.printf("\n%-20s %-10s\n", player.getPlayerName(), player.getOwnedSystems());
+			}
+			thread.sleep(1000);
+
+			// get the sorted list
+			System.out.println();
+			List<Player> listOfPlayersSortedByTimesDeclinedResources = sortPlayersByCounterOfTimesDeclinedResources(
+					players);
+			// display the sorted list
+			displayTimesDeclinedResourcesStats(listOfPlayersSortedByTimesDeclinedResources);
+
+			thread.interrupt();
+
+		} catch (InterruptedException e) {
+			System.out.println("Thread Interrupted");
+		}
 	}
 
 	/**
