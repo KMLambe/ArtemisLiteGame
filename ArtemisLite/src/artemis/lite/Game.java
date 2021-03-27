@@ -88,6 +88,8 @@ public class Game {
         Player currentPlayer = players.get(0);
 
         while (currentPlayer.getActionPoints() > 0 && !endGame) {
+            announce(String.format("Player %s it's your turn...make it count!", currentPlayer));
+
             int rollDice = rollDice();
 
             // let everyone know the player has moved
