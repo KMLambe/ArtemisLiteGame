@@ -194,9 +194,8 @@ public class Player {
             throw new IllegalArgumentException(component.getSquareName() + " is already owned.");
         } else if (!checkSufficientResources(component.getComponentCost())) {
             throw new IllegalArgumentException("Insufficient resources to purchase " + component.getSquareName());
-        } else if (!checkHasActionPoints()) {
-            throw new IllegalArgumentException("Insufficient action points cannot perform this action.");
         }
+
         // announce to all game players what just happened
         Game.announce("has purchased " + component + " for " + component.getComponentCost() + " " + Game.RESOURCE_NAME, this);
 
