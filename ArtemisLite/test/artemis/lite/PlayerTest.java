@@ -16,6 +16,7 @@ class PlayerTest {
 	private ArtemisSystem s1;
 	private Component c1, c2, c3;
 	private Player p1, p2, p3;
+	private Board board;
 
 	private String validPlayerName1, validPlayerName2, validComponentName1, validComponentName2, validSystemName,
 			validPlayerName3, validComponentName3;
@@ -58,16 +59,20 @@ class PlayerTest {
 		validBoardPosition2 = 10;
 		validBoardPosition3 = 3;
 
-		// create test objects
-		s1 = new ArtemisSystem(validSystemName);
+		board = new Board();
+		Game.setBoard(board);
 
-		c1 = new Component(validComponentName1, validComponentCost1, validCostToDevelop1, validCostForLanding1, s1);
-		c2 = new Component(validComponentName2, validComponentCost2, validCostToDevelop2, validCostForLanding2, s1);
-		c3 = new Component(validComponentName3, validComponentCost3, validCostToDevelop3, validCostForLanding3, s1);
+		// create test objects
+		s1 = board.createSystem(validSystemName);
+
+		c1 = (Component) board.createSquare(validComponentName1, validComponentCost1, validCostToDevelop1, validCostForLanding1, s1);
+		c2 = (Component) board.createSquare(validComponentName2, validComponentCost2, validCostToDevelop2, validCostForLanding2, s1);
+		c3 = (Component) board.createSquare(validComponentName3, validComponentCost3, validCostToDevelop3, validCostForLanding3, s1);
 
 		p1 = new Player(validPlayerName1, validResourceBalance1, validBoardPosition1);
 		p2 = new Player(validPlayerName2, validResourceBalance2, validBoardPosition2);
 		p3 = new Player(validPlayerName3, validResourceBalance3, validBoardPosition3);
+
 
 		// add players to game list of players
 		Game.setPlayers(Arrays.asList(p1, p2, p3));
@@ -113,7 +118,7 @@ class PlayerTest {
 	}
 
 	@Test
-	void purchaseComponentUpdatesActionPoints() {
+	void purchaseComponentDoesNotConsumeAnyActionPoints() {
 		// check default action points applied
 		assertEquals(Game.DEFAULT_ACTION_POINTS, p1.getActionPoints());
 		// make sure user has action points
@@ -122,7 +127,7 @@ class PlayerTest {
 		p1.purchaseComponent(c1);
 
 		// expect action points to be minus 1
-		int expected = Game.DEFAULT_ACTION_POINTS - 1;
+		int expected = Game.DEFAULT_ACTION_POINTS;
 		assertEquals(expected, p1.getActionPoints());
 	}
 
@@ -206,6 +211,20 @@ class PlayerTest {
 
 		// tradeIntiator should now have component as part of their components
 		assertTrue(tradeInitiator.getOwnedComponents().contains(componentBeingTraded));
+	}
+
+	@Test
+	void tradeComponentNoOwnedComponents() {
+		Player originalComponentOwner = p3;
+		Player tradeInitiator = p1;
+
+		// remove ownership of component so there are none to be displayed
+		c3.setComponentOwner(null);
+
+		// should not result in an exception
+		assertDoesNotThrow(() -> {
+			Game.displayComponentsForTrading(Game.getComponentsForTrading(tradeInitiator));
+		});
 	}
 
 	@Test
