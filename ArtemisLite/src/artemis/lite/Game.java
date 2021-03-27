@@ -698,9 +698,9 @@ public class Game {
      * @param message - the message to be outputted
      */
     public static void announce(String message) {
-        System.out.println("----------------------------------");
-        System.out.println("ANNOUNCEMENT:");
-        System.out.println("\t" + message);
+        System.out.println("\n----------------------------------");
+        System.out.println(message.toUpperCase());
+        System.out.println("----------------------------------\n");
     }
 
     /**
