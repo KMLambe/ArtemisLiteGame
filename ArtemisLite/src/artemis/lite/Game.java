@@ -342,7 +342,6 @@ public class Game {
 	 * player
 	 *
 	 * @param currentPlayer
-	 * @param playerPosition
 	 * @param scanner
 	 */
 	public static void checkIfSquareIsPurchasable(Player currentPlayer, Scanner scanner) {
@@ -374,9 +373,6 @@ public class Game {
 	 *
 	 * @param scanner
 	 * @param currentPlayer
-	 * @param component
-	 * @param board
-	 * @param players
 	 */
 	public static void displayComponentIfPurchasable(Scanner scanner, Player currentPlayer, Square playerPosition) {
 
@@ -412,34 +408,6 @@ public class Game {
 	 */
 
 	public static void displayMenu(Player currentPlayer, Scanner scanner) {
-		// TODO - menu needs to be contextual...
-		// a) purchase should not show if component is already owned
-		// b) some positions are not components so should not be treated as a component
-		// (e.g. team bonding)
-		// c) trade components should only show if another player owns a component,
-		// otherwise it will be blank
-		// d) Show all component owners -> the code implemented gets the currentPlayer's
-		// components but doesn't do
-		// anything with it
-		// e) Show resource balance -> the code implemented gets the resources but
-		// doesn't do anything with it
-		// f) I would not recommend throwing an exception for an invalid input,
-		// otherwise you need to catch it and then
-		// display the menu again. I'd recommend outputting invalid option then display
-		// again
-		// g) Develop Component and Develop System - these should show a list of
-		// components/systems that the current
-		// player can develop. The way it's coded at the minute invokes a development
-		// without asking which
-		// h) End turn invokes getNextPlayer but this is handled by the game loop. What
-		// you should do is break out of
-		// the loop, or set actionPoints to zero
-		// i) Leave game -> this calls the endGame method, but the endGame method is for
-		// dealing when the game is over,
-		// but this is a player leaving, it should confirm the player wants to leave and
-		// then call a different method
-		// that is specific to a player leaving -> endGame will be called by the game
-		// loop when conditions are met
 		int playerChoice;
 
 		String[] menuOptions = { "...MENU...", "1. Develop Component", "2. Trade components", "3. Display board status",
@@ -1012,7 +980,6 @@ public class Game {
 	 * game ended, owned components and systems and player who refused to accept
 	 * resources most.
 	 * 
-	 * @param players
 	 * @param currentPlayer
 	 * @param scanner
 	 * @throws InterruptedException
