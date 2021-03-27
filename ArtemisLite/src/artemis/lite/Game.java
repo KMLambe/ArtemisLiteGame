@@ -410,38 +410,41 @@ public class Game {
                 announce(option, currentPlayer);
             }
 
-            playerChoice = scanner.nextInt();
-            System.out.println();
+            try {
+                playerChoice = scanner.nextInt();
+                System.out.println();
 
-            switch (playerChoice) {
-                case 1:
-                    displayDevelopComponentMenu(currentPlayer, scanner);
-                    break;
-                case 2:
-                    subMenuTrade(currentPlayer, scanner);
-                    break;
-                case 3:
-                    announce("wants to trade resources for another player's component", currentPlayer);
-                    break;
-                case 4:
-                    displayPlayerComponents(currentPlayer);
-                    break;
-                case 5:
-                    announce("wants to view their resource balance", currentPlayer);
-                    break;
-                case 6:
-                    announce("has ended their turn", currentPlayer);
-                    currentPlayer.setActionPoints(0);
-                    break;
-                case 7:
-                    announce("has left the game", currentPlayer);
-                    // System.out.println("GAME OVER");
-                    leaveGameMenuOption(currentPlayer, scanner);
-                    gameFinished = true;
-                    break;
-                default:
-                    announce("Invalid option inputted", currentPlayer);
+                switch (playerChoice) {
+                    case 1:
+                        displayDevelopComponentMenu(currentPlayer, scanner);
+                        break;
+                    case 2:
+                        subMenuTrade(currentPlayer, scanner);
+                        break;
+                    case 3:
+                        board.displayAllSquares();
+                        break;
+                    case 4:
+                        displayPlayerComponents(currentPlayer);
+                        break;
+                    case 5:
+                        announce("has ended their turn", currentPlayer);
+                        currentPlayer.setActionPoints(0);
+                        break;
+                    case 6:
+                        announce("has left the game", currentPlayer);
+                        // System.out.println("GAME OVER");
+                        leaveGameMenuOption(currentPlayer, scanner);
+                        gameFinished = true;
+                        break;
+                    default:
+                        announce("Invalid option inputted", currentPlayer);
+                }
+            } catch (InputMismatchException inputMismatchException) {
+                System.out.println("Invalid input - please try again");
+                scanner.nextLine();
             }
+
         }
     }
 
