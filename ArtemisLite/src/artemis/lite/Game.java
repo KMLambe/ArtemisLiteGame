@@ -175,9 +175,9 @@ public class Game {
             }
 
             if (numberOfPlayers >= MINIMUM_PLAYERS && numberOfPlayers <= MAXIMUM_PLAYERS) {
-                System.out.println("There are " + numberOfPlayers + " players in the game.");
+                System.out.printf("There are %s players in the game.\n", numberOfPlayers);
             } else {
-                System.out.println("Invalid input please set number of players between 2-4");
+                System.out.printf("Invalid input please set number of players between %s-%s\n", MINIMUM_PLAYERS, MAXIMUM_PLAYERS);
                 return -1;
             }
         }
@@ -313,7 +313,7 @@ public class Game {
         // TODO - relocate this functionality to a more fitting method
         if (board.getSquares()[newBoardPosition] instanceof Component) {
             Component currentComponent = (Component) board.getSquares()[newBoardPosition];
-            if (currentComponent.getComponentOwner() != null && currentComponent.getComponentOwner() != currentPlayer) {
+            if (currentComponent.isOwned() && currentComponent.getComponentOwner() != currentPlayer) {
                 Scanner scanner = new Scanner(System.in);
                 currentComponent.checkOwnerWantsResources(currentPlayer, scanner);
                 // scanner.close();
@@ -342,9 +342,9 @@ public class Game {
             Component component = (Component) playerPosition;
             // currentPlayer.purchaseComponent(component);
 
-            if (component.getComponentOwner() == null) {
+            if (!component.isOwned()) {
                 displayComponentIfPurchasable(scanner, currentPlayer, playerPosition);
-            } else if (component.getComponentOwner() != null) {
+            } else if (component.isOwned()) {
                 component.checkOwnerWantsResources(currentPlayer, scanner);
                 scanner.close();
             } else {
@@ -419,7 +419,7 @@ public class Game {
                         displayDevelopComponentMenu(currentPlayer, scanner);
                         break;
                     case 2:
-                        subMenuTrade(currentPlayer, scanner);
+                        displayTradeMenu(currentPlayer, scanner);
                         break;
                     case 3:
                         board.displayAllSquares();
@@ -442,49 +442,14 @@ public class Game {
                 }
             } catch (InputMismatchException inputMismatchException) {
                 System.out.println("Invalid input - please try again");
+            } catch (Exception exception) {
+                System.out.println(exception.getMessage());
+                System.out.println("There was a problem - please try again");
+            } finally {
                 scanner.nextLine();
             }
 
         }
-    }
-
-    /**
-     * Displays components the player can trade for, captures their input and
-     * initiates the trade sequence.
-     *
-     * @param currentPlayer the player object of the current player
-     * @param scanner       a scanner object
-     */
-    private static void subMenuTrade(Player currentPlayer, Scanner scanner) {
-        announce("you can trade for the following components...\n", currentPlayer);
-
-        Map<Integer, Component> componentsForTrading = getComponentsForTrading(currentPlayer);
-
-        displayComponentsForTrading(componentsForTrading);
-
-        String userInput;
-        boolean validInput;
-
-        do {
-            announce("input the REF of the component you wish to trade for", currentPlayer);
-            userInput = scanner.next();
-
-            try {
-                validInput = componentsForTrading.containsKey(Integer.parseInt(userInput));
-            } catch (NumberFormatException numberFormatException) {
-                validInput = false;
-            }
-
-            if (!validInput) {
-                System.out.println("Invalid input");
-            }
-
-        } while (!validInput);
-
-        Component selectedComponent = componentsForTrading.get(Integer.parseInt(userInput));
-
-        // initiate trade with component owner
-        currentPlayer.tradeComponent(selectedComponent, scanner);
     }
 
     /**
@@ -495,12 +460,15 @@ public class Game {
      *
      * @param player the current player
      * @return an map of identifiers and components that the player can trade for
+     * @throws NullPointerException if the board object is null
      */
-    public static Map<Integer, Component> getComponentsForTrading(Player player) {
+    public static Map<Integer, Component> getComponentsForTrading(Player player) throws NullPointerException {
         Map<Integer, Component> componentsWithOwners = new HashMap<Integer, Component>();
         Component component;
 
-        Board board = getBoard();
+        if (board == null) {
+            throw new NullPointerException("Board object has not been created");
+        }
 
         int counter = 1;
 
@@ -508,7 +476,7 @@ public class Game {
             if (square instanceof Component) {
                 component = (Component) square;
 
-                if (component.getComponentOwner() != null && component.getComponentOwner() != player
+                if (component.isOwned() && component.getComponentOwner() != player
                         && player.checkSufficientResources(component.getComponentCost())) {
                     componentsWithOwners.put(counter++, component);
                 }
@@ -524,27 +492,29 @@ public class Game {
      * for them
      *
      * @param components a Map containing components available for trading
+     * @return true if there are components to display, otherwise display false
      */
-    public static void displayComponentsForTrading(Map<Integer, Component> components) {
+    public static boolean displayComponentsForTrading(Map<Integer, Component> components) {
         Component component;
 
         System.out.println();
 
-        if (components.size() == 0) {
-            System.out
-                    .println("There are no available components for you to purchase. This is either because you do not"
-                            + "have enough resources and/or there are no components owned by other players at present.");
-            return;
+        if (components.size() > 0) {
+            System.out.printf("%-5s %-40s %-20s %-4s\n", "REF", "COMPONENT NAME", "OWNER", "COST");
+
+            for (Map.Entry<Integer, Component> componentEntry : components.entrySet()) {
+                component = componentEntry.getValue();
+                System.out.printf("%-5s %-40s %-20s %-4s\n", componentEntry.getKey(), component,
+                        component.getComponentOwner(), component.getComponentCost());
+            }
+
+            return true;
         }
 
-        System.out.printf("%-5s %-40s %-20s %-4s\n", "REF", "COMPONENT NAME", "OWNER", "COST");
-
-        for (Map.Entry<Integer, Component> componentEntry : components.entrySet()) {
-            component = componentEntry.getValue();
-            System.out.printf("%-5s %-40s %-20s %-4s\n", componentEntry.getKey(), component,
-                    component.getComponentOwner(), component.getComponentCost());
-        }
-
+        System.out
+                .println("There are no available components for you to purchase. This is either because you do not"
+                        + "have enough resources and/or there are no components owned by other players at present.");
+        return false;
     }
 
     /**
@@ -593,21 +563,23 @@ public class Game {
     public static void displayTradeMenu(Player player, Scanner scanner) {
         Map<Integer, Component> componentsAvailable = getComponentsForTrading(player);
 
-        // display components
-        displayComponentsForTrading(componentsAvailable);
+        boolean menuDisplayed = displayComponentsForTrading(componentsAvailable);
 
-        // get user input
-        Component playerSelection = getPlayerComponentSelection(scanner, componentsAvailable);
+        // menu displayed at least one component
+        if (menuDisplayed) {
+            // get user input
+            Component playerSelection = getPlayerComponentSelection(scanner, componentsAvailable);
 
-        // player did not select a component - return to main main
-        if (playerSelection == null) {
-            return;
+            // player did not select a component - return to main main
+            if (playerSelection == null) {
+                return;
+            }
+
+            System.out.println(player + " has selected to trade with " + playerSelection.getComponentOwner() + " for "
+                    + playerSelection);
+            // process the trade
+            player.tradeComponent(playerSelection, scanner);
         }
-
-        System.out.println(player + " has selected to trade with " + playerSelection.getComponentOwner() + " for "
-                + playerSelection);
-        // process the trade
-        player.tradeComponent(playerSelection, scanner);
     }
 
     /**
@@ -704,7 +676,7 @@ public class Game {
      */
     public static void announce(String message) {
         System.out.println("\n----------------------------------");
-        System.out.println(message.toUpperCase());
+        System.out.println(message);
         System.out.println("----------------------------------\n");
     }
 
@@ -1153,21 +1125,14 @@ public class Game {
         int playerCounter = 0;
         int roundCounter = 1;
 
-        // -----testing-----
-//        highestRoll = 12;
-//        playersWithHighestRoll.add(new Player("manualPlayer1", Game.DEFAULT_RESOURCES, Game.STARTING_POSITION));
-//        playersWithHighestRoll.add(new Player("manualPlayer2", Game.DEFAULT_RESOURCES, Game.STARTING_POSITION));
-
-        // -----testing-----
-
         announce("Rolling dice to find out who rolls the highest...");
         do {
             // if already looped through all players then it means more than one player had
             // highest roll
             if (playerCounter >= activeList.size()) {
-                System.out.printf("[ROUND %s] There are %s players that rolled a %s\n", roundCounter,
+                System.out.printf("[ROUND %s] There are %s players that rolled a %s", roundCounter,
                         playersWithHighestRoll.size(), highestRoll);
-                System.out.printf("[ROUND %s] We need a winner...let's roll again!\n\n", roundCounter);
+                System.out.printf("[ROUND %s] We need a winner...let's roll again!\n", roundCounter);
 
                 activeList.clear();
                 activeList.addAll(playersWithHighestRoll);
@@ -1180,7 +1145,7 @@ public class Game {
             Player player = activeList.get(playerCounter);
 
             int playerRoll = Game.rollDice();
-            System.out.printf("[ROUND %s] %s rolled a %s\n\n", roundCounter, player.getPlayerName(), playerRoll);
+            System.out.printf("[ROUND %s] %s rolled a %s\n", roundCounter, player.getPlayerName(), playerRoll);
 
             if (playerRoll > highestRoll) {
                 highestRoll = playerRoll;
