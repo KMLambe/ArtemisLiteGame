@@ -38,7 +38,7 @@ public class Game {
 	// board
 	private static Board board;
 	private static boolean endGame = false;
-	private static boolean game Finished = false;
+	private static boolean gameFinished = false;
 
 	/**
 	 * @param args
