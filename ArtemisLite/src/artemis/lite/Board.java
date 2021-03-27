@@ -21,16 +21,20 @@ public class Board {
      * Output the name and system of all squares contained within this object.
      */
     public void displayAllSquares() {
+        System.out.printf("%-10s %-40s %-15s %s\n", "POSITION", "NAME", "OWNER", "SYSTEM");
         for (Square square : squares) {
             if (square != null) {
-                System.out.print("[" + square.getSquarePosition() + "] " + square.getSquareName());
+                String owner = "N/A";
+                String system = "N/A";
 
                 if (square instanceof Component) {
                     Component component = (Component) square;
-                    System.out.print(" - System=" + component.getComponentSystem().getSystemName());
+                    owner = (component.getComponentOwner() == null ? "Unowned" : component.getComponentOwner().getPlayerName());
+                    system = (component.getComponentSystem() == null ? "None" : component.getComponentSystem().getSystemName());
                 }
 
-                System.out.println();
+                System.out.printf("%-10s %-40s %-15s %s\n", square.getSquarePosition(), square.getSquareName(),
+                        owner.toUpperCase(), system.toUpperCase());
             }
         }
     }
@@ -105,7 +109,6 @@ public class Board {
                 // update position integer to match array index
                 squares[index].setSquarePosition(index);
 
-                // TODO - decide whether to return true when created, to verify it happened
                 return squares[index];
             }
 
