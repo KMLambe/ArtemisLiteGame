@@ -443,7 +443,7 @@ public class Game {
 		int playerChoice;
 
 		String[] menuOptions = { "...MENU...", "1. Develop Component", "2. Trade components", "3. Display board status",
-				"4. Display my components", "5. End turn", "6. Leave game", "Selection..." };
+				"4. Display my components", "5. End turn", "6. Leave game", "Selection..." };		
 
 		while (currentPlayer.getActionPoints() > 0 && !endGame) {
 			currentPlayer.displayTurnStats();
@@ -458,7 +458,6 @@ public class Game {
 
 			switch (playerChoice) {
 			case 1:
-				announce("wants to develop a component they own", currentPlayer);
 				displayDevelopComponentMenu(currentPlayer, scanner);
 				break;
 			case 2:
@@ -468,7 +467,6 @@ public class Game {
 				announce("wants to trade resources for another player's component", currentPlayer);
 				break;
 			case 4:
-				announce("wants to see their components", currentPlayer);
 				displayPlayerComponents(currentPlayer);
 				break;
 			case 5:

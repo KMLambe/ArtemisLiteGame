@@ -163,6 +163,11 @@ public class Component extends Square {
 						+ " has advanced to the maximum development level and can be developed no further.";
 				Game.announce(fullyDevelopedAnnouncement);
 			}
+			
+			// additional announcement if system is fully developed
+			if (getComponentSystem().checkFullyDeveloped()) {
+				Game.announce("'s team of experts has fully developed " + getComponentSystem().getSystemName() + "! That's a big step towards completion of the project.", currentPlayer);
+			}
 
 		} else {
 			System.out.println("ERROR - Component cannot be developed.");
