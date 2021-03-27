@@ -82,6 +82,9 @@ class ArtemisSystemTest {
 
 		board1.createSquare(validComponentName9, validComponentCost, validCostToDevelop, validCostForLanding, system4);
 		board1.createSquare(validComponentName10, validComponentCost, validCostToDevelop, validCostForLanding, system4);
+
+		// set this as the var in game
+		Game.setBoard(board1);
 		
 		// set up the components
 		testComponent1 = (Component) board1.getSquares()[1];

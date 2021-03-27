@@ -110,6 +110,9 @@ class ComponentTest {
 		board1.createSquare(validComponentName9, validComponentCost, validCostToDevelop, validCostForLanding, system4);
 		board1.createSquare(validComponentName10, validComponentCost, validCostToDevelop, validCostForLanding, system4);
 
+		// set board as the Game var
+		Game.setBoard(board1);
+
 		player1 = new Player();
 		player1.setPlayerName(validPlayerName1);
 		player1.setResourceBalance(validResourceBalance1);

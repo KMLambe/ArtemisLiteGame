@@ -99,6 +99,9 @@ class GameTest {
 		board1.createSquare(validComponentName9, validComponentCost, validCostToDevelop, validCostForLanding, system4);
 		board1.createSquare(validComponentName10, validComponentCost, validCostToDevelop, validCostForLanding, system4);
 
+		// set this as the var in game
+		Game.setBoard(board1);
+
 		// dice roll boundaries
 		minimumCombinedDiceRoll = 2;
 		maximumCombinedDiceRoll = 12;
@@ -257,7 +260,7 @@ class GameTest {
 		// test updating player position without passing recruitment square
 
 		// update player position
-		Game.updatePlayerPosition(player1, board1, validDiceRollMid);
+		Game.updatePlayerPosition(player1, validDiceRollMid);
 
 		// player started at position 1, now expected to be at position 9 following
 		// update
@@ -277,7 +280,7 @@ class GameTest {
 		player1.setCurrentBoardPosition(11);
 
 		// update player position
-		Game.updatePlayerPosition(player1, board1, validDiceRollLower);
+		Game.updatePlayerPosition(player1, validDiceRollLower);
 
 		// player started at position 12, now expected to be at position 1
 		expectedPosition = 1;
@@ -296,7 +299,7 @@ class GameTest {
 
 		// expect an exception to be thrown when lower invalid dice roll is passed
 		Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-			Game.updatePlayerPosition(player1, board1, invalidDiceRollLower);
+			Game.updatePlayerPosition(player1, invalidDiceRollLower);
 		});
 
 		// check correct message is shown
@@ -304,7 +307,7 @@ class GameTest {
 
 		// expect an exception to be thrown when upper invalid dice roll is passed
 		exception = assertThrows(IllegalArgumentException.class, () -> {
-			Game.updatePlayerPosition(player1, board1, invalidDiceRollUpper);
+			Game.updatePlayerPosition(player1, invalidDiceRollUpper);
 		});
 
 		// check correct message is shown
@@ -320,7 +323,7 @@ class GameTest {
 
 		// expect an exception to be thrown when lower invalid player is passed
 		Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-			Game.updatePlayerPosition(player1, board1, validDiceRollMid);
+			Game.updatePlayerPosition(player1, validDiceRollMid);
 		});
 
 		// check correct message is shown
@@ -336,7 +339,7 @@ class GameTest {
 
 		// expect an exception to be thrown when lower invalid player is passed
 		Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-			Game.updatePlayerPosition(player1, board1, validDiceRollMid);
+			Game.updatePlayerPosition(player1, validDiceRollMid);
 		});
 
 		// check correct message is shown
@@ -439,7 +442,7 @@ class GameTest {
 		player1.setResourceBalance(500); // manually override so that components appear
 
 		// get list of tradeable components returned for the player
-		Map<Integer, Component> player1ComponentsAvailable = Game.getComponentsForTrading(player1, board1);
+		Map<Integer, Component> player1ComponentsAvailable = Game.getComponentsForTrading(player1);
 
 		// player1 should see player2's components
 		assertEquals(3, player1ComponentsAvailable.size());
@@ -450,7 +453,7 @@ class GameTest {
 		assertFalse(player1ComponentsAvailable.containsValue(squares[7]));
 
 		// player2 should see player1's components
-		Map<Integer, Component> player2ComponentsAvailable = Game.getComponentsForTrading(player2, board1);
+		Map<Integer, Component> player2ComponentsAvailable = Game.getComponentsForTrading(player2);
 
 		assertEquals(1, player2ComponentsAvailable.size());
 		assertTrue(player2ComponentsAvailable.containsValue(squares[7]));
@@ -474,7 +477,7 @@ class GameTest {
 		player1.purchaseComponent(squares[7]);
 		player1.setResourceBalance(500); // manually override so that components appear
 
-		Map<Integer, Component> player1ComponentsAvailable = Game.getComponentsForTrading(player1, board1);
+		Map<Integer, Component> player1ComponentsAvailable = Game.getComponentsForTrading(player1);
 
 		// simulate user inputting wrong data, followed by 'end', which should return
 		// null (indicating no component selected)
