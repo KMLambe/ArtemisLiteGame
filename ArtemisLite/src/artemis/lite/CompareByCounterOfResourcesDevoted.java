@@ -6,14 +6,20 @@ package artemis.lite;
 import java.util.Comparator;
 
 /**
- * @author kmlam
+ * This comparator is used to compare two Components by the total number of resources devoted to them.
+ * @author Kieran Lambe 40040696
  *
  */
 public class CompareByCounterOfResourcesDevoted implements Comparator<Component> {
 
 	@Override
 	public int compare(Component component1, Component component2) {
-		return component2.getTotalExpertsDevotedToComponent() - component1.getTotalExpertsDevotedToComponent();
+		try {
+			return component2.getTotalExpertsDevotedToComponent() - component1.getTotalExpertsDevotedToComponent();
+		} catch (NullPointerException nullPointerException) {
+			System.out.println("Error: Cannot compare null components");
+			return -1;
+		}
 	}
 
 }
