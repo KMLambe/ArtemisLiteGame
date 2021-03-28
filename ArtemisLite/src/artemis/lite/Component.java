@@ -8,7 +8,8 @@ import java.util.Scanner;
  * This class facilitates the creation of component objects. This class is a
  * subclass of Square. Component - a square which can be owned by a player.
  *
- * @author Kieran Lambe 40040696, John Young 40030361
+ * @author Kieran Lambe 40040696
+ * @author John Young 40030361
  *
  */
 public class Component extends Square {
