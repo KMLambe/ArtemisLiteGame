@@ -61,20 +61,20 @@ public class Game {
                 "\nHere's how it works:",
                 "\t1. We need "+Game.MINIMUM_PLAYERS+"-"+Game.MAXIMUM_PLAYERS+" able bodied men and women who are willing to WORK TOGETHER",
                 "\t2. Once you're deployed, you will need to travel around our landing sites (Components and Squares)",
-                "\t3. If no one has landed on a component, you will have the opportunity to deploy EXPERTS to the site. This will make it yours.",
-                "\nEXPERTS are the currency of ArtemisLite, handle them with care... if you reach zero, you will be jettisoned for mishandling our future\n",
-                "\t4. If someone already has experts deployed on the site you've landed, you may need to help them out by transferring some of your own experts to their cause. This will be decided by the component owner",
+                "\t3. If a component does not have an owner, you will have the opportunity to deploy EXPERTS to the site. This will make it yours.",
+                "\nEXPERTS are the currency of ArtemisLite, handle them with care... if you reach zero, you will be jettisoned for mishandling our future.\n",
+                "\t4. If someone already has experts deployed on the site you've landed, you may need to help them out by transferring some of your own experts to their cause. This will be decided by the owner of the component.",
                 "\t5. If you land on a square you will not be able to develop it, it's considered communal, so put the feet up and enjoy the team bonding!",
                 "\t6. It's import to remember that you are allocated "+Game.DEFAULT_ACTION_POINTS+" action points each turn.",
                 "\t7. Action points enable you to perform important tasks, once you use them up your turn will end automatically - so be careful how you use them!",
-                "\t\tWhat consumes action points? Developing and Trading Components",
+                "\nACTION POINTS ARE CONSUMED BY: Developing and Trading Components. Purchasing a Component will NOT consume an action point.\n",
                 "\t8. If you want to develop a component, you will need to make sure you own all the components within the SAME system.",
                 "\t\tIf someone has one you need, you can always offer to trade them for it...REMEMBER: we all win when humanity progresses!",
                 "\t9. Each component has 4 stages, meaning it can be developed 3 times.",
-                "\t10. Once you or one of your comrades develops ALL the components WITHIN THE SAME SYSTEM - the game will initiate the Artemis Launch Sequence",
+                "\t10. Once you or one of your comrades develops ALL the components WITHIN THE SAME SYSTEM - the game will initiate the Artemis Launch Sequence.",
                 "\t\tYou have won the opportunity of a lifetime, front row seats to the next generation of humanity...enjoy it. You will have worked hard for this. ",
-                "\t11. BE CAREFUL THOUGH... If any of your comrades feel isolated, they may abandon ship and ALL WILL BE LOST - the game will end",
-                "\t12. DON'T LET ANYONE SUFFER... Take care of your comrades, if they run out of experts, this will result in a brain drain - the game will end",
+                "\t11. BE CAREFUL THOUGH... If any of your comrades feel isolated, they may abandon ship and ALL WILL BE LOST - the game will end.",
+                "\t12. DON'T LET ANYONE SUFFER... Take care of your comrades, if they run out of experts, this will result in a brain drain - the game will end.",
                 "\nTHIS IS YOUR OPPORTUNITY TO LEAD US ALL...",
                 "\nTAKE FORWARD OUR HOPES AND DREAMS... STRAP IN... ",
                 "\nBOOTCAMP IS OVER... Time to get stuck in!",
@@ -134,21 +134,29 @@ public class Game {
         Player currentPlayer = players.get(0);
 
         while (currentPlayer.getActionPoints() > 0 && !endGame &&!winGame) {
-            announce(String.format("Player %s it's your turn...make it count!", currentPlayer));
+            try {
+                announce(String.format("Player %s it's your turn...make it count!", currentPlayer));
 
-            int rollDice = rollDice();
+                int rollDice = rollDice();
 
-            // let everyone know the player has moved
-            announce("rolled a " + rollDice + " and moves accordingly.", currentPlayer);
-            updatePlayerPosition(currentPlayer, rollDice);
+                // let everyone know the player has moved
+                announce("rolled a " + rollDice + " and moves accordingly.", currentPlayer);
 
-            displayMenu(currentPlayer, scanner);
+                Square playerPosition = updatePlayerPosition(currentPlayer, rollDice);
 
-            // current player's turn is over, get the nextPlayer and set to currentPlayer
-            // nextPlayer will be the currentPlayer on the next iteration of loop
-            currentPlayer = getNextPlayer(players, currentPlayer);
-            // make sure player has action points before starting loop
-            currentPlayer.setActionPoints(DEFAULT_ACTION_POINTS);
+                displayComponentIfPurchasable(scanner, currentPlayer, playerPosition);
+
+                displayMenu(currentPlayer, scanner);
+
+                // current player's turn is over, get the nextPlayer and set to currentPlayer
+                // nextPlayer will be the currentPlayer on the next iteration of loop
+                currentPlayer = getNextPlayer(players, currentPlayer);
+                // make sure player has action points before starting loop
+                currentPlayer.setActionPoints(DEFAULT_ACTION_POINTS);
+            } catch (IllegalArgumentException illegalArgumentException) {
+                System.out.println("The action could not be performed...");
+                System.out.println(illegalArgumentException.getMessage());
+            }
         }
 
         if (endGame) {
@@ -300,7 +308,7 @@ public class Game {
      * @param currentPlayer - the current player, passed as a parameter argument
      * @param sumOfDice     - the sum of two dice returned by the rollDice() method,
      */
-    public static void updatePlayerPosition(Player currentPlayer, int sumOfDice)
+    public static Square updatePlayerPosition(Player currentPlayer, int sumOfDice)
             throws IllegalArgumentException {
 
         int movementCalculation, newBoardPosition, boardLength;
@@ -318,10 +326,6 @@ public class Game {
         }
 
         boardLength = board.getSquares().length;
-
-        // roll dice
-        // currentPlayerDiceRoll = Game.rollDice(); KL - this will be taken as a
-        // parameter argument
 
         movementCalculation = currentPlayer.getCurrentBoardPosition() + sumOfDice;
         newBoardPosition = movementCalculation % boardLength;
@@ -355,6 +359,7 @@ public class Game {
             }
         }
 
+        return board.getSquares()[newBoardPosition];
     }
 
     /**
@@ -546,8 +551,7 @@ public class Game {
             return true;
         }
 
-        System.out
-                .println("There are no available components for you to purchase. This is either because you do not"
+        Game.announce("There are no available components for you to purchase. This is either because you do not"
                         + "have enough resources and/or there are no components owned by other players at present.");
         return false;
     }
@@ -577,7 +581,7 @@ public class Game {
             try {
                 playerSelection = Integer.parseInt(playerInput);
             } catch (NumberFormatException e) {
-                // do nothing
+                System.out.println("Invalid entry");
             }
             System.out.println();
 
@@ -599,6 +603,7 @@ public class Game {
         Map<Integer, Component> componentsAvailable = getComponentsForTrading(player);
 
         boolean menuDisplayed = displayComponentsForTrading(componentsAvailable);
+        System.out.println();
 
         // menu displayed at least one component
         if (menuDisplayed) {
