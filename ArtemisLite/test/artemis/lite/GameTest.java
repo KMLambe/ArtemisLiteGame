@@ -332,22 +332,6 @@ class GameTest {
 	}
 
 	@Test
-	void testUpdatePlayerPositionInvalidBoard() {
-
-		// set player to null
-		board1 = null;
-
-		// expect an exception to be thrown when lower invalid player is passed
-		Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-			Game.updatePlayerPosition(player1, validDiceRollMid);
-		});
-
-		// check correct message is shown
-		assertTrue(exception.getMessage().contains("Board cannot"));
-
-	}
-
-	@Test
 	void testDisplayMenu() {
 		fail("Not yet implemented");
 	}
@@ -386,13 +370,16 @@ class GameTest {
 	}
 
 	@Test
-	void testGetPlayers() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	void testSetPlayers() {
-		fail("Not yet implemented");
+	void testGetSetPlayers() {
+		
+		ArrayList<Player> testPlayerList = new ArrayList<>();
+		testPlayerList.add(player1);
+		testPlayerList.add(player2);
+		
+		Game.setPlayers(testPlayerList);
+		
+		assertEquals(testPlayerList, Game.getPlayers());
+		
 	}
 
 	@Test
@@ -581,8 +568,11 @@ class GameTest {
 		playerList.add(player3);
 		playerList.add(player4);
 		
+		// set players in Game to newly-created list
+		Game.setPlayers(playerList);
+		
 		// perform the sort
-		List<Player> sortedList = Game.sortPlayersByCounterOfTimesDeclinedResources(playerList);
+		List<Player> sortedList = Game.sortPlayersByCounterOfTimesDeclinedResources();
 		
 		// check that array list contains expected number of objects
 		assertEquals(4, sortedList.size());
@@ -603,9 +593,11 @@ class GameTest {
 		// create null list
 		ArrayList<Player> emptyPlayerList = null;
 		
+		Game.setPlayers(emptyPlayerList);
+		
 		// perform the sort - expected exception
 		Exception exception = assertThrows(NullPointerException.class, ()->{
-		Game.sortPlayersByCounterOfTimesDeclinedResources(emptyPlayerList);
+		Game.sortPlayersByCounterOfTimesDeclinedResources();
 		});
 		
 		// check that message is as expected
