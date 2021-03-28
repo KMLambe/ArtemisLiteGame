@@ -784,7 +784,7 @@ public class Game {
             }
         }
         if (counter == board.getSystems().length) {
-            winGame(players);
+            winGame();
             winGame = true;
         }
     }
@@ -795,7 +795,7 @@ public class Game {
      *
      * @param players
      */
-    public static void winGame(List<Player> players) {
+    public static void winGame() {
         try {
             int totalNumberOfExperts = 0;
 
@@ -832,8 +832,7 @@ public class Game {
 
             System.out.println("\n");
             Thread.sleep(5000);
-            List<Player> listOfPlayersSortedByTimesDeclinedResources = sortPlayersByCounterOfTimesDeclinedResources(
-                    players);
+            List<Player> listOfPlayersSortedByTimesDeclinedResources = sortPlayersByCounterOfTimesDeclinedResources();
             displayTimesDeclinedResourcesStats(listOfPlayersSortedByTimesDeclinedResources);
 
             System.out.println("\n");
@@ -867,18 +866,18 @@ public class Game {
      * @return sortedList - the sorted list of players, ranked from most times
      * declined resources to least times
      */
-    public static List<Player> sortPlayersByCounterOfTimesDeclinedResources(List<Player> playerList) {
+    public static List<Player> sortPlayersByCounterOfTimesDeclinedResources() {
 
-        List<Player> sortedList = playerList;
+        List<Player> sortedList = players;
 
-        if (playerList == null) {
+        if (players == null) {
             throw new NullPointerException("Error: Player list cannot be null");
         }
 
         // perform the sort
-        if (playerList.size() <= MAXIMUM_PLAYERS && playerList.size() >= MINIMUM_PLAYERS) {
+        if (players.size() <= MAXIMUM_PLAYERS && players.size() >= MINIMUM_PLAYERS) {
             CompareByCounterOfTimesPlayerDeclinedResources compareByNumberOfTimesDeclinedResources = new CompareByCounterOfTimesPlayerDeclinedResources();
-            Collections.sort(playerList, compareByNumberOfTimesDeclinedResources);
+            Collections.sort(players, compareByNumberOfTimesDeclinedResources);
         } else {
             System.out.println("Error: The player list must be between " + MINIMUM_PLAYERS + " and " + MAXIMUM_PLAYERS
                     + " (inclusive)");
@@ -1063,8 +1062,7 @@ public class Game {
 
             // get the sorted list
             System.out.println();
-            List<Player> listOfPlayersSortedByTimesDeclinedResources = sortPlayersByCounterOfTimesDeclinedResources(
-                    players);
+            List<Player> listOfPlayersSortedByTimesDeclinedResources = sortPlayersByCounterOfTimesDeclinedResources();
             // display the sorted list
             displayTimesDeclinedResourcesStats(listOfPlayersSortedByTimesDeclinedResources);
 
@@ -1140,8 +1138,7 @@ public class Game {
 
         // get the sorted list
         System.out.println();
-        List<Player> listOfPlayersSortedByTimesDeclinedResources = sortPlayersByCounterOfTimesDeclinedResources(
-                players);
+        List<Player> listOfPlayersSortedByTimesDeclinedResources = sortPlayersByCounterOfTimesDeclinedResources();
         // display the sorted list
         displayTimesDeclinedResourcesStats(listOfPlayersSortedByTimesDeclinedResources);
 
