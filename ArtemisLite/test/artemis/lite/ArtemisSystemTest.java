@@ -2,6 +2,8 @@ package artemis.lite;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -27,8 +29,8 @@ class ArtemisSystemTest {
 	// Components
 	Component testComponent1, testComponent2, testComponent3;
 
-	// test system
-	ArtemisSystem testSystem1;
+	// test systems
+	ArtemisSystem testSystem1, testSystem2;
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -100,6 +102,7 @@ class ArtemisSystemTest {
 		validCurrentBoardPosition2 = 2;
 		
 		testSystem1 = system1;
+		testSystem2 = system2;
 		
 		player1 = new Player(validPlayerName1, validResourceBalance1, validCurrentBoardPosition1);
 		player2 = new Player(validPlayerName2, validResourceBalance2, validCurrentBoardPosition2);
@@ -107,23 +110,22 @@ class ArtemisSystemTest {
 	}
 
 	@Test
-	void testArtemisSystem() {
-		fail("Not yet implemented");
+	void testArtemisSystemDefaultConstructor() {
+		testSystem1 = new ArtemisSystem();
+		assertNotNull(testSystem1);
 	}
 
 	@Test
-	void testArtemisSystemString() {
-		fail("Not yet implemented");
+	void testArtemisSystemConstructorWithArguments() {
+		testSystem2 = new ArtemisSystem(validSystemName2);
+		
+		assertEquals(validSystemName2, testSystem2.getSystemName());
 	}
 
 	@Test
-	void testGetSystemName() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	void testSetSystemName() {
-		fail("Not yet implemented");
+	void testGetSetSystemName() {
+		testSystem2.setSystemName(validSystemName1);
+		assertEquals(validSystemName1, testSystem2.getSystemName());
 	}
 
 	@Test
@@ -152,14 +154,6 @@ class ArtemisSystemTest {
 		testComponent2.setComponentOwner(player1);
 		testComponent3.setComponentOwner(player1);
 		
-		/*
-		 * Included for visualisation purposes
-		 *  
-		for (Component component : testSystem1.getComponentsInSystem()) {
-		System.out.println(component.getSquareName() + " - " + component.getComponentOwner());
-		}
-		*/
-		
 		// expect true
 		boolean actualValue = testSystem1.checkSystemIsOwnedByOnePlayer();
 		assertTrue(actualValue);
@@ -172,39 +166,46 @@ class ArtemisSystemTest {
 		
 		assertFalse(actualValue);
 		
-		/*
-		 * Included for visualisation purposes
-		 *  
-		for (Component component : testSystem1.getComponentsInSystem()) {
-		System.out.println(component.getSquareName() + " - " + component.getComponentOwner());
-		}
-		*/
+	}
+
+	@Test
+	void testGetSetSystemOwner() {
+		testSystem1.setSystemOwner(player2);
+		assertEquals(player2, testSystem1.getSystemOwner());
+	}
+	
+	@Test
+	void testAddComponent() {
+		testSystem2 = new ArtemisSystem();
+		testSystem2.addComponent(testComponent1);
+		testSystem2.addComponent(testComponent3);
 		
-	}
-
-	@Test
-	void testGetSystemOwner() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	void testSetSystemOwner() {
-		fail("Not yet implemented");
+		assertEquals(2, testSystem2.getComponentsInSystem().size());
+		
+		assertTrue(testSystem2.getComponentsInSystem().contains(testComponent1));
+		
+		assertTrue(testSystem2.getComponentsInSystem().contains(testComponent3));
 	}
 
 	@Test
 	void testGetComponentsInSystem() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	void testAddComponent() {
-		fail("Not yet implemented");
+		
+		ArrayList<Component> testComponents = new ArrayList<Component>();
+		testComponents.add(testComponent2);
+		testComponents.add(testComponent3);
+		
+		testSystem2 = new ArtemisSystem(validSystemName2);
+		testSystem2.addComponent(testComponent2);
+		testSystem2.addComponent(testComponent3);
+		
+		assertEquals(testComponents, testSystem2.getComponentsInSystem());
+		
+		
 	}
 
 	@Test
 	void testDisplayAllDetails() {
-		fail("Not yet implemented");
+		// cannot be unit tested
 	}
 
 }
