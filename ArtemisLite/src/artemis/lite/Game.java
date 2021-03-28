@@ -401,7 +401,7 @@ public class Game {
 
         String[] menuOptions = {"...MENU...", "1. Develop Component", "2. Trade components", "3. Display board status",
                 "4. Display my components", "5. End turn", "6. Leave game", "Selection..."};
-
+        
         while (currentPlayer.getActionPoints() > 0 && !endGame) {
             currentPlayer.displayTurnStats();
 
@@ -583,36 +583,42 @@ public class Game {
     }
 
     /**
-     * This method prints to screen a menu of components that can be developed
-     *
+     * This method prints to screen a menu of components that can be developed to the next stage.     *
      * @param components - a HashMap of Components with associated Integer keys
      *                   representing menu numbers
      */
     public static void displayComponentsPlayerCanDevelop(Map<Integer, Component> components) {
-
-        Component component;
-
-        System.out.println();
-
-        if (components.size() == 0) {
-            announce("You do not own any Artemis Systems containing components available for development");
-            return;
-        }
-
-        System.out.printf("%-5s %-40s %-30s %-20s %-30s %-25s\n", "REF", "COMPONENT NAME", "SYSTEM", "OWNER",
-                "DEVELOPMENT STAGE", Game.RESOURCE_NAME + " REQUIRED TO DEVELOP");
-
-        for (Map.Entry<Integer, Component> componentEntry : components.entrySet()) {
-            component = componentEntry.getValue();
-            System.out.printf("%-5s %-40s %-30s %-20s %-30s %-25s\n", componentEntry.getKey(), component,
-                    component.getComponentSystem().getSystemName(), component.getComponentOwner(),
-                    component.getDevelopmentStage() + " - "
-                            + component.getDevelopmentStageNamesMap().get(component.getDevelopmentStage()),
-                    component.getCostToDevelop());
-        }
-
-        System.out.println();
-
+    	
+    	try {
+    		Component component;
+            System.out.println();
+            try {
+            	Thread.sleep(500);
+                if (components.size() == 0) {
+                    announce("You do not own any Artemis Systems containing components available for development");
+                    return;
+                }
+            	Thread.sleep(500);
+                System.out.printf("%-5s %-40s %-30s %-20s %-30s %-25s\n", "REF", "COMPONENT NAME", "SYSTEM", "OWNER",
+                        "DEVELOPMENT STAGE", Game.RESOURCE_NAME + " REQUIRED TO DEVELOP");
+                Thread.sleep(200);
+                for (Map.Entry<Integer, Component> componentEntry : components.entrySet()) {
+                    component = componentEntry.getValue();
+                    System.out.printf("%-5s %-40s %-30s %-20s %-30s %-25s\n", componentEntry.getKey(), component,
+                            component.getComponentSystem().getSystemName(), component.getComponentOwner(),
+                            component.getDevelopmentStage() + " - "
+                                    + component.getDevelopmentStageNamesMap().get(component.getDevelopmentStage()),
+                            component.getCostToDevelop());
+                }
+                System.out.println();            	
+            } catch (InterruptedException interruptedException) {
+            	System.out.println("Error: This operation has been interrupted");
+            	return;
+            }
+    	} catch (NullPointerException nullPointerException) {
+    		System.out.println("Error: Component map cannot be null");
+    		return;
+    	}
     }
 
     /**

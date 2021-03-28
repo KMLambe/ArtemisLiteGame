@@ -30,6 +30,9 @@ class GameTest {
 	String validComponentName1, validComponentName2, validComponentName3, validComponentName4, validComponentName5,
 			validComponentName6, validComponentName7, validComponentName8, validComponentName9, validComponentName10;
 	int validComponentCost, validCostToDevelop, validCostForLanding;
+	
+	// test component map
+	Map<Integer,Component> componentMapInvalid;
 
 	// variables for dice roll
 	int validDiceRollLower, validDiceRollMid, validDiceRollUpper, invalidDiceRollLower, invalidDiceRollUpper,
@@ -101,6 +104,10 @@ class GameTest {
 
 		// set this as the var in game
 		Game.setBoard(board1);
+		
+		// test component map
+		componentMapInvalid = new HashMap<>();
+		componentMapInvalid = null;
 
 		// dice roll boundaries
 		minimumCombinedDiceRoll = 2;
@@ -533,36 +540,12 @@ class GameTest {
 
 		assertTrue(illegalArgumentException.getMessage().equalsIgnoreCase("empty list of players"));
 	}
-
-
 	
 	@Test
-	void testDisplayComponentsPlayerCanDevelop() {
+	void testDisplayComponentsPlayerCanDevelopInvalidNullParameter() {
 
-		// TEMPORARY TEST CREATED WHEN DESIGNING FUNCTIONALITY - KL
-		
-		player1.setActionPoints(10);
-
-		player1.purchaseComponent(testComponent1);
-
-		System.out.println("Add 1000 experts");
-		player1.setResourceBalance(1000);
-
-		player1.purchaseComponent(testComponent2);
-
-		player1.purchaseComponent(testComponent3);
-
-
-		System.out.println("TESTING DISPLAY");
-		
-		Game.displayDevelopComponentMenu(player1, new Scanner("2"));
-		
-		
-		for (Component comp : player1.getOwnedComponents()) {
-			comp.displayAllDetails();
-		}
-
-
+		// pass a null Map as a parameter argument. Should NOT throw an exception
+		assertDoesNotThrow(() -> Game.displayComponentsPlayerCanDevelop(componentMapInvalid));
 	}
 	
 	@Test
