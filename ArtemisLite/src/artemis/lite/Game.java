@@ -776,7 +776,7 @@ public class Game {
     /**
      * Checks if all systems have been fully developed and runs winGame method
      */
-    public static void checkAllSystemsFullyDeveloped() {
+    public static boolean checkAllSystemsFullyDeveloped() {
         int counter = 0;
         for (ArtemisSystem system : board.getSystems()) {
             if (system.checkFullyDeveloped() == true) {
@@ -787,6 +787,7 @@ public class Game {
             winGame();
             winGame = true;
         }
+		return winGame;
     }
 
     /**
