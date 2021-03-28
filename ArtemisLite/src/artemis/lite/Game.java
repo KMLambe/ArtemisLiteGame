@@ -345,20 +345,13 @@ public class Game {
 
         // announce new board position
         positionChangeAnnouncement = "has landed on " + squareName;
-        announce(positionChangeAnnouncement, currentPlayer);
-
-        // check if player landed on owned square
-        // TODO - relocate this functionality to a more fitting method
+        
         if (board.getSquares()[newBoardPosition] instanceof Component) {
-            Component currentComponent = (Component) board.getSquares()[newBoardPosition];
-            if (currentComponent.isOwned() && currentComponent.getComponentOwner() != currentPlayer) {
-                Scanner scanner = new Scanner(System.in);
-                currentComponent.checkOwnerWantsResources(currentPlayer, scanner);
-                // scanner.close();
-            } else {
-                // TODO - offer player chance to take charge of component
-            }
+        	Component component = (Component) board.getSquares()[newBoardPosition];
+        	positionChangeAnnouncement += " which is part of " + component.getComponentSystem().getSystemName() + ".";
         }
+        
+        announce(positionChangeAnnouncement, currentPlayer);
 
         return board.getSquares()[newBoardPosition];
     }
@@ -404,25 +397,27 @@ public class Game {
     public static void displayComponentIfPurchasable(Scanner scanner, Player currentPlayer, Square playerPosition) {
 
         String response = null;
+        
+        if (playerPosition instanceof Component) {
+        	System.out.println(currentPlayer + " do you want to purchase " + playerPosition + "?");
+            System.out.println("Please enter yes or no");
+            response = scanner.next();
 
-        System.out.println(currentPlayer + " do you want to purchase " + playerPosition + "?");
-        System.out.println("Please enter yes or no");
-        response = scanner.next();
+            // TODO still a problem with this loop for an invalid input
 
-        // TODO still a problem with this loop for an invalid input
-
-        do {
-            // System.out.println("Please enter yes or no");
-            // response = scanner.next();
-            if (response.equalsIgnoreCase("Yes")) {
-                currentPlayer.purchaseComponent(playerPosition);
-            } else if (response.equalsIgnoreCase("No")) {
-                currentPlayer.offerComponentToOtherPlayers((Component) playerPosition, scanner);
-            } else {
-                announce("INVALID INPUT");
-                displayComponentIfPurchasable(scanner, currentPlayer, playerPosition);
-            }
-        } while (!(response.equalsIgnoreCase("yes") || !response.equalsIgnoreCase("no")));
+            do {
+                // System.out.println("Please enter yes or no");
+                // response = scanner.next();
+                if (response.equalsIgnoreCase("Yes")) {
+                    currentPlayer.purchaseComponent(playerPosition);
+                } else if (response.equalsIgnoreCase("No")) {
+                    currentPlayer.offerComponentToOtherPlayers((Component) playerPosition, scanner);
+                } else {
+                    announce("INVALID INPUT");
+                    displayComponentIfPurchasable(scanner, currentPlayer, playerPosition);
+                }
+            } while (!(response.equalsIgnoreCase("yes") || !response.equalsIgnoreCase("no")));
+        }
     }
 
     /**
