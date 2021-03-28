@@ -388,8 +388,12 @@ public class Game {
                 component.checkOwnerWantsResources(currentPlayer, scanner);
                 // scanner.close();
             } else {
-                announce(currentPlayer.getPlayerName() + " has decided not to purchase " + component);
-                currentPlayer.offerComponentToOtherPlayers(component, scanner);
+            	if (component.getComponentOwner()==currentPlayer) {
+            		Game.announce("already owns this component", currentPlayer);
+            	} else {
+                    announce(currentPlayer.getPlayerName() + " has decided not to purchase " + component);
+                    currentPlayer.offerComponentToOtherPlayers(component, scanner);
+            	}
             }
         }
     }
