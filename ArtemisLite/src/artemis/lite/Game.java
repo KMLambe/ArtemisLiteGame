@@ -12,6 +12,7 @@ import java.util.*;
  */
 public class Game {
 
+
 	private final static int MINIMUM_PLAYERS = 2;
 	private final static int MAXIMUM_PLAYERS = 4;
 	private final static int STARTING_POSITION = 0;
@@ -44,7 +45,7 @@ public class Game {
 	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
 
-		gameBriefing();
+		//gameBriefing();
 
 		setupGame(scanner);
 
@@ -147,7 +148,6 @@ public class Game {
 
 				checkIfSquareIsPurchasable(currentPlayer, scanner);
 
-				// displayComponentIfPurchasable(scanner, currentPlayer, playerPosition);
 
 			} catch (IllegalArgumentException illegalArgumentException) {
 				System.out.println(illegalArgumentException.getMessage());
@@ -164,13 +164,8 @@ public class Game {
 		}
 
 		if (endGame) {
-			try {
-				endGame(players, currentPlayer);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			System.out.println("GAME HAS ENDED");
+				endGame(currentPlayer);
+				System.out.println("GAME HAS ENDED");
 		}
 	}
 
@@ -404,30 +399,29 @@ public class Game {
 	 *
 	 * @param scanner
 	 * @param currentPlayer
+	 * @param playerPosition
 	 */
 	public static void displayComponentIfPurchasable(Scanner scanner, Player currentPlayer, Square playerPosition) {
 
-		String response = null;
+		String response;
 
 		if (playerPosition instanceof Component) {
 			System.out.println(currentPlayer + " do you want to purchase " + playerPosition + "?");
 			System.out.println("Please enter yes or no");
 			response = scanner.next();
 
-			// TODO still a problem with this loop for an invalid input
 
 			do {
-				// System.out.println("Please enter yes or no");
-				// response = scanner.next();
 				if (response.equalsIgnoreCase("Yes")) {
 					currentPlayer.purchaseComponent(playerPosition);
 				} else if (response.equalsIgnoreCase("No")) {
 					currentPlayer.offerComponentToOtherPlayers((Component) playerPosition, scanner);
 				} else {
 					announce("INVALID INPUT");
-					scanner.next()
+					System.out.println("Please enter yes or no");
+					response = scanner.next();
 				}
-			} while (!response.equalsIgnoreCase("yes") || !response.equalsIgnoreCase("no"));
+			} while (!response.equalsIgnoreCase("yes") && !response.equalsIgnoreCase("no"));
 		}
 	}
 
@@ -479,7 +473,6 @@ public class Game {
 					currentPlayer.setActionPoints(0);
 					break;
 				case 6:
-					announce("has left the game", currentPlayer);
 					endGame = true;
 					break;
 				default:
@@ -1013,19 +1006,9 @@ public class Game {
 	 * game ended, owned components and systems and player who refused to accept
 	 * resources most.
 	 *
-	 * @param players
 	 * @param currentPlayer
 	 */
 	public static void endGame(Player currentPlayer) {
-
-		// TODO create dialogue for game ending
-		// TODO why did game end - did player leave by choice or due to lack of
-		// resources - complete
-		// TODO Show all Components owned before end of game
-		// TODO show all systems owned before end of game
-		// TODO Final state of play - Player details and remaining experts
-		// TODO Who choose to not get resources from other players most - complete
-
 		String response;
 		Scanner scanner = new Scanner(System.in);
 
@@ -1066,7 +1049,7 @@ public class Game {
 			for (Player player : players) {
 				totalNumberOfExperts += player.getResourceBalance();
 			}
-			System.out.println("There were " + totalNumberOfExperts + " experts needed to launch the Artemis Project.");
+			System.out.println(totalNumberOfExperts + RESOURCE_NAME + " were required to launch Artemis");
 			Thread.sleep(1000);
 
 			System.out.printf("\n%-20s %-10s\n", "PLAYER", "REMAINING RESOURCES");
@@ -1092,8 +1075,7 @@ public class Game {
 
 			// get the sorted list
 			System.out.println();
-			List<Player> listOfPlayersSortedByTimesDeclinedResources = sortPlayersByCounterOfTimesDeclinedResources(
-					players);
+			List<Player> listOfPlayersSortedByTimesDeclinedResources = sortPlayersByCounterOfTimesDeclinedResources();
 			// display the sorted list
 			displayTimesDeclinedResourcesStats(listOfPlayersSortedByTimesDeclinedResources);
 
