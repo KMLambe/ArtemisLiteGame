@@ -59,13 +59,13 @@ public class Game {
                 "\nOUR SUCCESS WILL CHANGE THE WORLD\n",
                 "So... on to YOU, our fledgling astronauts, how can YOU help us achieve our mission? Read on...",
                 "\nHere's how it works:",
-                "\t1. We need "+Game.MINIMUM_PLAYERS+"-"+Game.MAXIMUM_PLAYERS+" able bodied men and women who are willing to WORK TOGETHER",
+                "\t1. We need " + Game.MINIMUM_PLAYERS + "-" + Game.MAXIMUM_PLAYERS + " able bodied men and women who are willing to WORK TOGETHER",
                 "\t2. Once you're deployed, you will need to travel around our landing sites (Components and Squares)",
                 "\t3. If a component does not have an owner, you will have the opportunity to deploy EXPERTS to the site. This will make it yours.",
                 "\nEXPERTS are the currency of ArtemisLite, handle them with care... if you reach zero, you will be jettisoned for mishandling our future.\n",
                 "\t4. If someone already has experts deployed on the site you've landed, you may need to help them out by transferring some of your own experts to their cause. This will be decided by the owner of the component.",
                 "\t5. If you land on a square you will not be able to develop it, it's considered communal, so put the feet up and enjoy the team bonding!",
-                "\t6. It's import to remember that you are allocated "+Game.DEFAULT_ACTION_POINTS+" action points each turn.",
+                "\t6. It's import to remember that you are allocated " + Game.DEFAULT_ACTION_POINTS + " action points each turn.",
                 "\t7. Action points enable you to perform important tasks, once you use them up your turn will end automatically - so be careful how you use them!",
                 "\nACTION POINTS ARE CONSUMED BY: Developing and Trading Components. Purchasing a Component will NOT consume an action point.\n",
                 "\t8. If you want to develop a component, you will need to make sure you own all the components within the SAME system.",
@@ -133,7 +133,7 @@ public class Game {
         // set currentplayer to the first player in the arraylist
         Player currentPlayer = players.get(0);
 
-        while (currentPlayer.getActionPoints() > 0 && !endGame &&!winGame) {
+        while (currentPlayer.getActionPoints() > 0 && !endGame && !winGame) {
             try {
                 announce(String.format("Player %s it's your turn...make it count!", currentPlayer));
 
@@ -146,17 +146,18 @@ public class Game {
 
                 displayComponentIfPurchasable(scanner, currentPlayer, playerPosition);
 
-                displayMenu(currentPlayer, scanner);
-
-                // current player's turn is over, get the nextPlayer and set to currentPlayer
-                // nextPlayer will be the currentPlayer on the next iteration of loop
-                currentPlayer = getNextPlayer(players, currentPlayer);
-                // make sure player has action points before starting loop
-                currentPlayer.setActionPoints(DEFAULT_ACTION_POINTS);
             } catch (IllegalArgumentException illegalArgumentException) {
-                System.out.println("The action could not be performed...");
                 System.out.println(illegalArgumentException.getMessage());
             }
+
+            displayMenu(currentPlayer, scanner);
+
+            // current player's turn is over, get the nextPlayer and set to currentPlayer
+            // nextPlayer will be the currentPlayer on the next iteration of loop
+            currentPlayer = getNextPlayer(players, currentPlayer);
+            // make sure player has action points before starting loop
+            currentPlayer.setActionPoints(DEFAULT_ACTION_POINTS);
+
         }
 
         if (endGame) {
@@ -552,7 +553,7 @@ public class Game {
         }
 
         Game.announce("There are no available components for you to purchase. This is either because you do not"
-                        + "have enough resources and/or there are no components owned by other players at present.");
+                + "have enough resources and/or there are no components owned by other players at present.");
         return false;
     }
 
@@ -624,21 +625,22 @@ public class Game {
 
     /**
      * This method prints to screen a menu of components that can be developed to the next stage.     *
+     *
      * @param components - a HashMap of Components with associated Integer keys
      *                   representing menu numbers
      */
     public static void displayComponentsPlayerCanDevelop(Map<Integer, Component> components) {
-    	
-    	try {
-    		Component component;
+
+        try {
+            Component component;
             System.out.println();
             try {
-            	Thread.sleep(500);
+                Thread.sleep(500);
                 if (components.size() == 0) {
                     announce("You do not own any Artemis Systems containing components available for development");
                     return;
                 }
-            	Thread.sleep(500);
+                Thread.sleep(500);
                 System.out.printf("%-5s %-40s %-30s %-20s %-30s %-25s\n", "REF", "COMPONENT NAME", "SYSTEM", "OWNER",
                         "DEVELOPMENT STAGE", Game.RESOURCE_NAME + " REQUIRED TO DEVELOP");
                 Thread.sleep(200);
@@ -650,15 +652,15 @@ public class Game {
                                     + component.getDevelopmentStageNamesMap().get(component.getDevelopmentStage()),
                             component.getCostToDevelop());
                 }
-                System.out.println();            	
+                System.out.println();
             } catch (InterruptedException interruptedException) {
-            	System.out.println("Error: This operation has been interrupted");
-            	return;
+                System.out.println("Error: This operation has been interrupted");
+                return;
             }
-    	} catch (NullPointerException nullPointerException) {
-    		System.out.println("Error: Component map cannot be null");
-    		return;
-    	}
+        } catch (NullPointerException nullPointerException) {
+            System.out.println("Error: Component map cannot be null");
+            return;
+        }
     }
 
     /**
@@ -721,23 +723,23 @@ public class Game {
      * @param message - the message to be outputted
      */
     public static void announce(String message) {
-    	
-    	int borderLength = message.length();
-    	
-    	System.out.println();
-    	
-    	for (int loop = 0; loop < borderLength; loop++) {
-    		System.out.print("-");
-    	}
-    	
-        System.out.println("\n"+message);
-        
-    	for (int loop = 0; loop < borderLength; loop++) {
-    		System.out.print("-");
-    	}
-    	
-    	System.out.println();
-    	System.out.println();
+
+        int borderLength = message.length();
+
+        System.out.println();
+
+        for (int loop = 0; loop < borderLength; loop++) {
+            System.out.print("-");
+        }
+
+        System.out.println("\n" + message);
+
+        for (int loop = 0; loop < borderLength; loop++) {
+            System.out.print("-");
+        }
+
+        System.out.println();
+        System.out.println();
     }
 
     /**
@@ -775,21 +777,21 @@ public class Game {
         announce(updatedResourceBalanceAnnouncement);
 
     }
-    
+
     /**
      * Checks if all systems have been fully developed and runs winGame method
      */
     public static void checkAllSystemsFullyDeveloped() {
-    	int counter=0;
-    	for (ArtemisSystem system : board.getSystems()) {
-    		if(system.checkFullyDeveloped()==true) {
-    			counter++;
-    		}
-    	}
-    	if (counter==board.getSystems().length) {
-    		winGame(players);
-    		winGame=true;
-    	}
+        int counter = 0;
+        for (ArtemisSystem system : board.getSystems()) {
+            if (system.checkFullyDeveloped() == true) {
+                counter++;
+            }
+        }
+        if (counter == board.getSystems().length) {
+            winGame(players);
+            winGame = true;
+        }
     }
 
     /**
