@@ -35,6 +35,7 @@ public class Game {
     private static Board board;
     private static boolean endGame = false;
     private static boolean gameFinished = false;
+    private static boolean winGame = false;
 
     /**
      * @param args
@@ -87,7 +88,7 @@ public class Game {
         // set currentplayer to the first player in the arraylist
         Player currentPlayer = players.get(0);
 
-        while (currentPlayer.getActionPoints() > 0 && !endGame) {
+        while (currentPlayer.getActionPoints() > 0 && !endGame &&!winGame) {
             announce(String.format("Player %s it's your turn...make it count!", currentPlayer));
 
             int rollDice = rollDice();
@@ -171,7 +172,6 @@ public class Game {
             } catch (InputMismatchException e) {
                 System.out.println("Input Mismatch! Please enter Numbers");
                 scanner.next();
-                playersInTheGame(scanner);
             }
 
             if (numberOfPlayers >= MINIMUM_PLAYERS && numberOfPlayers <= MAXIMUM_PLAYERS) {
@@ -232,18 +232,6 @@ public class Game {
      */
     public static Player getNextPlayer(List<Player> players, Player currentPlayer) {
         return players.get((players.indexOf(currentPlayer) + 1) % players.size());
-    }
-
-    /**
-     *
-     */
-    public static void cast(Player currentPlayer) {
-        ArrayList<Player> players = createPlayers(new Scanner(System.in));
-        generatePlayerOrder(players);
-        for (Player player : players) {
-            System.out.println(player.getPlayerName());
-            getNextPlayer(players, player);
-        }
     }
 
     /**
@@ -402,7 +390,7 @@ public class Game {
         String[] menuOptions = {"...MENU...", "1. Develop Component", "2. Trade components", "3. Display board status",
                 "4. Display my components", "5. End turn", "6. Leave game", "Selection..."};
 
-        while (currentPlayer.getActionPoints() > 0 && !endGame) {
+        while (currentPlayer.getActionPoints() > 0 && !endGame && !winGame) {
             currentPlayer.displayTurnStats();
 
             // loop through string array and output to screen using method
@@ -417,6 +405,7 @@ public class Game {
                 switch (playerChoice) {
                     case 1:
                         displayDevelopComponentMenu(currentPlayer, scanner);
+                        checkAllSystemsFullyDeveloped();
                         break;
                     case 2:
                         displayTradeMenu(currentPlayer, scanner);
@@ -715,6 +704,22 @@ public class Game {
         announce(updatedResourceBalanceAnnouncement);
 
     }
+    
+    /**
+     * Checks if all systems have been fully developed and runs winGame method
+     */
+    public static void checkAllSystemsFullyDeveloped() {
+    	int counter=0;
+    	for (ArtemisSystem system : board.getSystems()) {
+    		if(system.checkFullyDeveloped()==true) {
+    			counter++;
+    		}
+    	}
+    	if (counter==board.getSystems().length) {
+    		winGame(players);
+    		winGame=true;
+    	}
+    }
 
     /**
      * Displays to the players that the game has been won along with stats about the
@@ -722,17 +727,8 @@ public class Game {
      *
      * @param players
      */
-    public static void winGame(ArrayList<Player> players) {
-        // As soon as development is complete, announce the path ahead:
-        // this will be like a summary of future events at the end of a movie(an
-        // epilogue).
-        // Display the successful outcome dynamically as a sequence of headlines:
-        // e.g. in2021[...], then in 2022 [...]until finally a successful landing is
-        // achieved,
-        // with congratulations all round! Also give the final state of play that made
-        // it possible.
+    public static void winGame(List<Player> players) {
         try {
-            Thread thread = new Thread();
             int totalNumberOfExperts = 0;
 
             System.out.print("Congratulations ");
@@ -744,11 +740,11 @@ public class Game {
                 }
             }
             System.out.print("the Artemis system has successfully launched.\n");
-            thread.sleep(2000);
+            Thread.sleep(2000);
 
             for (ArtemisSystem system : board.getSystems()) {
                 system.displaySystemOwnerForEndGame();
-                thread.sleep(2000);
+                Thread.sleep(2000);
             }
 
             for (Square square : board.getSquares()) {
@@ -763,48 +759,30 @@ public class Game {
             }
 
             System.out.println("\n\nThere were " + totalNumberOfExperts + " experts needed to launch the Artemis Project.\n");
-            thread.sleep(2000);
-            // KL COMPLETED (PENDING PLAYTESTING) Sort and display board components according total number of experts number of experts committed over the course of the game
+            Thread.sleep(2000);
             sortComponentsByTotalResourcesDevoted();
 
             System.out.println("\n");
-            thread.sleep(5000);
-            // get the sorted list
+            Thread.sleep(5000);
             List<Player> listOfPlayersSortedByTimesDeclinedResources = sortPlayersByCounterOfTimesDeclinedResources(
                     players);
-            // display the sorted list
             displayTimesDeclinedResourcesStats(listOfPlayersSortedByTimesDeclinedResources);
 
-
             System.out.println("\n");
-            thread.sleep(2000);
+            Thread.sleep(2000);
 
             announce("In 2021");
             System.out.println("The crew module has successfully landed on the Moon and Orion has been sent on its journey around the Moon.");
-            thread.sleep(2000);
+            Thread.sleep(2000);
             announce("In 2022");
             System.out.println("The first test flight with crew takes off to check critical systems and then returns back to Earth.");
-            thread.sleep(2000);
+            Thread.sleep(2000);
             announce("In 2023");
             System.out.println("Science investigations and technology experiments through a variety of robotic and human activities on the surface and in orbit around the Moon begin.");
-            thread.sleep(2000);
+            Thread.sleep(2000);
             announce("In 2024");
             System.out.println("NASA have succesfully landed the first woman on the Moon establishing a permanent human presence as part of the project.");
 
-
-            // Summary of future events
-
-            // Final state of play, Remaining experts
-            // (Total amount of experts taken to win the game, remaining player experts plus
-            // all costs
-            // the shuttle successfully launched thanks to the work of getPlayer name and
-            // their experts
-
-            // KL COMPLETED (PENDING PLAYTESTING): WHO DECLINED RESOURCES ON THE MOST
-            // OCCASIONS
-            // i.e. who put the needs of the project above their own
-
-            thread.interrupt();
         } catch (InterruptedException e) {
             System.out.println("Thread interrupted");
         }
