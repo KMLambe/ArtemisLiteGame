@@ -304,16 +304,16 @@ public class Component extends Square {
     /**
      * @return the totalResourcesDevotedToComponent
      */
-    public int getTotalExpertsDevotedToComponent() {
+    public int getTotalResourcesDevotedToComponent() {
         return totalResourcesDevotedToComponent;
     }
 
     /**
-     * @param totalExpertsDevotedToComponent the totalResourcesDevotedToComponent
+     * @param totalResourcessDevotedToComponent the totalResourcesDevotedToComponent
      *                                         to set
      */
-    public void setTotalExpertsDevotedToComponent(int totalExpertsDevotedToComponent) {
-        this.totalResourcesDevotedToComponent = totalExpertsDevotedToComponent;
+    public void setTotalResourcessDevotedToComponent(int totalResourcessDevotedToComponent) {
+        this.totalResourcesDevotedToComponent = totalResourcessDevotedToComponent;
     }
 
     /**

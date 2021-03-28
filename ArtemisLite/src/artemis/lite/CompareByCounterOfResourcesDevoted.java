@@ -15,7 +15,7 @@ public class CompareByCounterOfResourcesDevoted implements Comparator<Component>
 	@Override
 	public int compare(Component component1, Component component2) {
 		try {
-			return component2.getTotalExpertsDevotedToComponent() - component1.getTotalExpertsDevotedToComponent();
+			return component2.getTotalResourcesDevotedToComponent() - component1.getTotalResourcesDevotedToComponent();
 		} catch (NullPointerException nullPointerException) {
 			System.out.println("Error: Cannot compare null components");
 			return -1;
