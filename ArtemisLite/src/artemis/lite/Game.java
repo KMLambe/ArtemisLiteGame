@@ -671,9 +671,23 @@ public class Game {
      * @param message - the message to be outputted
      */
     public static void announce(String message) {
-        System.out.println("\n----------------------------------");
-        System.out.println(message);
-        System.out.println("----------------------------------\n");
+    	
+    	int borderLength = message.length();
+    	
+    	System.out.println();
+    	
+    	for (int loop = 0; loop < borderLength; loop++) {
+    		System.out.print("-");
+    	}
+    	
+        System.out.println("\n"+message);
+        
+    	for (int loop = 0; loop < borderLength; loop++) {
+    		System.out.print("-");
+    	}
+    	
+    	System.out.println();
+    	System.out.println();
     }
 
     /**
