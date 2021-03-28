@@ -24,6 +24,7 @@ public class Game {
     public final static int MAXIMUM_SQUARES = 12;
     public final static int MAXIMUM_SYSTEMS = 4;
     public final static int MAXIMUM_NAME_LENGTH = 50;
+    public final static int MAXIMUM_PLAYER_NAME_LENGTH = 10;
 
     // labels - to be used in place of hard coding strings
     public final static String RESOURCE_NAME = "EXPERTS";
@@ -143,8 +144,10 @@ public class Game {
                 announce("rolled a " + rollDice + " and moves accordingly.", currentPlayer);
 
                 Square playerPosition = updatePlayerPosition(currentPlayer, rollDice);
+                
+                checkIfSquareIsPurchasable(currentPlayer, scanner);
 
-                displayComponentIfPurchasable(scanner, currentPlayer, playerPosition);
+                // displayComponentIfPurchasable(scanner, currentPlayer, playerPosition);
 
             } catch (IllegalArgumentException illegalArgumentException) {
                 System.out.println(illegalArgumentException.getMessage());
@@ -253,8 +256,13 @@ public class Game {
         ArrayList<String> playerNames = new ArrayList<String>(numberOfPlayers);
         ArrayList<Player> players = new ArrayList<>(numberOfPlayers);
         for (int loop = 1; loop <= numberOfPlayers; loop++) {
-            System.out.println("Enter player " + loop + " name");
-            String playerName = scanner.next();
+        	String playerName;
+        	do {
+                System.out.println("Enter player " + loop + " name");
+                System.out.println("Player names can have a maximum of " + MAXIMUM_PLAYER_NAME_LENGTH + " characters.");
+                playerName = scanner.next();
+        	} while (playerName.length() > MAXIMUM_PLAYER_NAME_LENGTH);
+
 
             while (playerNames.contains(playerName.toLowerCase())) {
                 System.out.println("Player name already exists please enter a different name.");
@@ -376,9 +384,9 @@ public class Game {
 
             if (!component.isOwned()) {
                 displayComponentIfPurchasable(scanner, currentPlayer, playerPosition);
-            } else if (component.isOwned()) {
+            } else if (component.isOwned() && component.getComponentOwner()!=currentPlayer) {
                 component.checkOwnerWantsResources(currentPlayer, scanner);
-                scanner.close();
+                // scanner.close();
             } else {
                 announce(currentPlayer.getPlayerName() + " has decided not to purchase " + component);
                 currentPlayer.offerComponentToOtherPlayers(component, scanner);
@@ -689,6 +697,10 @@ public class Game {
     public static void displayDevelopComponentMenu(Player player, Scanner scanner) {
 
         Map<Integer, Component> componentsAvailable = player.getOwnedComponentsThatCanBeDeveloped();
+        
+        Game.announce("has " + player.getResourceBalance() + " " + RESOURCE_NAME.toLowerCase() + " to commit to developing a component...", player);
+        
+        Game.announce("has the following components to develop:\n", player);
 
         // display components
         displayComponentsPlayerCanDevelop(componentsAvailable);
@@ -705,11 +717,15 @@ public class Game {
         if (playerSelection == null) {
             return;
         }
-
-        System.out.println(player + " has decided to develop  " + playerSelection + ".");
-
-        // process the development
-        playerSelection.developComponent();
+        
+        // account for scenario in which player lacks resources
+        if (player.getResourceBalance() < playerSelection.getCostToDevelop()) {
+        	Game.announce("doesn't have enough " + RESOURCE_NAME + " to develop this component right now.", player);
+        } else {
+        	Game.announce("has decided to develop " + playerSelection, player);
+            // process the development
+            playerSelection.developComponent();
+        }
     }
 
     /**

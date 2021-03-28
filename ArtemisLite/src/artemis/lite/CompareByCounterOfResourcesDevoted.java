@@ -6,7 +6,7 @@ package artemis.lite;
 import java.util.Comparator;
 
 /**
- * This comparator is used to compare two Components by the total number of resources devoted to them.
+ * This comparator is used to compare two Components by the total number of resources devoted to them - high to low.
  * @author Kieran Lambe 40040696
  *
  */
