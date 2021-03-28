@@ -43,9 +43,9 @@ public class Game {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        setupGame(scanner);
-
         gameBriefing();
+
+        setupGame(scanner);
 
         gameLoop(scanner);
     }
