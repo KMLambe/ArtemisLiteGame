@@ -816,7 +816,7 @@ public class Game {
             for (Square square : board.getSquares()) {
                 if (square instanceof Component) {
                     Component component = (Component) square;
-                    totalNumberOfExperts += component.getTotalExpertsDevotedToComponent();
+                    totalNumberOfExperts += component.getTotalResourcesDevotedToComponent();
                 }
             }
 
