@@ -12,8 +12,8 @@ class CompareByCounterOfResourcesDevotedTest {
 	Comparator<Component> testComparator;
 	
 	Component testComponent1, testComponent2, testComponent3;
-	int resourcesDevotedValid1 = 1;
-	int resourcesDevotedValid2 = 2;
+	int resourcesDevotedValid1;
+	int resourcesDevotedValid2;
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -23,6 +23,9 @@ class CompareByCounterOfResourcesDevotedTest {
 		testComponent1 = new Component();
 		testComponent2 = new Component();
 		testComponent3 = null;
+		
+		resourcesDevotedValid1 = 1;
+		resourcesDevotedValid2 = 2;
 		
 		testComponent1.setTotalExpertsDevotedToComponent(resourcesDevotedValid1);
 		testComponent2.setTotalExpertsDevotedToComponent(resourcesDevotedValid2);

@@ -14,8 +14,12 @@ public class CompareByCounterOfTimesPlayerDeclinedResources implements Comparato
 
 	@Override
 	public int compare(Player player1, Player player2) {
-		
-		return player2.getCountOfTimesPlayerDeclinedResources() - player1.getCountOfTimesPlayerDeclinedResources();
+		try {
+			return player2.getCountOfTimesPlayerDeclinedResources() - player1.getCountOfTimesPlayerDeclinedResources();
+		} catch (NullPointerException nullPointerException) {
+			System.out.println("Error: Cannot compare null components");
+			return -1;
+		}
 	}
 
 }
