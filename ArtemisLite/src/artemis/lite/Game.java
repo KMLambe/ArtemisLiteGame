@@ -45,7 +45,52 @@ public class Game {
 
         setupGame(scanner);
 
+        gameBriefing();
+
         gameLoop(scanner);
+    }
+
+    /**
+     * Outputs an overview of the game, rules, and mission - provides context before jumping into gameplay.
+     */
+    public static void gameBriefing() {
+        String[] mission = {
+                "With the ArtemisLite program, we will land the first woman and next man on the Moon by 2024, using innovative technologies to explore more of the lunar surface than ever before. ",
+                "\nOUR SUCCESS WILL CHANGE THE WORLD\n",
+                "So... on to YOU, our fledgling astronauts, how can YOU help us achieve our mission? Read on...",
+                "\nHere's how it works:",
+                "\t1. We need "+Game.MINIMUM_PLAYERS+"-"+Game.MAXIMUM_PLAYERS+" able bodied men and women who are willing to WORK TOGETHER",
+                "\t2. Once you're deployed, you will need to travel around our landing sites (Components and Squares)",
+                "\t3. If no one has landed on a component, you will have the opportunity to deploy EXPERTS to the site. This will make it yours.",
+                "\nEXPERTS are the currency of ArtemisLite, handle them with care... if you reach zero, you will be jettisoned for mishandling our future\n",
+                "\t4. If someone already has experts deployed on the site you've landed, you may need to help them out by transferring some of your own experts to their cause. This will be decided by the component owner",
+                "\t5. If you land on a square you will not be able to develop it, it's considered communal, so put the feet up and enjoy the team bonding!",
+                "\t6. It's import to remember that you are allocated "+Game.DEFAULT_ACTION_POINTS+" action points each turn.",
+                "\t7. Action points enable you to perform important tasks, once you use them up your turn will end automatically - so be careful how you use them!",
+                "\t\tWhat consumes action points? Developing and Trading Components",
+                "\t8. If you want to develop a component, you will need to make sure you own all the components within the SAME system.",
+                "\t\tIf someone has one you need, you can always offer to trade them for it...REMEMBER: we all win when humanity progresses!",
+                "\t9. Each component has 4 stages, meaning it can be developed 3 times.",
+                "\t10. Once you or one of your comrades develops ALL the components WITHIN THE SAME SYSTEM - the game will initiate the Artemis Launch Sequence",
+                "\t\tYou have won the opportunity of a lifetime, front row seats to the next generation of humanity...enjoy it. You will have worked hard for this. ",
+                "\t11. BE CAREFUL THOUGH... If any of your comrades feel isolated, they may abandon ship and ALL WILL BE LOST - the game will end",
+                "\t12. DON'T LET ANYONE SUFFER... Take care of your comrades, if they run out of experts, this will result in a brain drain - the game will end",
+                "\nTHIS IS YOUR OPPORTUNITY TO LEAD US ALL...",
+                "\nTAKE FORWARD OUR HOPES AND DREAMS... STRAP IN... ",
+                "\nBOOTCAMP IS OVER... Time to get stuck in!",
+                "\nPress the enter key to continue..."
+        };
+
+        for (String output : mission) {
+            System.out.printf("%s\n", output);
+            try {
+                Thread.sleep(800);
+            } catch (InterruptedException interruptedException) {
+                System.out.println("Mission Briefing interrupted");
+            }
+        }
+
+        new Scanner(System.in).nextLine();
     }
 
     /**
