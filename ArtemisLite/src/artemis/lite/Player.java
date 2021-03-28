@@ -44,32 +44,13 @@ public class Player {
     // methods
 
     /**
-     * Update the component owner to the player that invokes the method
-     *
-     * @param component the object to be updated
-     */
-    private void updateOwner(Component component) {
-        component.setComponentOwner(this);
-    }
-
-    /**
-     * Update the system owner to the player that invokes the method
-     *
-     * @param system the object to be updated
-     */
-    private void updateOwner(ArtemisSystem system) {
-        system.setSystemOwner(this);
-    }
-
-
-    /**
      * Updates the player's ownedComponents to add the specified component. This
      * will only add components that do not already exist within the ArrayList.
      *
      * @param component the object to be added
      * @throws NullPointerException if component is null
      */
-    private void addComponent(Component component) throws NullPointerException {
+    public void addComponent(Component component) throws NullPointerException {
         if (component == null) {
             throw new NullPointerException("Cannot add null component to player's owned components");
         }
@@ -87,12 +68,11 @@ public class Player {
      * @param component the object to be removed
      * @throws NullPointerException if component is null
      */
-    private void removeComponent(Component component) throws NullPointerException {
+    public void removeComponent(Component component) throws NullPointerException {
         if (component == null) {
             throw new NullPointerException("Cannot remove null component to player's owned components");
         }
 
-        // can only be removed if it does not already exist
         ownedComponents.remove(component);
     }
 
@@ -104,7 +84,6 @@ public class Player {
      * developed.
      */
     public Map<Integer, Component> getOwnedComponentsThatCanBeDeveloped() {
-
         Map<Integer, Component> componentsThatCanBeDeveloped = new HashMap<Integer, Component>();
 
         int menuNumber = 1;
@@ -116,7 +95,6 @@ public class Player {
         }
 
         return componentsThatCanBeDeveloped;
-
     }
 
     /**
@@ -130,7 +108,6 @@ public class Player {
             throw new NullPointerException("Cannot add null to player's owned systems");
         }
 
-        // make sure player does not already own this
         if (!ownedSystems.contains(system)) {
             ownedSystems.add(system);
         }
@@ -142,23 +119,13 @@ public class Player {
      * @param system the object to be removed
      * @throws NullPointerException if system is null
      */
-    private void removeSystem(ArtemisSystem system) throws NullPointerException {
+    public void removeSystem(ArtemisSystem system) throws NullPointerException {
         if (system == null) {
             throw new NullPointerException("Cannot remove null from player's owned systems");
         }
 
         // can only be removed if it does not already exist
         ownedSystems.remove(system);
-    }
-
-    /**
-     * Determines whether the player owns the component
-     *
-     * @param component the object to be checked
-     * @return true if player owns the component
-     */
-    public boolean checkPlayerOwns(Component component) {
-        return (ownedComponents.contains(component));
     }
 
     /**
@@ -183,9 +150,7 @@ public class Player {
      * validation checks were successful.
      *
      * @param component - the component that will be purchased
-     * @return true - if the component was successfully purchased and ownership
-     * changed
-     * @throws Exception - if any validation conditions fail
+     * @throws IllegalArgumentException - if any validation conditions fail
      */
     public void purchaseComponent(Component component) throws IllegalArgumentException {
 
@@ -196,18 +161,13 @@ public class Player {
             throw new IllegalArgumentException("Insufficient resources to purchase " + component.getSquareName());
         }
 
-        // announce to all game players what just happened
         Game.announce("has purchased " + component + " for " + component.getComponentCost() + " " + Game.RESOURCE_NAME, this);
 
         updateResources(-component.getComponentCost());
-        // update count of resources devoted to component (for end game notification)
         component.updateTotalResourcesDevotedToComponent(component.getComponentCost());
-        // add component to player's components
         addComponent(component);
-        // update component owned
         component.setComponentOwner(this);
-        // additional message if player now owns entire system in which component is
-        // contained
+
         if (component.getComponentSystem().checkSystemIsOwnedByOnePlayer()) {
             Game.announce("now owns all of " + component.getComponentSystem().getSystemName()
                     + " and can develop any of its components", this);
@@ -222,7 +182,6 @@ public class Player {
      */
     public void purchaseComponent(Square square) {
         if (square instanceof Component) {
-            // cast square as Component
             purchaseComponent((Component) square);
         } else {
             System.out.println(square.getSquareName() + " is not purchasable");
@@ -237,7 +196,7 @@ public class Player {
      * @param component - the object that will be proposed for a trade
      * @param scanner   - used to pass through a scanner input. - NOTE: this should
      *                  be Scanner(System.in) outside of testing.
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException for a number of conditions (component is not owned, not enough resources, no action points)
      */
     public void tradeComponent(Component component, Scanner scanner) throws IllegalArgumentException {
         // if player already owns this exit method
@@ -276,13 +235,10 @@ public class Player {
 
             message = String.format("Transferring %s from %s to %s", component.getSquareName(), componentOwner, this);
             Game.announce(message);
-            // update resources
+
             transferResources(componentOwner, component.getComponentCost());
-            // update owner
             component.setComponentOwner(this);
-            // remove from componentOwner's components
             componentOwner.removeComponent(component);
-            // add component to player's components
             addComponent(component);
 
             // check if the new component owner now owns the system
@@ -334,8 +290,7 @@ public class Player {
 
         String message;
 
-        message = String.format("Transferred %s %s to %s from %s", transferTo.getPlayerName(), resources,
-                Game.RESOURCE_NAME, transferFrom, transferTo);
+        message = String.format("Transferred %s %s to %s from %s", resources, Game.RESOURCE_NAME, transferFrom, transferTo);
 
         Game.announce(message);
     }
