@@ -389,13 +389,9 @@ public class Game {
 
         String[] menuOptions = {"...MENU...", "1. Develop Component", "2. Trade components", "3. Display board status",
                 "4. Display my components", "5. End turn", "6. Leave game", "Selection..."};
-<<<<<<< HEAD
 
         while (currentPlayer.getActionPoints() > 0 && !endGame && !winGame) {
-=======
-        
-        while (currentPlayer.getActionPoints() > 0 && !endGame) {
->>>>>>> branch 'master' of https://gitlab2.eeecs.qub.ac.uk/CSC7053-2021/csc7053-2021-g20.git
+
             currentPlayer.displayTurnStats();
 
             // loop through string array and output to screen using method
