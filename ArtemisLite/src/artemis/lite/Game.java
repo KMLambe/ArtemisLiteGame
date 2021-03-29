@@ -12,7 +12,6 @@ import java.util.*;
  */
 public class Game {
 
-
 	private final static int MINIMUM_PLAYERS = 2;
 	private final static int MAXIMUM_PLAYERS = 4;
 	private final static int STARTING_POSITION = 0;
@@ -81,7 +80,7 @@ public class Game {
 				"\t11. BE CAREFUL THOUGH... If any of your comrades feel isolated, they may abandon ship and ALL WILL BE LOST - the game will end.",
 				"\t12. DON'T LET ANYONE SUFFER... Take care of your comrades, if they run out of experts, this will result in a brain drain - the game will end.",
 				"\nTHIS IS YOUR OPPORTUNITY TO LEAD US ALL...", "\nTAKE FORWARD OUR HOPES AND DREAMS... STRAP IN... ",
-				"\nBOOTCAMP IS OVER... Time to get stuck in!", "\nPress the enter key to continue..."};
+				"\nBOOTCAMP IS OVER... Time to get stuck in!", "\nPress the enter key to continue..." };
 
 		for (String output : mission) {
 			System.out.printf("%s\n", output);
@@ -151,12 +150,11 @@ public class Game {
 
 					checkIfSquareIsPurchasable(currentPlayer, scanner);
 
-
 				} catch (IllegalArgumentException illegalArgumentException) {
 					System.out.println(illegalArgumentException.getMessage());
 				}
 
-				playTurn(currentPlayer, scanner);    //outside the above try-catch to prevent user from missing their turn
+				playTurn(currentPlayer, scanner); // outside the above try-catch to prevent user from missing their turn
 
 			} catch (InterruptedException interruptedException) {
 				System.out.println("Game was interrupted - moving on to the next player");
@@ -170,6 +168,7 @@ public class Game {
 		}
 
 		if (endGame) {
+			System.out.println("Mission has failed due to " + currentPlayer + " running out of " + RESOURCE_NAME);
 			endGame();
 		}
 	}
@@ -368,27 +367,22 @@ public class Game {
 	 * component is an instance of a square and component is not owned by another
 	 * player
 	 *
-	 * @param currentPlayer
-	 * @param scanner
+	 * @param currentPlayer has been passed from update player position.
 	 */
-	public static void checkIfSquareIsPurchasable(Player currentPlayer, Scanner scanner) {
+	public static void checkIfSquareIsPurchasable(Player currentPlayer) {
+
+		Scanner scanner = new Scanner(System.in);
 
 		Square[] squares = board.getSquares();
 		Square playerPosition = squares[currentPlayer.getCurrentBoardPosition()];
-		try {
-			playerPosition.displayAllDetails();
-		} catch (InterruptedException interruptedException) {
-			System.out.println("Error: Operation was interrupted.");
-		}
+		playerPosition.displayAllDetails();
 		if (playerPosition instanceof Component) {
 			Component component = (Component) playerPosition;
-			// currentPlayer.purchaseComponent(component);
 
 			if (!component.isOwned()) {
-				displayComponentIfPurchasable(scanner, currentPlayer, playerPosition);
+				displayComponentIfPurchasable(currentPlayer, playerPosition);
 			} else if (component.isOwned() && component.getComponentOwner() != currentPlayer) {
 				component.checkOwnerWantsResources(currentPlayer, scanner);
-				// scanner.close();
 			} else {
 				if (component.getComponentOwner() == currentPlayer) {
 					Game.announce("already owns this component", currentPlayer);
@@ -405,29 +399,28 @@ public class Game {
 	 * updated. takes a user response and allows player to purchase component if
 	 * user enters yes and component is offered to other players if user enters no.
 	 *
-	 * @param scanner
-	 * @param currentPlayer
-	 * @param playerPosition
+	 * @param currentPlayer  is the player given the option to purchase
+	 * @param playerPosition the square the player has landed on
 	 */
-	public static void displayComponentIfPurchasable(Scanner scanner, Player currentPlayer, Square playerPosition) {
+	public static void displayComponentIfPurchasable(Player currentPlayer, Square playerPosition) {
 
+		Scanner scanner = new Scanner(System.in);
 		String response;
 
 		if (playerPosition instanceof Component) {
 			System.out.println(currentPlayer + " do you want to purchase " + playerPosition + "?");
-			System.out.println("Please enter yes or no");
-			response = scanner.next();
-
 
 			do {
+				System.out.println("Please enter yes or no");
+				response = scanner.next();
 				if (response.equalsIgnoreCase("Yes")) {
 					currentPlayer.purchaseComponent(playerPosition);
 				} else if (response.equalsIgnoreCase("No")) {
 					currentPlayer.offerComponentToOtherPlayers((Component) playerPosition, scanner);
 				} else {
 					announce("INVALID INPUT");
-					System.out.println("Please enter yes or no");
-					response = scanner.next();
+					// System.out.println("Please enter yes or no");
+
 				}
 			} while (!response.equalsIgnoreCase("yes") && !response.equalsIgnoreCase("no"));
 		}
@@ -445,8 +438,8 @@ public class Game {
 
 	public static void playTurn(Player currentPlayer, Scanner scanner) throws InterruptedException {
 		int playerChoice;
-		String[] menuOptions = {"...MENU...", "1. Develop Component", "2. Trade components", "3. Display board status",
-				"4. Display my components", "5. End turn", "6. Leave game", "Selection..."};
+		String[] menuOptions = { "...MENU...", "1. Develop Component", "2. Trade components", "3. Display board status",
+				"4. Display my components", "5. End turn", "6. Leave game", "Selection..." };
 
 		while (currentPlayer.getActionPoints() > 0 && !endGame && !winGame) {
 
@@ -462,32 +455,32 @@ public class Game {
 				System.out.println();
 
 				switch (playerChoice) {
-					case 1:
-						displayDevelopComponentMenu(currentPlayer, scanner);
-						checkAllSystemsFullyDeveloped();
-						break;
-					case 2:
-						displayTradeMenu(currentPlayer, scanner);
-						break;
-					case 3:
-						board.displayAllSquares();
-						break;
-					case 4:
-						displayPlayerComponents(currentPlayer);
-						break;
-					case 5:
-						announce("has ended their turn", currentPlayer);
-						currentPlayer.setActionPoints(0);
-						break;
-					case 6:
-						// this breaks the loop and within gameLoop the endGame method is called
-						boolean playerWantsToLeave = confirmPlayerWantsToLeave();
-						if (playerWantsToLeave) {
-							endGame = true;
-						}
-						break;
-					default:
-						announce("Invalid option inputted", currentPlayer);
+				case 1:
+					displayDevelopComponentMenu(currentPlayer, scanner);
+					checkAllSystemsFullyDeveloped();
+					break;
+				case 2:
+					displayTradeMenu(currentPlayer, scanner);
+					break;
+				case 3:
+					board.displayAllSquares();
+					break;
+				case 4:
+					displayPlayerComponents(currentPlayer);
+					break;
+				case 5:
+					announce("has ended their turn", currentPlayer);
+					currentPlayer.setActionPoints(0);
+					break;
+				case 6:
+					// this breaks the loop and within gameLoop the endGame method is called
+					boolean playerWantsToLeave = confirmPlayerWantsToLeave();
+					if (playerWantsToLeave) {
+						endGame = true;
+					}
+					break;
+				default:
+					announce("Invalid option inputted", currentPlayer);
 				}
 			} catch (InputMismatchException inputMismatchException) {
 				System.out.println("Invalid input - please try again");
@@ -549,7 +542,8 @@ public class Game {
 		System.out.println();
 
 		if (components.size() > 0) {
-			System.out.printf("%-5s %-40s %-30s %-15s %-30s %s\n", "REF", "COMPONENT NAME", "SYSTEM", "OWNER", "DEVELOPMENT STAGE", "COST");
+			System.out.printf("%-5s %-40s %-30s %-15s %-30s %s\n", "REF", "COMPONENT NAME", "SYSTEM", "OWNER",
+					"DEVELOPMENT STAGE", "COST");
 
 			for (Map.Entry<Integer, Component> componentEntry : components.entrySet()) {
 				component = componentEntry.getValue();
@@ -573,7 +567,7 @@ public class Game {
 	 * @param scanner    a scanner object
 	 * @param components a map containing components as the value
 	 * @return a component object if a valid selection was made, otherwise will
-	 * return null
+	 *         return null
 	 */
 	public static Component getPlayerComponentSelection(Scanner scanner, Map<Integer, Component> components) {
 		String playerInput;
@@ -728,7 +722,9 @@ public class Game {
 
 		// account for scenario in which player lacks resources
 		if (player.getResourceBalance() <= playerSelection.getCostToDevelop()) {
-			Game.announce("doesn't have enough " + RESOURCE_NAME + " to develop this component right now. Remember you need to keep your number of " + RESOURCE_NAME + " above zero or the game is over!", player);
+			Game.announce("doesn't have enough " + RESOURCE_NAME
+					+ " to develop this component right now. Remember you need to keep your number of " + RESOURCE_NAME
+					+ " above zero or the game is over!", player);
 		} else {
 			Game.announce("has decided to develop " + playerSelection, player);
 			// process the development
@@ -892,7 +888,7 @@ public class Game {
 	 * to perform the sort and returns a sorted ArrayList of Player objects.
 	 *
 	 * @return sortedList - the sorted list of players, ranked from most times
-	 * declined resources to least times
+	 *         declined resources to least times
 	 */
 	public static List<Player> sortPlayersByCounterOfTimesDeclinedResources() {
 
@@ -1014,7 +1010,15 @@ public class Game {
 
 	}
 
-	public static boolean confirmPlayerWantsToLeave() {
+	/**
+	 * This method confirms if the current player wishes to leave the game. If the
+	 * player inputs yes then game will end and if no then game will continue.
+	 * 
+	 * @param currentPlayer is the player opting to leave
+	 * @return false if user input is no stopping the game from ending
+	 * @throws InterruptedException
+	 */
+	public static boolean confirmPlayerWantsToLeave(Player currentPlayer) throws InterruptedException {
 		Scanner scanner = new Scanner(System.in);
 		String response;
 
@@ -1024,6 +1028,8 @@ public class Game {
 			response = scanner.next();
 
 			if (response.equalsIgnoreCase("yes")) {
+				Thread.sleep(1000);
+				System.out.println(currentPlayer.getPlayerName() + " has chosen to abort the mission");
 				return true;
 			} else if (response.equalsIgnoreCase("no")) {
 				return false;
@@ -1040,66 +1046,53 @@ public class Game {
 	 * ended. It displays to screen the final resources available to players before
 	 * game ended, owned components and systems and player who refused to accept
 	 * resources most.
+	 * 
+	 * @throws InterruptedException
 	 *
 	 */
-	public static void endGame()  {
-		try {
-			int totalNumberOfExperts = 0;
+	public static void endGame() throws InterruptedException {
 
-			// print generic response for mission failure and announce end of game
-			announce("Houston... we've had a problem");
-			System.out.println("MISSION ABORTED!");
-			Thread.sleep(1000);
+		int totalNumberOfExperts = 0;
 
-			// loop through the players to find the player with no resources left and print
-			// message to screen
-			/*
-			if (currentPlayer.getResourceBalance() <= 0) {
-				System.out.println("Mission has failed due to " + currentPlayer + " running out of " + RESOURCE_NAME);
-			} else {
-				System.out.println(currentPlayer.getPlayerName() + " has chosen to abort the mission");
-			}
-			 */
-			Thread.sleep(1000);
+		Thread.sleep(1000);
+		announce("Houston... we've had a problem");
+		System.out.println("MISSION ABORTED!");
+		Thread.sleep(1000);
 
-			// loop through players to get resources required to win game
-			for (Player player : players) {
-				totalNumberOfExperts += player.getResourceBalance();
-			}
-			System.out.println(totalNumberOfExperts + RESOURCE_NAME + " were required to launch Artemis");
-			Thread.sleep(1000);
-
-			System.out.printf("\n%-20s %-10s\n", "PLAYER", "REMAINING RESOURCES");
-			System.out.println("-----------------------------------------");
-			for (Player player : players) {
-				System.out.printf("%-20s %-10s\n", player.getPlayerName(), player.getResourceBalance());
-			}
-			Thread.sleep(1000);
-
-			System.out.printf("\n%-20s %-10s\n", "PLAYER", "OWNED COMPONENTS");
-			System.out.println("-----------------------------------------");
-			for (Player player : players) {
-				System.out.printf("\n%-20s %-10s\n", player.getPlayerName(), player.getOwnedComponents());
-			}
-			Thread.sleep(1000);
-
-			System.out.printf("\n%-20s %-10s\n", "PLAYER", "OWNED SYSTEMS");
-			System.out.println("-----------------------------------------");
-			for (Player player : players) {
-				System.out.printf("\n%-20s %-10s\n", player.getPlayerName(), player.getOwnedSystems());
-			}
-			Thread.sleep(1000);
-
-			// get the sorted list
-			System.out.println();
-			List<Player> listOfPlayersSortedByTimesDeclinedResources = sortPlayersByCounterOfTimesDeclinedResources();
-			// display the sorted list
-			displayTimesDeclinedResourcesStats(listOfPlayersSortedByTimesDeclinedResources);
-
-		} catch (InterruptedException e) {
-			System.out.println("Thread interrupted");
+		for (Player player : players) {
+			totalNumberOfExperts += player.getResourceBalance();
 		}
+		System.out.println(totalNumberOfExperts + " " + RESOURCE_NAME + " were required to launch Artemis");
+		Thread.sleep(1000);
 
+		System.out.printf("\n%-20s %-10s\n", "PLAYER", "REMAINING RESOURCES");
+		System.out.println("-----------------------------------------");
+		for (Player player : players) {
+			System.out.printf("%-20s %-10s\n", player.getPlayerName(), player.getResourceBalance());
+		}
+		Thread.sleep(1000);
+
+		System.out.printf("\n%-20s %-10s\n", "PLAYER", "OWNED COMPONENTS");
+		System.out.println("-----------------------------------------");
+		for (Player player : players) {
+			System.out.printf("\n%-20s %-10s\n", player.getPlayerName(), player.getOwnedComponents());
+		}
+		Thread.sleep(1000);
+
+		System.out.printf("\n%-20s %-10s\n", "PLAYER", "OWNED SYSTEMS");
+		System.out.println("-----------------------------------------");
+		for (Player player : players) {
+			System.out.printf("\n%-20s %-10s\n", player.getPlayerName(), player.getOwnedSystems());
+		}
+		Thread.sleep(1000);
+
+		// get the sorted list
+		System.out.println();
+		List<Player> listOfPlayersSortedByTimesDeclinedResources = sortPlayersByCounterOfTimesDeclinedResources();
+		// display the sorted list
+		displayTimesDeclinedResourcesStats(listOfPlayersSortedByTimesDeclinedResources);
+
+		announce("GAME ENDED");
 	}
 
 	/**
@@ -1205,7 +1198,8 @@ public class Game {
 	/**
 	 * Sets the value of the board variable.
 	 *
-	 * @param board should be the board object that contains the virtual board (squares and systems)
+	 * @param board should be the board object that contains the virtual board
+	 *              (squares and systems)
 	 */
 	public static void setBoard(Board board) {
 		Game.board = board;
