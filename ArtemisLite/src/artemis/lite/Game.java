@@ -211,7 +211,7 @@ public class Game {
 	 * Takes an input from the user to confirm the number of players playing
 	 *
 	 * @param scanner
-	 * @return
+	 * @return the number of players in the game
 	 */
 	public static int playersInTheGame(Scanner scanner) {
 
@@ -240,7 +240,7 @@ public class Game {
 	 * Sets the player names, starting position and starting resources
 	 *
 	 * @param scanner
-	 * @return
+	 * @return a List of all the players 
 	 */
 	public static ArrayList<Player> createPlayers(Scanner scanner) {
 		int numberOfPlayers;
@@ -786,11 +786,12 @@ public class Game {
 
 	/**
 	 * Checks if all systems have been fully developed and runs winGame method
+	 * @return winGame boolean to check if the game has been won
 	 */
 	public static boolean checkAllSystemsFullyDeveloped() {
 		int counter = 0;
 		for (ArtemisSystem system : board.getSystems()) {
-			if (system.checkFullyDeveloped() == true) {
+			if (system.checkFullyDeveloped()) {
 				counter++;
 			}
 		}
