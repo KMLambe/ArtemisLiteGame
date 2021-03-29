@@ -132,13 +132,15 @@ public class Game {
 	 * @param scanner a scanner object
 	 */
 	public static void gameLoop(Scanner scanner) {
-		// set currentplayer to the first player in the arraylist
+		// set currentPlayer to the first player in the arraylist
 		Player currentPlayer = players.get(0);
 
 		while (currentPlayer.getActionPoints() > 0 && !endGame && !winGame) {
 			try {
 				try {
 					announce(String.format("Player %s it's your turn...make it count!", currentPlayer));
+
+					currentPlayer.incrementTurnCounter();
 
 					int rollDice = rollDice();
 
@@ -440,7 +442,6 @@ public class Game {
 
 	public static void playTurn(Player currentPlayer, Scanner scanner) throws InterruptedException {
 		int playerChoice;
-
 		String[] menuOptions = {"...MENU...", "1. Develop Component", "2. Trade components", "3. Display board status",
 				"4. Display my components", "5. End turn", "6. Leave game", "Selection..."};
 

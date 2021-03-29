@@ -21,6 +21,7 @@ public class Player {
     private List<Component> ownedComponents = new ArrayList<>();
     private List<ArtemisSystem> ownedSystems = new ArrayList<>();
     private int CountOfTimesPlayerDeclinedResources;
+    private int turnCounter;
 
     /**
      * Default constructor - accepts no arguments
@@ -39,6 +40,7 @@ public class Player {
         this.playerName = playerName;
         this.resourceBalance = resourceBalance;
         this.currentBoardPosition = currentBoardPosition;
+        this.turnCounter = 0;
     }
 
     // methods
@@ -528,5 +530,19 @@ public class Player {
      */
     public void setCountOfTimesPlayerDeclinedResources(int countOfTimesPlayerDeclinedResources) {
         CountOfTimesPlayerDeclinedResources = countOfTimesPlayerDeclinedResources;
+    }
+
+    /**
+     * @return the number of turns a given player has had within the game
+     */
+    public int getTurnCounter() {
+        return turnCounter;
+    }
+
+    /**
+     * Increases the player's turnCounter by +1 each time the method is called.
+     */
+    public void incrementTurnCounter() {
+        this.turnCounter++;
     }
 }

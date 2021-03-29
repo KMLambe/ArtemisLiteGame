@@ -558,4 +558,11 @@ class PlayerTest {
         assertTrue(illegalArgumentException.getMessage().equalsIgnoreCase("invalid board position"));
     }
 
+    @Test
+    void getAndIncrementTurnCounter() {
+        assertEquals(0, p1.getTurnCounter());
+        p1.incrementTurnCounter();
+        assertEquals(1, p1.getTurnCounter());
+    }
+
 }
