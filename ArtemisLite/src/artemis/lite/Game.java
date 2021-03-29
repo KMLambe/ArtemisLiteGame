@@ -1157,23 +1157,44 @@ public class Game {
 		return winner;
 	}
 
-	// getters and setters
-	public static List<Player> getPlayers() {
-		return players;
-	}
+    // getters and setters
 
-	public static void setPlayers(List<Player> players) {
-		Game.players = players;
-	}
+    /**
+     * Used to access the list of players outside of the Game object.
+     *
+     * @return list of player objects
+     */
+    public static List<Player> getPlayers() {
+        return players;
+    }
 
-	public static Board getBoard() {
-		if (board == null) {
-			createBoard();
-		}
-		return board;
-	}
+    /**
+     * Set the value of the players variable.
+     *
+     * @param players a list of player objects
+     */
+    public static void setPlayers(List<Player> players) {
+        Game.players = players;
+    }
 
-	public static void setBoard(Board board) {
-		Game.board = board;
-	}
+    /**
+     * Used to access the board object outside of the Game object.
+     *
+     * @return the virtual board being used
+     */
+    public static Board getBoard() {
+        if (board == null) {
+            createBoard();
+        }
+        return board;
+    }
+
+    /**
+     * Sets the value of the board variable.
+     *
+     * @param board should be the board object that contains the virtual board (squares and systems)
+     */
+    public static void setBoard(Board board) {
+        Game.board = board;
+    }
 }
