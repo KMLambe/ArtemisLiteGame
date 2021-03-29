@@ -390,6 +390,23 @@ public class Player {
 
         return newBalance;
     }
+    
+    /**
+     * Determines which of the player's owned components have been developed to the maximum development stage
+     * and adds them to a List.
+     * @return componentsThatCanBeDeveloped - the List of components which have reached maximum development stage
+     */
+    public List<Component> getFullyDevelopedComponents() {
+    	List<Component> fullyDevelopedComponents = new ArrayList<Component>();
+
+        for (Component component : getOwnedComponents()) {
+            if (component.checkFullyDeveloped()) {
+                fullyDevelopedComponents.add(component);
+            }
+        }
+
+        return fullyDevelopedComponents;
+    }
 
     // getters and setters
 

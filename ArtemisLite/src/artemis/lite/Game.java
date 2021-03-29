@@ -698,37 +698,75 @@ public class Game {
 	public static void displayDevelopComponentMenu(Player player, Scanner scanner) {
 
 		Map<Integer, Component> componentsAvailable = player.getOwnedComponentsThatCanBeDeveloped();
-
-		Game.announce("has " + player.getResourceBalance() + " " + RESOURCE_NAME.toLowerCase()
-				+ " to commit to developing a component...", player);
-
-		Game.announce("has the following components to develop:\n", player);
-
-		// display components
-		displayComponentsPlayerCanDevelop(componentsAvailable);
-
-		// if no components are available then return to menu
-		if (componentsAvailable.size() == 0) {
-			return;
+		List<Component> componentsFullyDeveloped = player.getFullyDevelopedComponents();
+		
+		if (componentsFullyDeveloped.size() > 0) {
+			displayPlayerFullyDevelopedComponents(player);
 		}
-
-		// get user input
-		Component playerSelection = getPlayerComponentSelection(scanner, componentsAvailable);
-
-		// player did not select a component - return to main main
-		if (playerSelection == null) {
-			return;
-		}
-
-		// account for scenario in which player lacks resources
-		if (player.getResourceBalance() <= playerSelection.getCostToDevelop()) {
-			Game.announce("doesn't have enough " + RESOURCE_NAME
-					+ " to develop this component right now. Remember you need to keep your number of " + RESOURCE_NAME
-					+ " above zero or the game is over!", player);
+		
+		if (componentsAvailable.size()==0) {
+			Thread.sleep(200);
+			Game.announce("does not have any components that meet the criteria for development.", player);
 		} else {
-			Game.announce("has decided to develop " + playerSelection, player);
-			// process the development
-			playerSelection.developComponent();
+			Thread.sleep(200);
+			Game.announce("has " + player.getResourceBalance() + " " + RESOURCE_NAME.toLowerCase()
+					+ " to commit to developing a component...", player);
+			Thread.sleep(200);
+			Game.announce("has the following components to develop:\n", player);
+
+			// display components
+			displayComponentsPlayerCanDevelop(componentsAvailable);
+
+			// if no components are available then return to menu
+			if (componentsAvailable.size() == 0) {
+				return;
+			}
+
+			// get user input
+			Component playerSelection = getPlayerComponentSelection(scanner, componentsAvailable);
+
+			// player did not select a component - return to main main
+			if (playerSelection == null) {
+				return;
+			}
+
+			// account for scenario in which player lacks resources
+			if (player.getResourceBalance() <= playerSelection.getCostToDevelop()) {
+				Game.announce("doesn't have enough " + RESOURCE_NAME
+						+ " to develop this component right now. Remember you need to keep your number of "
+						+ RESOURCE_NAME + " above zero or the game is over!", player);
+			} else {
+				Game.announce("has decided to develop " + playerSelection, player);
+				// process the development
+				playerSelection.developComponent();
+			}
+		}
+	}
+	
+	/**
+	 * Outputs to screen key information about the components the player has developed to the maximum stage.
+	 * @param player - the current player.
+	 */
+	public static void displayPlayerFullyDevelopedComponents(Player player) throws InterruptedException {
+		
+		List<Component> fullyDevelopedComponents = player.getFullyDevelopedComponents();
+
+		if (fullyDevelopedComponents.isEmpty()) {
+			Thread.sleep(200);
+			Game.announce("has not fully developed any components yet.", player);
+		} else {
+			Thread.sleep(200);
+			Game.announce("has fully developed the following components so far:\n", player);
+			Thread.sleep(200);
+			System.out.printf("%-12s %-40s %-30s %-30s\n", "POSITION", "NAME", "SYSTEM", "DEVELOPMENT STAGE");
+			
+			fullyDevelopedComponents.sort(new CompareByPosition());
+
+			for (Component component : fullyDevelopedComponents) {
+				component.displaySquarePositionNameSystemAndDevelopmentStage();
+			}
+			
+			System.out.println();
 		}
 	}
 
