@@ -542,12 +542,13 @@ public class Game {
 		System.out.println();
 
 		if (components.size() > 0) {
-			System.out.printf("%-5s %-40s %-20s %-4s\n", "REF", "COMPONENT NAME", "OWNER", "COST");
+			System.out.printf("%-5s %-40s %-30s %-15s %-30s %s\n", "REF", "COMPONENT NAME", "SYSTEM", "OWNER", "DEVELOPMENT STAGE", "COST");
 
 			for (Map.Entry<Integer, Component> componentEntry : components.entrySet()) {
 				component = componentEntry.getValue();
-				System.out.printf("%-5s %-40s %-20s %-4s\n", componentEntry.getKey(), component,
-						component.getComponentOwner(), component.getComponentCost());
+				System.out.printf("%-5s %-40s %-30s %-15s %-30s %s\n", componentEntry.getKey(), component,
+						component.getComponentSystem().getSystemName(), component.getComponentOwner(),
+						component.getDevelopmentStageName(), component.getComponentCost());
 			}
 
 			return true;
