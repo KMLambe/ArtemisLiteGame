@@ -706,8 +706,9 @@ public class Game {
 	 *
 	 * @param player  - the current player
 	 * @param scanner - used to receive player input
+	 * @throws InterruptedException if interrupted
 	 */
-	public static void displayDevelopComponentMenu(Player player, Scanner scanner) {
+	public static void displayDevelopComponentMenu(Player player, Scanner scanner) throws InterruptedException {
 
 		Map<Integer, Component> componentsAvailable = player.getOwnedComponentsThatCanBeDeveloped();
 		List<Component> componentsFullyDeveloped = player.getFullyDevelopedComponents();
