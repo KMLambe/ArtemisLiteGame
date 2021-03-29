@@ -129,8 +129,9 @@ public class Game {
 	 * true).
 	 *
 	 * @param scanner a scanner object
+	 * @throws InterruptedException 
 	 */
-	public static void gameLoop(Scanner scanner) {
+	public static void gameLoop(Scanner scanner) throws InterruptedException {
 		// set currentPlayer to the first player in the arraylist
 		Player currentPlayer = players.get(0);
 
@@ -139,16 +140,18 @@ public class Game {
 				try {
 					announce(String.format("Player %s it's your turn...make it count!", currentPlayer));
 
-					currentPlayer.incrementTurnCounter();
+					// currentPlayer.incrementTurnCounter();
 
 					int rollDice = rollDice();
 
 					// let everyone know the player has moved
+					announce("is rolling the dice...", currentPlayer);
+					Thread.sleep(2000);
 					announce("rolled a " + rollDice + " and moves accordingly.", currentPlayer);
-
+					Thread.sleep(1000);
 					Square playerPosition = updatePlayerPosition(currentPlayer, rollDice);
 
-					checkIfSquareIsPurchasable(currentPlayer, scanner);
+					checkIfSquareIsPurchasable(currentPlayer);
 
 				} catch (IllegalArgumentException illegalArgumentException) {
 					System.out.println(illegalArgumentException.getMessage());
@@ -358,18 +361,24 @@ public class Game {
 		}
 
 		announce(positionChangeAnnouncement, currentPlayer);
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 
 		return board.getSquares()[newBoardPosition];
 	}
 
-	/**
+
+/**
 	 * Allows the position of the current player to be purchased only if the
 	 * component is an instance of a square and component is not owned by another
 	 * player
 	 *
-	 * @param currentPlayer has been passed from update player position.
+	 * @param currentPlayer
+	 * @throws InterruptedException 
 	 */
-	public static void checkIfSquareIsPurchasable(Player currentPlayer) {
+	public static void checkIfSquareIsPurchasable(Player currentPlayer) throws InterruptedException {
 
 		Scanner scanner = new Scanner(System.in);
 
@@ -399,19 +408,24 @@ public class Game {
 	 * updated. takes a user response and allows player to purchase component if
 	 * user enters yes and component is offered to other players if user enters no.
 	 *
-	 * @param currentPlayer  is the player given the option to purchase
-	 * @param playerPosition the square the player has landed on
+	 * @param scanner
+	 * @param currentPlayer
+	 * @param playerPosition
+	 * @throws InterruptedException interrupts thread 
 	 */
-	public static void displayComponentIfPurchasable(Player currentPlayer, Square playerPosition) {
+	public static void displayComponentIfPurchasable(Player currentPlayer, Square playerPosition) throws InterruptedException {
 
 		Scanner scanner = new Scanner(System.in);
 		String response;
+		
+		Thread.sleep(1000);
+		currentPlayer.displayTurnStats();
 
 		if (playerPosition instanceof Component) {
-			System.out.println(currentPlayer + " do you want to purchase " + playerPosition + "?");
+			announce("do you want to purchase " + playerPosition + "?", currentPlayer);
 
 			do {
-				System.out.println("Please enter yes or no");
+				System.out.println("Please input yes or no...");
 				response = scanner.next();
 				if (response.equalsIgnoreCase("Yes")) {
 					currentPlayer.purchaseComponent(playerPosition);
@@ -419,8 +433,6 @@ public class Game {
 					currentPlayer.offerComponentToOtherPlayers((Component) playerPosition, scanner);
 				} else {
 					announce("INVALID INPUT");
-					// System.out.println("Please enter yes or no");
-
 				}
 			} while (!response.equalsIgnoreCase("yes") && !response.equalsIgnoreCase("no"));
 		}
