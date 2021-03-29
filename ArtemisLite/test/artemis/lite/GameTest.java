@@ -125,6 +125,11 @@ class GameTest {
 		testComponent3 = (Component) board1.getSquares()[3];
 
 		system1.setSystemOwner(player1);
+		
+		List<Player> players = new ArrayList<Player>();
+		players.add(player1);
+		players.add(player2);
+		Game.setPlayers(players);
 	}
 
 	@Test
@@ -603,6 +608,61 @@ class GameTest {
 		// check that message is as expected
 		assertTrue(exception.getMessage().contains("cannot be null"));
 		
+	}
+	
+	@Test
+	void testcheckAllSystemsFullyDevelopedValid() {
+		Player currentPlayer;
+		boolean actualResult;
+		boolean expectedOutcome1=false;
+		boolean expectedOutcome2=true;
+		Square[] squares = board1.getSquares();
+		player1.setResourceBalance(5000);
+		player2.setResourceBalance(5000);
+		player1.setActionPoints(10);
+		player2.setActionPoints(10);
+		
+		currentPlayer=player1;
+		
+		player1.purchaseComponent(squares[1]);
+		player1.purchaseComponent(squares[2]);
+		player1.purchaseComponent(squares[3]);
+		player1.purchaseComponent(squares[7]);
+		player1.purchaseComponent(squares[8]);
+		player1.purchaseComponent(squares[9]);
+	
+		currentPlayer=player2;
+		player2.purchaseComponent(squares[4]);
+		player2.purchaseComponent(squares[5]);
+		player2.purchaseComponent(squares[10]);
+		player2.purchaseComponent(squares[11]);
+		
+		actualResult=Game.checkAllSystemsFullyDeveloped();
+		assertEquals(expectedOutcome1, actualResult);
+		
+		Component testComponent1 = (Component) squares[1];
+		testComponent1.setDevelopmentStage(4);
+		Component testComponent2 = (Component) squares[2];
+		testComponent2.setDevelopmentStage(4);
+		Component testComponent3 = (Component) squares[3];
+		testComponent3.setDevelopmentStage(4);
+		Component testComponent4 = (Component) squares[4];
+		testComponent4.setDevelopmentStage(4);
+		Component testComponent5 = (Component) squares[5];
+		testComponent5.setDevelopmentStage(4);
+		Component testComponent7 = (Component) squares[7];
+		testComponent7.setDevelopmentStage(4);
+		Component testComponent8 = (Component) squares[8];
+		testComponent8.setDevelopmentStage(4);
+		Component testComponent9 = (Component) squares[9];
+		testComponent9.setDevelopmentStage(4);
+		Component testComponent10 = (Component) squares[10];
+		testComponent10.setDevelopmentStage(4);
+		Component testComponent11 = (Component) squares[11];
+		testComponent11.setDevelopmentStage(4);
+		
+		actualResult=Game.checkAllSystemsFullyDeveloped();
+		assertEquals(expectedOutcome2, actualResult);
 	}
 
 }
