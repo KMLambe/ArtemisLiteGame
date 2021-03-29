@@ -81,7 +81,7 @@ public class Game {
 				"\t11. BE CAREFUL THOUGH... If any of your comrades feel isolated, they may abandon ship and ALL WILL BE LOST - the game will end.",
 				"\t12. DON'T LET ANYONE SUFFER... Take care of your comrades, if they run out of experts, this will result in a brain drain - the game will end.",
 				"\nTHIS IS YOUR OPPORTUNITY TO LEAD US ALL...", "\nTAKE FORWARD OUR HOPES AND DREAMS... STRAP IN... ",
-				"\nBOOTCAMP IS OVER... Time to get stuck in!", "\nPress the enter key to continue..." };
+				"\nBOOTCAMP IS OVER... Time to get stuck in!", "\nPress the enter key to continue..."};
 
 		for (String output : mission) {
 			System.out.printf("%s\n", output);
@@ -153,7 +153,7 @@ public class Game {
 				System.out.println(illegalArgumentException.getMessage());
 			}
 
-			displayMenu(currentPlayer, scanner);
+			playTurn(currentPlayer, scanner);
 
 			// current player's turn is over, get the nextPlayer and set to currentPlayer
 			// nextPlayer will be the currentPlayer on the next iteration of loop
@@ -163,8 +163,8 @@ public class Game {
 		}
 
 		if (endGame) {
-				endGame(currentPlayer);
-				System.out.println("GAME HAS ENDED");
+			endGame(currentPlayer);
+			System.out.println("GAME HAS ENDED");
 		}
 	}
 
@@ -240,7 +240,7 @@ public class Game {
 	 * Sets the player names, starting position and starting resources
 	 *
 	 * @param scanner
-	 * @return a List of all the players 
+	 * @return a List of all the players
 	 */
 	public static ArrayList<Player> createPlayers(Scanner scanner) {
 		int numberOfPlayers;
@@ -434,11 +434,11 @@ public class Game {
 	 * @param currentPlayer takes an arraylist of players
 	 */
 
-	public static void displayMenu(Player currentPlayer, Scanner scanner) {
+	public static void playTurn(Player currentPlayer, Scanner scanner) {
 		int playerChoice;
 
-		String[] menuOptions = { "...MENU...", "1. Develop Component", "2. Trade components", "3. Display board status",
-				"4. Display my components", "5. End turn", "6. Leave game", "Selection..." };
+		String[] menuOptions = {"...MENU...", "1. Develop Component", "2. Trade components", "3. Display board status",
+				"4. Display my components", "5. End turn", "6. Leave game", "Selection..."};
 
 		while (currentPlayer.getActionPoints() > 0 && !endGame && !winGame) {
 
@@ -454,28 +454,28 @@ public class Game {
 				System.out.println();
 
 				switch (playerChoice) {
-				case 1:
-					displayDevelopComponentMenu(currentPlayer, scanner);
-					checkAllSystemsFullyDeveloped();
-					break;
-				case 2:
-					displayTradeMenu(currentPlayer, scanner);
-					break;
-				case 3:
-					board.displayAllSquares();
-					break;
-				case 4:
-					displayPlayerComponents(currentPlayer);
-					break;
-				case 5:
-					announce("has ended their turn", currentPlayer);
-					currentPlayer.setActionPoints(0);
-					break;
-				case 6:
-					endGame = true;
-					break;
-				default:
-					announce("Invalid option inputted", currentPlayer);
+					case 1:
+						displayDevelopComponentMenu(currentPlayer, scanner);
+						checkAllSystemsFullyDeveloped();
+						break;
+					case 2:
+						displayTradeMenu(currentPlayer, scanner);
+						break;
+					case 3:
+						board.displayAllSquares();
+						break;
+					case 4:
+						displayPlayerComponents(currentPlayer);
+						break;
+					case 5:
+						announce("has ended their turn", currentPlayer);
+						currentPlayer.setActionPoints(0);
+						break;
+					case 6:
+						endGame = true;
+						break;
+					default:
+						announce("Invalid option inputted", currentPlayer);
 				}
 			} catch (InputMismatchException inputMismatchException) {
 				System.out.println("Invalid input - please try again");
@@ -560,7 +560,7 @@ public class Game {
 	 * @param scanner    a scanner object
 	 * @param components a map containing components as the value
 	 * @return a component object if a valid selection was made, otherwise will
-	 *         return null
+	 * return null
 	 */
 	public static Component getPlayerComponentSelection(Scanner scanner, Map<Integer, Component> components) {
 		String playerInput;
@@ -786,6 +786,7 @@ public class Game {
 
 	/**
 	 * Checks if all systems have been fully developed and runs winGame method
+	 *
 	 * @return winGame boolean to check if the game has been won
 	 */
 	public static boolean checkAllSystemsFullyDeveloped() {
@@ -881,7 +882,7 @@ public class Game {
 	 *
 	 * @param playerList - the list of players at the end of the game
 	 * @return sortedList - the sorted list of players, ranked from most times
-	 *         declined resources to least times
+	 * declined resources to least times
 	 */
 	public static List<Player> sortPlayersByCounterOfTimesDeclinedResources() {
 
@@ -926,10 +927,10 @@ public class Game {
 			Game.announce("owns the following components:\n", player);
 
 			System.out.printf("%-12s %-40s %-30s %-30s\n", "POSITION", "NAME", "SYSTEM", "DEVELOPMENT STAGE");
-			
+
 			List<Component> componentList = player.getOwnedComponents();
-			
-			Collections.sort(componentList,new CompareByPosition());
+
+			Collections.sort(componentList, new CompareByPosition());
 
 			for (Component component : player.getOwnedComponents()) {
 				component.displaySquarePositionNameSystemAndDevelopmentStage();
@@ -1027,7 +1028,7 @@ public class Game {
 				if (response.equalsIgnoreCase("yes")) {
 					announce("has left the game", currentPlayer);
 				} else if (response.equalsIgnoreCase("no")) {
-					displayMenu(currentPlayer, scanner);
+					playTurn(currentPlayer, scanner);
 				} else {
 					System.out.println("invalid");
 				}
@@ -1157,44 +1158,44 @@ public class Game {
 		return winner;
 	}
 
-    // getters and setters
+	// getters and setters
 
-    /**
-     * Used to access the list of players outside of the Game object.
-     *
-     * @return list of player objects
-     */
-    public static List<Player> getPlayers() {
-        return players;
-    }
+	/**
+	 * Used to access the list of players outside of the Game object.
+	 *
+	 * @return list of player objects
+	 */
+	public static List<Player> getPlayers() {
+		return players;
+	}
 
-    /**
-     * Set the value of the players variable.
-     *
-     * @param players a list of player objects
-     */
-    public static void setPlayers(List<Player> players) {
-        Game.players = players;
-    }
+	/**
+	 * Set the value of the players variable.
+	 *
+	 * @param players a list of player objects
+	 */
+	public static void setPlayers(List<Player> players) {
+		Game.players = players;
+	}
 
-    /**
-     * Used to access the board object outside of the Game object.
-     *
-     * @return the virtual board being used
-     */
-    public static Board getBoard() {
-        if (board == null) {
-            createBoard();
-        }
-        return board;
-    }
+	/**
+	 * Used to access the board object outside of the Game object.
+	 *
+	 * @return the virtual board being used
+	 */
+	public static Board getBoard() {
+		if (board == null) {
+			createBoard();
+		}
+		return board;
+	}
 
-    /**
-     * Sets the value of the board variable.
-     *
-     * @param board should be the board object that contains the virtual board (squares and systems)
-     */
-    public static void setBoard(Board board) {
-        Game.board = board;
-    }
+	/**
+	 * Sets the value of the board variable.
+	 *
+	 * @param board should be the board object that contains the virtual board (squares and systems)
+	 */
+	public static void setBoard(Board board) {
+		Game.board = board;
+	}
 }
