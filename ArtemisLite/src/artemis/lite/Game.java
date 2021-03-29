@@ -254,13 +254,13 @@ public class Game {
 			numberOfPlayers = playersInTheGame(scanner);
 		} while (numberOfPlayers < 0);
 
+		System.out.println("Player names can have a maximum of " + MAXIMUM_PLAYER_NAME_LENGTH + " characters.");
 		ArrayList<String> playerNames = new ArrayList<String>(numberOfPlayers);
 		ArrayList<Player> players = new ArrayList<>(numberOfPlayers);
 		for (int loop = 1; loop <= numberOfPlayers; loop++) {
 			String playerName;
 			do {
 				System.out.println("Enter player " + loop + " name");
-				System.out.println("Player names can have a maximum of " + MAXIMUM_PLAYER_NAME_LENGTH + " characters.");
 				playerName = scanner.next();
 			} while (playerName.length() > MAXIMUM_PLAYER_NAME_LENGTH);
 
