@@ -792,6 +792,21 @@ public class Game {
 		announce(updatedResourceBalanceAnnouncement);
 
 	}
+	
+	/**
+	 * Adds the total amount of turns taken in the game and gives the average number of turns to develop each system
+	 */
+	public static void displayTotalNumberofTurns() {
+		int totalNumberOfTurns=0;
+		double averageTurnsToUpgradeASystem;
+		for (Player player : players) {
+			totalNumberOfTurns+=player.getTurnCounter();
+		}
+		
+		System.out.println("\n\nIt has taken a combined effort of "+totalNumberOfTurns+ " turns to successfully launch the system.");
+		averageTurnsToUpgradeASystem=(double)totalNumberOfTurns/board.getSystems().length;
+		System.out.printf("There was an average of %.2f turns to complete each system.",averageTurnsToUpgradeASystem);
+	}
 
 	/**
 	 * Checks if all systems have been fully developed and runs winGame method
@@ -835,7 +850,10 @@ public class Game {
 				system.displaySystemOwnerForEndGame();
 				Thread.sleep(2000);
 			}
-
+			
+			displayTotalNumberofTurns();
+			Thread.sleep(2000);
+			
 			for (Square square : board.getSquares()) {
 				if (square instanceof Component) {
 					Component component = (Component) square;
