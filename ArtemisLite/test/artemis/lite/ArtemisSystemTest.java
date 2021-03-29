@@ -7,6 +7,11 @@ import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Unit tests to check the functionality of the ArtemisSystem class is working as intended. 
+ * @author Kieran Lambe 40040696
+ *
+ */
 class ArtemisSystemTest {
 
 	// test board

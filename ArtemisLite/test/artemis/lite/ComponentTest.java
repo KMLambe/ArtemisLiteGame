@@ -1,11 +1,17 @@
 package artemis.lite;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
+/**
+ * Test class comprising unit tests to check the functionality of the Component class.
+ * @author Kieran Lambe 40040696
+ *
+ */
 class ComponentTest {
 
 	// test players
@@ -20,6 +26,9 @@ class ComponentTest {
 	Player player3;
 	String validPlayerName3;
 	int validResourceBalance3, validCurrentBoardPosition3;
+	
+	// arraylist to store players
+	ArrayList<Player> playerList;
 
 	// test board
 	Board board1;
@@ -124,6 +133,13 @@ class ComponentTest {
 		player3 = new Player();
 		player3.setPlayerName(validPlayerName3);
 		player3.setResourceBalance(validResourceBalance3);
+		
+		playerList = new ArrayList<>();
+		playerList.add(player1);
+		playerList.add(player2);
+		playerList.add(player3);
+		
+		Game.setPlayers(playerList);
 
 		// set up the component
 		testComponent = (Component) board1.getSquares()[1];
@@ -414,8 +430,9 @@ class ComponentTest {
 
 		// attempt to transfer resources - player 3 has no resources so game should end
 		testComponent.chargePlayerForLanding(player3, true);
-
-		// TODO - implement check that game is ending / has ended
+		
+		// check that player's resources have been set to 0
+		assertEquals(0, player3.getResourceBalance());
 
 	}
 
