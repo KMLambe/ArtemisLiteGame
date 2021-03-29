@@ -21,20 +21,22 @@ public class Board {
      * Output the name and system of all squares contained within this object.
      */
     public void displayAllSquares() {
-        System.out.printf("%-10s %-40s %-15s %s\n", "POSITION", "NAME", "OWNER", "SYSTEM");
+        System.out.printf("%-10s %-40s %-30s %-15s %s\n", "POSITION", "NAME", "SYSTEM", "OWNER", "DEVELOPMENT STAGE");
         for (Square square : squares) {
             if (square != null) {
                 String owner = "N/A";
                 String system = "N/A";
+                String stage = "N/A";
 
                 if (square instanceof Component) {
                     Component component = (Component) square;
                     owner = (component.getComponentOwner() == null ? "Unowned" : component.getComponentOwner().getPlayerName());
                     system = (component.getComponentSystem() == null ? "None" : component.getComponentSystem().getSystemName());
+                    stage = (component.getDevelopmentStage() < 0 ? "None" : component.getDevelopmentStageName());
                 }
 
-                System.out.printf("%-10s %-40s %-15s %s\n", square.getSquarePosition(), square.getSquareName(),
-                        owner.toUpperCase(), system.toUpperCase());
+                System.out.printf("%-10s %-40s %-30s %-15s %s\n", square.getSquarePosition(), square.getSquareName(),
+                        system.toUpperCase(), owner.toUpperCase(), stage.toUpperCase());
             }
         }
     }
