@@ -186,8 +186,7 @@ public class Component extends Square {
 
 		// notify players of cost for landing
 		System.out.println("The cost of landing on this component is " + costForLanding);
-		System.out.println(this.getComponentOwner().getPlayerName()
-				+ " is the owner of this component - meaning they can choose whether they want to take their fee or not!");
+		Game.announce("is the owner of this component - meaning they can choose whether they want to take their fee or not!", componentOwner);
 
 		if (currentPlayer.getResourceBalance() < costForLanding) {
 			System.out.println("WARNING: If " + componentOwner.getPlayerName() + " decides to request their fee then "
@@ -197,12 +196,9 @@ public class Component extends Square {
 
 		do {
 			// confirm if owner wishes to take their fee
-			System.out.println(componentOwner.getPlayerName() + ", do you require " + Game.RESOURCE_NAME.toLowerCase()
-					+ " from " + currentPlayer.getPlayerName() + "?");
+			Game.announce("do you require " + Game.RESOURCE_NAME + " from " + currentPlayer.getPlayerName() + "?",componentOwner);
 			System.out.println(
-					"Type Yes and press enter if you wish to receive " + Game.RESOURCE_NAME.toLowerCase() + ".");
-			System.out.println(
-					"Type No and press enter if do NOT wish to receive " + Game.RESOURCE_NAME.toLowerCase() + ".");
+					"Please input yes or no...");
 
 			ownerResponse = scanner.next();
 
