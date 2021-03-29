@@ -137,23 +137,28 @@ public class Game {
 
 		while (currentPlayer.getActionPoints() > 0 && !endGame && !winGame) {
 			try {
-				announce(String.format("Player %s it's your turn...make it count!", currentPlayer));
+				try {
+					announce(String.format("Player %s it's your turn...make it count!", currentPlayer));
 
-				int rollDice = rollDice();
+					int rollDice = rollDice();
 
-				// let everyone know the player has moved
-				announce("rolled a " + rollDice + " and moves accordingly.", currentPlayer);
+					// let everyone know the player has moved
+					announce("rolled a " + rollDice + " and moves accordingly.", currentPlayer);
 
-				Square playerPosition = updatePlayerPosition(currentPlayer, rollDice);
+					Square playerPosition = updatePlayerPosition(currentPlayer, rollDice);
 
-				checkIfSquareIsPurchasable(currentPlayer, scanner);
+					checkIfSquareIsPurchasable(currentPlayer, scanner);
 
 
-			} catch (IllegalArgumentException illegalArgumentException) {
-				System.out.println(illegalArgumentException.getMessage());
+				} catch (IllegalArgumentException illegalArgumentException) {
+					System.out.println(illegalArgumentException.getMessage());
+				}
+
+				playTurn(currentPlayer, scanner);    //outside the above try-catch to prevent user from missing their turn
+
+			} catch (InterruptedException interruptedException) {
+				System.out.println("Game was interrupted - moving on to the next player");
 			}
-
-			playTurn(currentPlayer, scanner);
 
 			// current player's turn is over, get the nextPlayer and set to currentPlayer
 			// nextPlayer will be the currentPlayer on the next iteration of loop
@@ -164,7 +169,6 @@ public class Game {
 
 		if (endGame) {
 			endGame(currentPlayer);
-			System.out.println("GAME HAS ENDED");
 		}
 	}
 
@@ -434,7 +438,7 @@ public class Game {
 	 * @param currentPlayer takes an arraylist of players
 	 */
 
-	public static void playTurn(Player currentPlayer, Scanner scanner) {
+	public static void playTurn(Player currentPlayer, Scanner scanner) throws InterruptedException {
 		int playerChoice;
 
 		String[] menuOptions = {"...MENU...", "1. Develop Component", "2. Trade components", "3. Display board status",
@@ -685,7 +689,7 @@ public class Game {
 	 * prompted to select one from the list of components. If a valid selection is
 	 * made, the developComponent method is invoked.
 	 *
-	 * @param player - the current player
+	 * @param player  - the current player
 	 * @param scanner - used to receive player input
 	 */
 	public static void displayDevelopComponentMenu(Player player, Scanner scanner) {
@@ -806,8 +810,6 @@ public class Game {
 	/**
 	 * Displays to the players that the game has been won along with stats about the
 	 * game
-	 *
-	 * @param players
 	 */
 	public static void winGame() {
 		try {
@@ -880,7 +882,6 @@ public class Game {
 	 * game. It uses the CompareByCounterOfTimesPlayerDeclinedResources comparator
 	 * to perform the sort and returns a sorted ArrayList of Player objects.
 	 *
-	 * @param playerList - the list of players at the end of the game
 	 * @return sortedList - the sorted list of players, ranked from most times
 	 * declined resources to least times
 	 */
@@ -942,7 +943,6 @@ public class Game {
 	 * This post-game method displays to screen all player names alongside a count
 	 * of how many times they declined resources over the course of the game.
 	 * <p>
-	 * TODO - make more flexible by taking comparator as parameter argument etc.
 	 * Could be used to display other endgame stats.
 	 *
 	 * @param playerList
