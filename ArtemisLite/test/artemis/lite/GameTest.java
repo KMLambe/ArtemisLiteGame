@@ -548,18 +548,8 @@ class GameTest {
 		player1.purchaseComponent(testComponent2);
 
 		player1.purchaseComponent(testComponent3);
-
-
-		System.out.println("TESTING DISPLAY");
 		
 		Game.displayDevelopComponentMenu(player1, new Scanner("2"));
-		
-		
-		for (Component comp : player1.getOwnedComponents()) {
-			comp.displayAllDetails();
-		}
-
-
 	}
 	
 	@Test

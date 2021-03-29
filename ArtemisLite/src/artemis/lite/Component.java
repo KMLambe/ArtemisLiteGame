@@ -487,28 +487,56 @@ public class Component extends Square {
 
 	/**
 	 * This method prints to screen key information about this component.
+	 * Thread.sleep() is used to delay each output slightly for readability.
+	 * @throws InterruptedException in the event of Thread.sleep() being interrupted.
 	 */
 	@Override
-	public void displayAllDetails() {
-		System.out.println("----------------------------------");
-		System.out.println("Component Name:      \t" + this.getSquareName());
-		System.out.println("Position:            \t" + this.getSquarePosition());
-		System.out.println("Development Stage:   \t" + this.developmentStage + " - "
-				+ developmentStageNamesMap.get(this.developmentStage));
-		System.out.println("Component Cost:      \t" + this.componentCost);
+	public void displayAllDetails() throws InterruptedException {
+		
+		int maximumLineLength = 60;
+		
+		System.out.println();
+		
+		for (int loop = 0; loop < maximumLineLength; loop++) {
+			System.out.print("-");
+		}
+		
+		System.out.println("\nDISPLAYING COMPONENT DETAILS...");
+		Thread.sleep(200);
+		System.out.printf("\n%-25s %-20s\n","COMPONENT NAME:",getSquareName());
+		Thread.sleep(200);
+		System.out.printf("%-25s %-20s\n","COMPONENT SYSTEM:",getComponentSystem().getSystemName());
+		Thread.sleep(200);
+		System.out.printf("%-25s %-20s\n","BOARD POSITION:",getSquarePosition());
+		Thread.sleep(200);
+		System.out.printf("%-25s %-20s\n","DEVELOPMENT STAGE:",getDevelopmentStageName());
+		Thread.sleep(200);
+		System.out.printf("%-25s %-20s\n","COMPONENT NAME:",getSquareName());
+		Thread.sleep(200);
+		System.out.printf("%-25s %-20s\n","COMPONENT COST:",componentCost);
 		if (this.checkFullyDeveloped()) {
-			System.out.println("Cost to Develop: \tThis component is at the maximum development stage!");
+			Thread.sleep(200);
+			System.out.printf("%-25s %-20s\n","COST TO DEVELOP:","This component is fully developed");
 		} else {
-			System.out.println("Cost to Develop: \t" + costToDevelop);
+			Thread.sleep(200);
+			System.out.printf("%-25s %-20s\n","COST TO DEVELOP:",getSquareName());
 		}
-		System.out.println("Cost for Landing:    \t" + costForLanding);
-		if (componentOwner != null) {
-			System.out.println("Component Owner: \t" + componentOwner.getPlayerName());
+		Thread.sleep(200);
+		System.out.printf("%-25s %-20s\n","COST FOR LANDING:",costForLanding);
+		if (componentOwner!=null) {
+			Thread.sleep(200);
+			System.out.printf("%-25s %-20s\n","COMPONENT OWNER:",componentOwner.getPlayerName());
 		} else {
-			System.out.println("Component Owner: \tThis component is currently unowned");
+			Thread.sleep(200);
+			System.out.printf("%-25s %-20s\n","COMPONENT OWNER:","UNOWNED");
 		}
-
-		System.out.println("Component System:    \t" + componentSystem.getSystemName());
+		
+		for (int loop = 0; loop < maximumLineLength; loop++) {
+			System.out.print("-");
+		}
+		
+		System.out.println();
+		System.out.println();
 	}
 
 	/**

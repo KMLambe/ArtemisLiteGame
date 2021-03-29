@@ -85,11 +85,31 @@ public class Square {
     }
 
     /**
-     * displays all details associated with the object
+     * Displays all details associated with the object.
+     * Thread.sleep() is used to delay each output slightly for the benefit of readability for the end-user.
+     * @throws InterruptedException in the event of Thread.sleep() being interrupted
      */
-    public void displayAllDetails() {
-        System.out.println("Name \t:" + this.squareName);
-        System.out.println("Position \t:" + this.squarePosition);
+    public void displayAllDetails() throws InterruptedException{
+		int maximumLineLength = 60;
+		
+		System.out.println();
+		
+		for (int loop = 0; loop < maximumLineLength; loop++) {
+			System.out.print("-");
+		}
+		
+		System.out.println("\nDISPLAYING SQUARE DETAILS...");
+		Thread.sleep(200);
+		System.out.printf("\n%-25s %-20s\n","SQUARE NAME:",squareName);
+		Thread.sleep(200);
+		System.out.printf("%-25s %-20s\n","SQUARE POSITION:",squarePosition);
+		
+		for (int loop = 0; loop < maximumLineLength; loop++) {
+			System.out.print("-");
+		}
+		
+		System.out.println();
+		System.out.println();
     }
 
     /**

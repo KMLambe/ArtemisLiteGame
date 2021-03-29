@@ -375,8 +375,11 @@ public class Game {
 
 		Square[] squares = board.getSquares();
 		Square playerPosition = squares[currentPlayer.getCurrentBoardPosition()];
-
-		playerPosition.displayAllDetails();
+		try {
+			playerPosition.displayAllDetails();
+		} catch (InterruptedException interruptedException) {
+			System.out.println("Error: Operation was interrupted.");
+		}
 		if (playerPosition instanceof Component) {
 			Component component = (Component) playerPosition;
 			// currentPlayer.purchaseComponent(component);
