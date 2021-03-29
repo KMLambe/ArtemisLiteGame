@@ -1092,7 +1092,7 @@ public class Game {
 
 		do {
 			System.out.println("Are you sure you want to leave the game?");
-			System.out.println("enter yes or no");
+			System.out.println("Please input yes or no...");
 			response = scanner.next();
 
 			if (response.equalsIgnoreCase("yes")) {
