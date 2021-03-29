@@ -238,11 +238,8 @@ public class Component extends Square {
     public void chargePlayerForLanding(Player currentPlayer, boolean ownerResponse) {
         if (ownerResponse == true) {
             if (currentPlayer.getResourceBalance() < costForLanding) {
-                try {
-                    Game.endGame(null, currentPlayer); // KL - this leads to a null pointer exception. We'll need to think about how endgame is triggered - boolean being toggled?
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            	currentPlayer.setResourceBalance(0);
+                    Game.endGame(currentPlayer);
             } else {
                 currentPlayer.transferResources(componentOwner, costForLanding);
             }

@@ -45,7 +45,7 @@ public class Game {
 	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
 
-		//gameBriefing();
+		gameBriefing();
 
 		setupGame(scanner);
 
@@ -160,7 +160,6 @@ public class Game {
 			currentPlayer = getNextPlayer(players, currentPlayer);
 			// make sure player has action points before starting loop
 			currentPlayer.setActionPoints(DEFAULT_ACTION_POINTS);
-
 		}
 
 		if (endGame) {
