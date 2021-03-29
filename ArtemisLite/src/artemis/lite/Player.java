@@ -170,6 +170,10 @@ public class Player {
         addComponent(component);
         component.setComponentOwner(this);
 
+        // let player know if they need more components before developing
+        ArtemisSystem artemisSystem = component.getComponentSystem();
+        artemisSystem.announceComponentsRequiredBeforeDevelopment(this);
+
         if (component.getComponentSystem().checkSystemIsOwnedByOnePlayer()) {
             Game.announce("now owns all of " + component.getComponentSystem().getSystemName()
                     + " and can develop any of its components", this);
@@ -242,6 +246,9 @@ public class Player {
             component.setComponentOwner(this);
             componentOwner.removeComponent(component);
             addComponent(component);
+
+            ArtemisSystem artemisSystem = component.getComponentSystem();
+            artemisSystem.announceComponentsRequiredBeforeDevelopment(this);
 
             // check if the new component owner now owns the system
             if (component.getComponentSystem().checkSystemIsOwnedByOnePlayer()) {
