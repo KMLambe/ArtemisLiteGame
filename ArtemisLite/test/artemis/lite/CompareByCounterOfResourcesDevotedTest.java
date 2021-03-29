@@ -7,6 +7,11 @@ import java.util.Comparator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+/**
+ * This class tests the functionality of CompareByCounterOfResourcesDevoted
+ * @author Kieran Lambe 40040696
+ *
+ */
 class CompareByCounterOfResourcesDevotedTest {
 	
 	Comparator<Component> testComparator;

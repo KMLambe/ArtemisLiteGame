@@ -6,7 +6,11 @@ import java.util.Comparator;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
+/**
+ * This class tests the functionality of CompareByCounterOfTimesPlayerDeclinedResources
+ * @author Kieran Lambe 40040696
+ *
+ */
 class CompareByCounterOfTimesPlayerDeclinedResourcesTest {
 
 	Comparator<Player> testComparator;
@@ -34,7 +38,7 @@ class CompareByCounterOfTimesPlayerDeclinedResourcesTest {
 	@Test
 	void testCompareByCounterOfTimesPlayerDeclineResourcesValid() {
 		
-		// testComponent2 > testComponent1
+		// testPlayer2 > testPlayer1
 		
 		int expectedValue, actualValue;
 		expectedValue = 1;
@@ -42,7 +46,7 @@ class CompareByCounterOfTimesPlayerDeclinedResourcesTest {
 		
 		assertEquals(expectedValue, actualValue);
 		
-		// testComponent1 > testComponent2
+		// testPlayer1 > testPlayer2
 		
 		testPlayer1.setCountOfTimesPlayerDeclinedResources(counterOfDeclinedResourcesValid2);
 		testPlayer2.setCountOfTimesPlayerDeclinedResources(counterOfDeclinedResourcesValid1);
@@ -52,7 +56,7 @@ class CompareByCounterOfTimesPlayerDeclinedResourcesTest {
 		actualValue = testComparator.compare(testPlayer1, testPlayer2);
 		assertEquals(expectedValue, actualValue);
 		
-		// testComponent1 == testComponent2
+		// testPlayer1 == testPlayer2
 		
 		testPlayer1.setCountOfTimesPlayerDeclinedResources(counterOfDeclinedResourcesValid2);
 		testPlayer2.setCountOfTimesPlayerDeclinedResources(counterOfDeclinedResourcesValid2);
@@ -68,7 +72,7 @@ class CompareByCounterOfTimesPlayerDeclinedResourcesTest {
 	
 	@Test
 	void testCompareByCounterOfTimesPlayerDeclineResourcesNullInvalid() {
-		// passing null components as parameter argument
+		// passing null players as parameter argument
 		int actualValue = testComparator.compare(testPlayer3, testPlayer3);
 		
 		assertEquals(-1, actualValue);

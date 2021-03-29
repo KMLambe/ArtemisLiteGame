@@ -925,6 +925,10 @@ public class Game {
 			Game.announce("owns the following components:\n", player);
 
 			System.out.printf("%-12s %-40s %-30s %-30s\n", "POSITION", "NAME", "SYSTEM", "DEVELOPMENT STAGE");
+			
+			List<Component> componentList = player.getOwnedComponents();
+			
+			Collections.sort(componentList,new CompareByPosition());
 
 			for (Component component : player.getOwnedComponents()) {
 				component.displaySquarePositionNameSystemAndDevelopmentStage();

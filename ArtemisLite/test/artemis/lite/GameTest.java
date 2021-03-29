@@ -7,6 +7,11 @@ import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
+/**
+ * This class tests the functionality of the Game class.
+ * @author Kieran Lambe 40040696
+ *
+ */
 class GameTest {
 
 	// test players
