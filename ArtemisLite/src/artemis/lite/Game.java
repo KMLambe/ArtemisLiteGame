@@ -170,7 +170,7 @@ public class Game {
 		}
 
 		if (endGame) {
-			endGame(currentPlayer);
+			endGame();
 		}
 	}
 
@@ -477,7 +477,11 @@ public class Game {
 						currentPlayer.setActionPoints(0);
 						break;
 					case 6:
-						endGame = true;
+						// this breaks the loop and within gameLoop the endGame method is called
+						boolean playerWantsToLeave = confirmPlayerWantsToLeave();
+						if (playerWantsToLeave) {
+							endGame = true;
+						}
 						break;
 					default:
 						announce("Invalid option inputted", currentPlayer);
@@ -1007,35 +1011,36 @@ public class Game {
 
 	}
 
+	public static boolean confirmPlayerWantsToLeave() {
+		Scanner scanner = new Scanner(System.in);
+		String response;
+
+		do {
+			System.out.println("Are you sure you want to leave the game?");
+			System.out.println("enter yes or no");
+			response = scanner.next();
+
+			if (response.equalsIgnoreCase("yes")) {
+				return true;
+			} else if (response.equalsIgnoreCase("no")) {
+				return false;
+			} else {
+				System.out.println("invalid");
+			}
+		} while (!response.equalsIgnoreCase("yes") && !response.equalsIgnoreCase("no"));
+
+		return false;
+	}
+
 	/**
 	 * This end of game method gives the final state of play when the game has
 	 * ended. It displays to screen the final resources available to players before
 	 * game ended, owned components and systems and player who refused to accept
 	 * resources most.
 	 *
-	 * @param currentPlayer
 	 */
-	public static void endGame(Player currentPlayer) {
-		String response;
-		Scanner scanner = new Scanner(System.in);
-
+	public static void endGame()  {
 		try {
-
-			if (currentPlayer.checkSufficientResources(1)) {
-				announce(currentPlayer + " has asked to leave...");
-				System.out.println("Are you sure you want to leave the game?");
-				System.out.println("enter yes or no");
-				response = scanner.next();
-
-				if (response.equalsIgnoreCase("yes")) {
-					announce("has left the game", currentPlayer);
-				} else if (response.equalsIgnoreCase("no")) {
-					playTurn(currentPlayer, scanner);
-				} else {
-					System.out.println("invalid");
-				}
-			}
-
 			int totalNumberOfExperts = 0;
 
 			// print generic response for mission failure and announce end of game
@@ -1045,11 +1050,13 @@ public class Game {
 
 			// loop through the players to find the player with no resources left and print
 			// message to screen
+			/*
 			if (currentPlayer.getResourceBalance() <= 0) {
 				System.out.println("Mission has failed due to " + currentPlayer + " running out of " + RESOURCE_NAME);
 			} else {
 				System.out.println(currentPlayer.getPlayerName() + " has chosen to abort the mission");
 			}
+			 */
 			Thread.sleep(1000);
 
 			// loop through players to get resources required to win game
