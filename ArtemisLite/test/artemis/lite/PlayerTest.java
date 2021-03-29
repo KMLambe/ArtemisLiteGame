@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -13,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class PlayerTest {
     private ArtemisSystem system1;
     private Component c1, c2, c3;
+    private List<Component> fullyDevelopedComponents;
     private Square sq1;
     private Player p1, p2, p3;
     private Board board;
@@ -82,6 +84,13 @@ class PlayerTest {
 
         // setup component for trading
         p3.purchaseComponent(c3);
+        
+        // set component development stage
+        c3.setDevelopmentStage(3);
+        
+        // add components to list
+        fullyDevelopedComponents = new ArrayList<Component>();
+        fullyDevelopedComponents.add(c3);
     }
 
     @Test
@@ -447,19 +456,13 @@ class PlayerTest {
         // set p3 as system owner for testing purposes
         system1.setSystemOwner(p3);
 
-        // p3 already owns c3
-        // set p3 as owner of c1 for testing purposes
-        p3.setResourceBalance(1000);
-        p3.purchaseComponent(c1);
-
         // run the method, assign returned HashMap to map variable
         Map<Integer, Component> map = p3.getOwnedComponentsThatCanBeDeveloped();
 
-        // check that map contains the correct number of entries (2)
-        assertEquals(2, map.size());
+        // check that map contains the correct number of entries (1)
+        assertEquals(1, map.size());
 
-        // check that the map contains the expected values (c1 and c3 as they are owned by p3)
-        assertTrue(map.containsValue(c1));
+        // check that the map contains the expected values (c3 as it is owned by p3)
         assertTrue(map.containsValue(c3));
 
     }
@@ -503,6 +506,24 @@ class PlayerTest {
         });
 
         assertTrue(illegalArgumentException.getMessage().contains("does not have enough"));
+    }
+    
+    @Test
+    void testGetFullyDevelopedComponents() {
+
+    	List<Component> expectedList = fullyDevelopedComponents;
+    	List<Component> emptyList = new ArrayList<Component>();
+    	List<Component> actualList = p3.getFullyDevelopedComponents();
+    	
+    	assertEquals(emptyList, actualList);
+    	
+    	// develop c3 to max
+    	p3.setResourceBalance(10000);
+    	c3.developComponent();
+    	
+    	actualList = p3.getFullyDevelopedComponents();
+    	
+        assertEquals(expectedList, actualList);
     }
 
 
