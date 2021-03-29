@@ -685,8 +685,8 @@ public class Game {
 	 * prompted to select one from the list of components. If a valid selection is
 	 * made, the developComponent method is invoked.
 	 *
-	 * @param player
-	 * @param scanner
+	 * @param player - the current player
+	 * @param scanner - used to receive player input
 	 */
 	public static void displayDevelopComponentMenu(Player player, Scanner scanner) {
 
@@ -714,8 +714,8 @@ public class Game {
 		}
 
 		// account for scenario in which player lacks resources
-		if (player.getResourceBalance() < playerSelection.getCostToDevelop()) {
-			Game.announce("doesn't have enough " + RESOURCE_NAME + " to develop this component right now.", player);
+		if (player.getResourceBalance() <= playerSelection.getCostToDevelop()) {
+			Game.announce("doesn't have enough " + RESOURCE_NAME + " to develop this component right now. Remember you need to keep your number of " + RESOURCE_NAME + " above zero or the game is over!", player);
 		} else {
 			Game.announce("has decided to develop " + playerSelection, player);
 			// process the development
