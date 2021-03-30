@@ -6,7 +6,7 @@ import java.util.*;
  * Creates and manages the ArtemisLite game.
  *
  * @author Peter McMahon
- * @author Gavin Taylor
+ * @author Gavin Taylor 40314237
  * @author John Young 40030361
  * @author Kieran Lambe 40040696
  */
@@ -109,7 +109,7 @@ public class Game {
 		ArrayList<Player> players = createPlayers(scanner);
 
 		// 3. shuffle players
-		generatePlayerOrder(players);
+		generatePlayerOrder();
 
 		announce("Game setup complete...time to get rolling!");
 	}
@@ -161,7 +161,7 @@ public class Game {
 
 			// current player's turn is over, get the nextPlayer and set to currentPlayer
 			// nextPlayer will be the currentPlayer on the next iteration of loop
-			currentPlayer = getNextPlayer(players, currentPlayer);
+			currentPlayer = getNextPlayer(currentPlayer);
 			// make sure player has action points before starting loop
 			currentPlayer.setActionPoints(DEFAULT_ACTION_POINTS);
 		}
@@ -277,20 +277,19 @@ public class Game {
 	 * Randomises the list of players so that player turns are not based on the
 	 * order they were created.
 	 *
-	 * @param players list of player objects
+	 * 
 	 */
-	public static void generatePlayerOrder(ArrayList<Player> players) {
+	public static void generatePlayerOrder() {
 		Collections.shuffle(players);
 	}
 
 	/**
 	 * Returns the next player object in the players list.
 	 *
-	 * @param players       list of players in the game
 	 * @param currentPlayer the current player object
 	 * @return player object that represents the next player
 	 */
-	public static Player getNextPlayer(List<Player> players, Player currentPlayer) {
+	public static Player getNextPlayer(Player currentPlayer) {
 		return players.get((players.indexOf(currentPlayer) + 1) % players.size());
 	}
 
