@@ -367,8 +367,7 @@ public class Game {
 	 * component is an instance of a square and component is not owned by another
 	 * player
 	 *
-	 * @param currentPlayer
-	 * @throws InterruptedException
+	 * @param currentPlayer takes the current player
 	 */
 	public static void checkIfSquareIsPurchasable(Player currentPlayer, Square playerPosition) {
 
@@ -398,9 +397,8 @@ public class Game {
 	 * updated. takes a user response and allows player to purchase component if
 	 * user enters yes and component is offered to other players if user enters no.
 	 *
-	 * @param currentPlayer
-	 * @param playerPosition
-	 * @throws InterruptedException interrupts thread
+	 * @param currentPlayer takes the current player
+	 * @param playerPosition takes the current board position of the current player
 	 */
 	public static void displayComponentIfPurchasable(Player currentPlayer, Square playerPosition, Scanner scanner) {
 
@@ -1140,8 +1138,8 @@ public class Game {
 	 * This method confirms if the current player wishes to leave the game. If the
 	 * player inputs yes then game will end and if no then game will continue.
 	 *
-	 * @param currentPlayer is the player opting to leave
-	 * @return false if user input is no stopping the game from ending
+ 	 * @param currentPlayer is the player opting to leave
+	 * @return boolean to accept true or false conditions
 	 */
 	public static boolean confirmPlayerWantsToLeave(Player currentPlayer, Scanner scanner) {
 		
