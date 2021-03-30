@@ -35,7 +35,6 @@ public class Game {
 	// board
 	private static Board board;
 	private static boolean endGame = false;
-	private static boolean gameFinished = false;
 	private static boolean winGame = false;
 
 	/**
@@ -48,7 +47,11 @@ public class Game {
 
 		setupGame(scanner);
 
-		gameLoop(scanner);
+		try {
+			gameLoop(scanner);
+		} catch (InterruptedException interruptedException) {
+			System.out.println("Game was interrupted");
+		}
 	}
 
 	/**
@@ -58,8 +61,8 @@ public class Game {
 	public static void gameBriefing() {
 		String[] mission = {
 				"For over half a century humans have yearned to return to the Moon." +
-		"\nOur collective spirit of discovery is undiminished by time." +
-				"\nWith the Artemis program, we will land the first woman and next man on the Moon by 2024, using innovative technologies to explore more of the lunar surface than ever before.",
+						"\nOur collective spirit of discovery is undiminished by time." +
+						"\nWith the Artemis program, we will land the first woman and next man on the Moon by 2024, using innovative technologies to explore more of the lunar surface than ever before.",
 				"\nOUR SUCCESS WILL CHANGE THE WORLD\n",
 				"But we can't do it without you.",
 				"\nHere's how it works:",
@@ -82,7 +85,7 @@ public class Game {
 				"\t11. BE CAREFUL THOUGH... If any of your comrades feel isolated, they may abandon ship and ALL WILL BE LOST - the game will end.",
 				"\t12. DON'T LET ANYONE SUFFER... Take care of your comrades, if they run out of experts, this will result in a brain drain - the game will end.",
 				"\nTHIS IS YOUR OPPORTUNITY TO LEAD US ALL...", "\nTAKE FORWARD OUR HOPES AND DREAMS... STRAP IN... ",
-				"\nBOOTCAMP IS OVER... Time to get stuck in!", "\nPress the enter key to continue..." };
+				"\nBOOTCAMP IS OVER... Time to get stuck in!", "\nPress the enter key to continue..."};
 
 		for (String output : mission) {
 			System.out.printf("%s\n", output);
@@ -112,8 +115,6 @@ public class Game {
 		generatePlayerOrder(players);
 
 		announce("Game setup complete...time to get rolling!");
-
-		// TODO - call mission brief
 	}
 
 	/**
@@ -131,7 +132,7 @@ public class Game {
 	 * true).
 	 *
 	 * @param scanner a scanner object
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
 	public static void gameLoop(Scanner scanner) throws InterruptedException {
 		// set currentPlayer to the first player in the arraylist
@@ -139,31 +140,27 @@ public class Game {
 
 		while (currentPlayer.getActionPoints() > 0 && !endGame && !winGame) {
 			try {
-				try {
-					announce(String.format("Player %s it's your turn...make it count!", currentPlayer));
+				announce(String.format("Player %s it's your turn...make it count!", currentPlayer));
 
-					// currentPlayer.incrementTurnCounter();
+				// currentPlayer.incrementTurnCounter();
 
-					int rollDice = rollDice();
+				int rollDice = rollDice();
 
-					// let everyone know the player has moved
-					announce("is rolling the dice...", currentPlayer);
-					Thread.sleep(2000);
-					announce("rolled a " + rollDice + " and moves accordingly.", currentPlayer);
-					Thread.sleep(1000);
-					Square playerPosition = updatePlayerPosition(currentPlayer, rollDice);
+				// let everyone know the player has moved
+				announce("is rolling the dice...", currentPlayer);
+				Thread.sleep(2000);
+				announce("rolled a " + rollDice + " and moves accordingly.", currentPlayer);
+				Thread.sleep(1000);
+				Square playerPosition = updatePlayerPosition(currentPlayer, rollDice);
 
-					checkIfSquareIsPurchasable(currentPlayer);
+				checkIfSquareIsPurchasable(currentPlayer, playerPosition);
 
-				} catch (IllegalArgumentException illegalArgumentException) {
-					System.out.println(illegalArgumentException.getMessage());
-				}
-
-				playTurn(currentPlayer, scanner); // outside the above try-catch to prevent user from missing their turn
-
-			} catch (InterruptedException interruptedException) {
-				System.out.println("Game was interrupted - moving on to the next player");
+			} catch (IllegalArgumentException illegalArgumentException) {
+				System.out.println(illegalArgumentException.getMessage());
 			}
+
+			playTurn(currentPlayer, scanner); // outside the above try-catch to prevent user from missing their turn
+
 
 			// current player's turn is over, get the nextPlayer and set to currentPlayer
 			// nextPlayer will be the currentPlayer on the next iteration of loop
@@ -321,7 +318,8 @@ public class Game {
 	 * @param currentPlayer - the current player, passed as a parameter argument
 	 * @param sumOfDice     - the sum of two dice returned by the rollDice() method,
 	 */
-	public static Square updatePlayerPosition(Player currentPlayer, int sumOfDice) throws IllegalArgumentException {
+	public static Square updatePlayerPosition(Player currentPlayer, int sumOfDice) throws IllegalArgumentException,
+			InterruptedException {
 
 		int movementCalculation, newBoardPosition, boardLength;
 		String positionChangeAnnouncement, squareName;
@@ -362,31 +360,26 @@ public class Game {
 			positionChangeAnnouncement += " which is part of " + component.getComponentSystem().getSystemName() + ".";
 		}
 
+		Thread.sleep(1000);
 		announce(positionChangeAnnouncement, currentPlayer);
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
 
 		return board.getSquares()[newBoardPosition];
 	}
 
 
-/**
+	/**
 	 * Allows the position of the current player to be purchased only if the
 	 * component is an instance of a square and component is not owned by another
 	 * player
 	 *
 	 * @param currentPlayer
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
-	public static void checkIfSquareIsPurchasable(Player currentPlayer) throws InterruptedException {
+	public static void checkIfSquareIsPurchasable(Player currentPlayer, Square playerPosition) throws InterruptedException {
 
 		Scanner scanner = new Scanner(System.in);
-
-		Square[] squares = board.getSquares();
-		Square playerPosition = squares[currentPlayer.getCurrentBoardPosition()];
 		playerPosition.displayAllDetails();
+
 		if (playerPosition instanceof Component) {
 			Component component = (Component) playerPosition;
 
@@ -410,16 +403,16 @@ public class Game {
 	 * updated. takes a user response and allows player to purchase component if
 	 * user enters yes and component is offered to other players if user enters no.
 	 *
-	 * @param scanner
 	 * @param currentPlayer
 	 * @param playerPosition
-	 * @throws InterruptedException interrupts thread 
+	 * @throws InterruptedException interrupts thread
 	 */
-	public static void displayComponentIfPurchasable(Player currentPlayer, Square playerPosition) throws InterruptedException {
+	public static void displayComponentIfPurchasable(Player currentPlayer, Square playerPosition) throws
+			InterruptedException {
 
 		Scanner scanner = new Scanner(System.in);
 		String response;
-		
+
 		Thread.sleep(1000);
 		currentPlayer.displayTurnStats();
 
@@ -452,8 +445,8 @@ public class Game {
 
 	public static void playTurn(Player currentPlayer, Scanner scanner) throws InterruptedException {
 		int playerChoice;
-		String[] menuOptions = { "...MENU...", "1. Develop Component", "2. Trade components", "3. Display board status",
-				"4. Display my components", "5. End turn", "6. Leave game", "Selection..." };
+		String[] menuOptions = {"...MENU...", "1. Develop Component", "2. Trade components", "3. Display board status",
+				"4. Display my components", "5. End turn", "6. Leave game", "Selection..."};
 
 		while (currentPlayer.getActionPoints() > 0 && !endGame && !winGame) {
 
@@ -469,32 +462,32 @@ public class Game {
 				System.out.println();
 
 				switch (playerChoice) {
-				case 1:
-					displayDevelopComponentMenu(currentPlayer, scanner);
-					checkAllSystemsFullyDeveloped();
-					break;
-				case 2:
-					displayTradeMenu(currentPlayer, scanner);
-					break;
-				case 3:
-					board.displayAllSquares();
-					break;
-				case 4:
-					displayPlayerComponents(currentPlayer);
-					break;
-				case 5:
-					announce("has ended their turn", currentPlayer);
-					currentPlayer.setActionPoints(0);
-					break;
-				case 6:
-					// this breaks the loop and within gameLoop the endGame method is called
-					boolean playerWantsToLeave = confirmPlayerWantsToLeave();
-					if (playerWantsToLeave) {
-						endGame = true;
-					}
-					break;
-				default:
-					announce("Invalid option inputted", currentPlayer);
+					case 1:
+						displayDevelopComponentMenu(currentPlayer, scanner);
+						checkAllSystemsFullyDeveloped();
+						break;
+					case 2:
+						displayTradeMenu(currentPlayer, scanner);
+						break;
+					case 3:
+						board.displayAllSquares();
+						break;
+					case 4:
+						displayPlayerComponents(currentPlayer);
+						break;
+					case 5:
+						announce("has ended their turn", currentPlayer);
+						currentPlayer.setActionPoints(0);
+						break;
+					case 6:
+						// this breaks the loop and within gameLoop the endGame method is called
+						boolean playerWantsToLeave = confirmPlayerWantsToLeave(currentPlayer);
+						if (playerWantsToLeave) {
+							endGame = true;
+						}
+						break;
+					default:
+						announce("Invalid option inputted", currentPlayer);
 				}
 			} catch (InputMismatchException inputMismatchException) {
 				System.out.println("Invalid input - please try again");
@@ -581,7 +574,7 @@ public class Game {
 	 * @param scanner    a scanner object
 	 * @param components a map containing components as the value
 	 * @return a component object if a valid selection was made, otherwise will
-	 *         return null
+	 * return null
 	 */
 	public static Component getPlayerComponentSelection(Scanner scanner, Map<Integer, Component> components) {
 		String playerInput;
@@ -714,12 +707,12 @@ public class Game {
 
 		Map<Integer, Component> componentsAvailable = player.getOwnedComponentsThatCanBeDeveloped();
 		List<Component> componentsFullyDeveloped = player.getFullyDevelopedComponents();
-		
+
 		if (componentsFullyDeveloped.size() > 0) {
 			displayPlayerFullyDevelopedComponents(player);
 		}
-		
-		if (componentsAvailable.size()==0) {
+
+		if (componentsAvailable.size() == 0) {
 			Thread.sleep(200);
 			Game.announce("does not have any components that meet the criteria for development.", player);
 		} else {
@@ -757,13 +750,14 @@ public class Game {
 			}
 		}
 	}
-	
+
 	/**
 	 * Outputs to screen key information about the components the player has developed to the maximum stage.
+	 *
 	 * @param player - the current player.
 	 */
 	public static void displayPlayerFullyDevelopedComponents(Player player) throws InterruptedException {
-		
+
 		List<Component> fullyDevelopedComponents = player.getFullyDevelopedComponents();
 
 		if (fullyDevelopedComponents.isEmpty()) {
@@ -774,13 +768,13 @@ public class Game {
 			Game.announce("has fully developed the following components so far:\n", player);
 			Thread.sleep(200);
 			System.out.printf("%-12s %-40s %-30s %-30s\n", "POSITION", "NAME", "SYSTEM", "DEVELOPMENT STAGE");
-			
+
 			fullyDevelopedComponents.sort(new CompareByPosition());
 
 			for (Component component : fullyDevelopedComponents) {
 				component.displaySquarePositionNameSystemAndDevelopmentStage();
 			}
-			
+
 			System.out.println();
 		}
 	}
@@ -845,20 +839,20 @@ public class Game {
 		announce(updatedResourceBalanceAnnouncement);
 
 	}
-	
+
 	/**
 	 * Adds the total amount of turns taken in the game and gives the average number of turns to develop each system
 	 */
-	public static void displayTotalNumberofTurns() {
-		int totalNumberOfTurns=0;
+	public static void displayTotalNumberOfTurns() {
+		int totalNumberOfTurns = 0;
 		double averageTurnsToUpgradeASystem;
 		for (Player player : players) {
-			totalNumberOfTurns+=player.getTurnCounter();
+			totalNumberOfTurns += player.getTurnCounter();
 		}
-		
-		System.out.println("\n\nIt has taken a combined effort of "+totalNumberOfTurns+ " turns to successfully launch the system.");
-		averageTurnsToUpgradeASystem=(double)totalNumberOfTurns/board.getSystems().length;
-		System.out.printf("There was an average of %.2f turns to complete each system.",averageTurnsToUpgradeASystem);
+
+		System.out.println("\n\nIt has taken a combined effort of " + totalNumberOfTurns + " turns to successfully launch the system.");
+		averageTurnsToUpgradeASystem = (double) totalNumberOfTurns / board.getSystems().length;
+		System.out.printf("There was an average of %.2f turns to complete each system.", averageTurnsToUpgradeASystem);
 	}
 
 	/**
@@ -908,7 +902,7 @@ public class Game {
 				Thread.sleep(2000);
 			}
 
-			displayTotalNumberofTurns();
+			displayTotalNumberOfTurns();
 			Thread.sleep(2000);
 
 			for (Square square : board.getSquares()) {
@@ -1030,7 +1024,7 @@ public class Game {
 	 * to perform the sort and returns a sorted ArrayList of Player objects.
 	 *
 	 * @return sortedList - the sorted list of players, ranked from most times
-	 *         declined resources to least times
+	 * declined resources to least times
 	 */
 	public static List<Player> sortPlayersByCounterOfTimesDeclinedResources() {
 
@@ -1053,7 +1047,8 @@ public class Game {
 
 	}
 
-	public static void displayAllComponentsNameSystemResourcesDevoted(List<Component> componentList) throws InterruptedException {
+	public static void displayAllComponentsNameSystemResourcesDevoted(List<Component> componentList) throws
+			InterruptedException {
 
 		Thread.sleep(500);
 		System.out.printf("%-40s %-30s %-30s\n", "COMPONENT", "SYSTEM", "TOTAL " + Game.RESOURCE_NAME + " DEVOTED");
@@ -1160,7 +1155,7 @@ public class Game {
 	/**
 	 * This method confirms if the current player wishes to leave the game. If the
 	 * player inputs yes then game will end and if no then game will continue.
-	 * 
+	 *
 	 * @param currentPlayer is the player opting to leave
 	 * @return false if user input is no stopping the game from ending
 	 * @throws InterruptedException
@@ -1193,9 +1188,8 @@ public class Game {
 	 * ended. It displays to screen the final resources available to players before
 	 * game ended, owned components and systems and player who refused to accept
 	 * resources most.
-	 * 
-	 * @throws InterruptedException
 	 *
+	 * @throws InterruptedException
 	 */
 	public static void endGame() throws InterruptedException {
 
