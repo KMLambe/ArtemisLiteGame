@@ -57,25 +57,27 @@ public class Game {
 	 */
 	public static void gameBriefing() {
 		String[] mission = {
-				"With the ArtemisLite program, we will land the first woman and next man on the Moon by 2024, using innovative technologies to explore more of the lunar surface than ever before. ",
+				"For over half a century humans have yearned to return to the Moon." +
+		"\nOur collective spirit of discovery is undiminished by time." +
+				"\nWith the Artemis program, we will land the first woman and next man on the Moon by 2024, using innovative technologies to explore more of the lunar surface than ever before.",
 				"\nOUR SUCCESS WILL CHANGE THE WORLD\n",
-				"So... on to YOU, our fledgling astronauts, how can YOU help us achieve our mission? Read on...",
+				"But we can't do it without you.",
 				"\nHere's how it works:",
 				"\t1. We need " + Game.MINIMUM_PLAYERS + "-" + Game.MAXIMUM_PLAYERS
-						+ " able bodied men and women who are willing to WORK TOGETHER",
-				"\t2. Once you're deployed, you will need to travel around our landing sites (Components and Squares)",
-				"\t3. If a component does not have an owner, you will have the opportunity to deploy EXPERTS to the site. This will make it yours.",
+						+ " resourceful leaders who are willing to WORK TOGETHER",
+				"\t2. You will need to travel around our sites (Components and Squares)",
+				"\t3. If a component does not have an owner taking responsibility for its development, you will have the opportunity to devote EXPERTS to it. This will make it yours.",
 				"\nEXPERTS are the currency of ArtemisLite, handle them with care... if you reach zero, you will be jettisoned for mishandling our future.\n",
 				"\t4. If someone already has experts deployed on the site you've landed, you may need to help them out by transferring some of your own experts to their cause. This will be decided by the owner of the component.",
-				"\t5. If you land on a square you will not be able to develop it, it's considered communal, so put the feet up and enjoy the team bonding!",
+				"\t5. If you land on a square you will not be able to develop it, it's considered communal, so put the feet up and enjoy the team bonding or welcome your newest " + RESOURCE_NAME + "!",
 				"\t6. It's import to remember that you are allocated " + Game.DEFAULT_ACTION_POINTS
 						+ " action points each turn.",
 				"\t7. Action points enable you to perform important tasks, once you use them up your turn will end automatically - so be careful how you use them!",
 				"\nACTION POINTS ARE CONSUMED BY: Developing and Trading Components. Purchasing a Component will NOT consume an action point.\n",
 				"\t8. If you want to develop a component, you will need to make sure you own all the components within the SAME system.",
 				"\t\tIf someone has one you need, you can always offer to trade them for it...REMEMBER: we all win when humanity progresses!",
-				"\t9. Each component has 4 stages, meaning it can be developed 3 times.",
-				"\t10. Once you or one of your comrades develops ALL the components WITHIN THE SAME SYSTEM - the game will initiate the Artemis Launch Sequence.",
+				"\t9. Each component has 4 stages, meaning it can be developed 3 times. The final development constitutes a MAJOR development, meaning you'll need more " + RESOURCE_NAME + " than usual.",
+				"\t10. Once you and your comrades develop ALL the components WITHIN ALL THE SYSTEMS - the Artemis project is completed.",
 				"\t\tYou have won the opportunity of a lifetime, front row seats to the next generation of humanity...enjoy it. You will have worked hard for this. ",
 				"\t11. BE CAREFUL THOUGH... If any of your comrades feel isolated, they may abandon ship and ALL WILL BE LOST - the game will end.",
 				"\t12. DON'T LET ANYONE SUFFER... Take care of your comrades, if they run out of experts, this will result in a brain drain - the game will end.",
@@ -682,7 +684,7 @@ public class Game {
 	/**
 	 * Sorts the board's components according to the number of resources devoted.
 	 */
-	public static void sortComponentsByTotalResourcesDevoted() {
+	public static void sortComponentsByTotalResourcesDevoted() throws InterruptedException {
 
 		List<Component> gameComponents = new ArrayList<>();
 
@@ -885,6 +887,10 @@ public class Game {
 	public static void winGame() {
 		try {
 			int totalNumberOfExperts = 0;
+			ArtemisSystem spaceLaunchSystem = board.getSystems()[0];
+			ArtemisSystem preStagingSystem = board.getSystems()[1];
+			ArtemisSystem orionSpacecraft = board.getSystems()[2];
+			ArtemisSystem gatewayLunarSystem = board.getSystems()[3];
 
 			System.out.print("Congratulations ");
 			for (int loop = 0; loop < players.size(); loop++) {
@@ -901,10 +907,10 @@ public class Game {
 				system.displaySystemOwnerForEndGame();
 				Thread.sleep(2000);
 			}
-			
+
 			displayTotalNumberofTurns();
 			Thread.sleep(2000);
-			
+
 			for (Square square : board.getSquares()) {
 				if (square instanceof Component) {
 					Component component = (Component) square;
@@ -922,7 +928,7 @@ public class Game {
 			sortComponentsByTotalResourcesDevoted();
 
 			System.out.println("\n");
-			Thread.sleep(5000);
+			Thread.sleep(4000);
 			List<Player> listOfPlayersSortedByTimesDeclinedResources = sortPlayersByCounterOfTimesDeclinedResources();
 			displayTimesDeclinedResourcesStats(listOfPlayersSortedByTimesDeclinedResources);
 
@@ -931,19 +937,86 @@ public class Game {
 
 			announce("In 2021");
 			System.out.println(
-					"The crew module has successfully landed on the Moon and Orion has been sent on its journey around the Moon.");
+					"Artemis I launches with an uncrewed spacecraft providing a glimpse of what the project might hold...\n");
+			Thread.sleep(2000);
+			System.out.println(
+					"The spacecraft travels 280,000 miles from home, passing the moon and returning to Earth without ever touching down on the lunar surface.");
+			Thread.sleep(2000);
+			System.out.println("A taste of things to come, a promise for another day...");
+			Thread.sleep(1000);
+			Game.announce("Thanks to " + orionSpacecraft.getSystemOwner().getPlayerName()
+					+ " and their team of resourceful " + RESOURCE_NAME
+					+ ", the " + orionSpacecraft + " proves a fitting vessel for future astronauts daring to venture into space.");
 			Thread.sleep(2000);
 			announce("In 2022");
-			System.out.println(
-					"The first test flight with crew takes off to check critical systems and then returns back to Earth.");
 			Thread.sleep(2000);
-			announce("In 2023");
 			System.out.println(
-					"Science investigations and technology experiments through a variety of robotic and human activities on the surface and in orbit around the Moon begin.");
+					"Following the success of the crewless expedition, the brave crew of Artemis II partcipates in the first manned test flight to check critical systems.");
+			Thread.sleep(2000);
+			System.out.println("The spacecraft manages to orbit the Moon and its crew returns home safely.");
 			Thread.sleep(2000);
 			announce("In 2024");
+			Thread.sleep(2000);
+			System.out.println("The time has come for Artemis III...");
+			Thread.sleep(2000);
+			Game.announce("Thanks to the skill of " + spaceLaunchSystem.getSystemOwner() + " and their team of " + RESOURCE_NAME + " who worked tirelessly on " + spaceLaunchSystem.getSystemName() + ", the Orion spacecraft is able to safely depart our planet");
+			Thread.sleep(2000);
+			System.out.println("The Orion is on its way.");
 			System.out.println(
-					"NASA have succesfully landed the first woman on the Moon establishing a permanent human presence as part of the project.");
+					"The crew members of the Orion are preparing for the moment they have been waiting for...");
+			Thread.sleep(2000);
+			System.out.println(
+					"The moment they've been waiting for since they first stared up at the night sky in wonder.");
+			Thread.sleep(2000);
+			System.out.println(
+					"However, before they can land on the lunar surface the Orion needs to match the elliptical orbit of "
+							+ gatewayLunarSystem.getSystemName() + "...");
+			Thread.sleep(2000);
+			Game.announce(gatewayLunarSystem.getSystemOwner().getPlayerName() + " and their team of " + RESOURCE_NAME
+					+ " watch in anticipation...");
+			Thread.sleep(2000);
+			System.out.println("Will their countless hours of work have paid off?");
+			Thread.sleep(2000);
+			System.out.println("The Orion safely docks with " + gatewayLunarSystem.getSystemName()
+					+ " and from there the crew descends towards the lunar surface.");
+			Thread.sleep(2000);
+			System.out.println("The world holds its breath.");
+			Thread.sleep(2000);
+			System.out.println("Finally, after years of dedication, ingenuity and cooperation...");
+			Thread.sleep(2000);
+			System.out.println("After half a century of waiting...");
+			Thread.sleep(3000);
+			System.out.println("Humans once again walk on the surface of the moon.");
+			Thread.sleep(2000);
+			System.out.println("Among them, the first woman to land on the lunar surface.");
+			Thread.sleep(2000);
+			System.out.println("This time we plan to stay a while...");
+			Thread.sleep(2000);
+			Game.announce("Thanks to the careful planning of " + preStagingSystem.getSystemOwner().getPlayerName()
+					+ " and their team of " + RESOURCE_NAME + ", everything the crew needs is in place...");
+			Thread.sleep(2000);
+			System.out.println("This includes " + preStagingSystem.getComponentsInSystem().get(0).getSquareName()
+					+ " and " + preStagingSystem.getComponentsInSystem().get(1).getSquareName() + ".");
+			Thread.sleep(2000);
+			System.out.println(
+					"The crew members find themselves on the Moon's South Pole. Never before have humans explored this region of the Moon.");
+			Thread.sleep(2000);
+			System.out.println(
+					"As they begin their experiments they take a moment to glance back towards home, towards Earth.");
+			Thread.sleep(2000);
+			System.out.println("They see our home as so few have seen it.\n");
+			Thread.sleep(3000);
+			System.out.println("This would not have been possible without you.\n");
+			Thread.sleep(2000);
+			for (Player player : players) {
+				Thread.sleep(2000);
+				System.out.println(player.getPlayerName());
+				System.out.println();
+			}
+			Thread.sleep(2000);
+			System.out.println("Thank you for playing ArtemisLite...\n");
+			Thread.sleep(2000);
+			Game.announce("Mission accomplished.");
 
 		} catch (InterruptedException e) {
 			System.out.println("Thread interrupted");
@@ -980,11 +1053,13 @@ public class Game {
 
 	}
 
-	public static void displayAllComponentsNameSystemResourcesDevoted(List<Component> componentList) {
+	public static void displayAllComponentsNameSystemResourcesDevoted(List<Component> componentList) throws InterruptedException {
 
+		Thread.sleep(500);
 		System.out.printf("%-40s %-30s %-30s\n", "COMPONENT", "SYSTEM", "TOTAL " + Game.RESOURCE_NAME + " DEVOTED");
 
 		for (Component component : componentList) {
+			Thread.sleep(500);
 			component.displayNameSystemAndTotalResourcesDevoted();
 		}
 	}
@@ -1021,13 +1096,15 @@ public class Game {
 	 *
 	 * @param playerList
 	 */
-	public static void displayTimesDeclinedResourcesStats(List<Player> playerList) {
+	public static void displayTimesDeclinedResourcesStats(List<Player> playerList) throws InterruptedException {
 
 		// column headers
+		Thread.sleep(1000);
 		System.out.printf("%-20s %-10s\n", "PLAYER", "NUMBER OF TIMES DECLINED RESOURCES");
 
 		// print stats to screen
 		for (Player player : playerList) {
+			Thread.sleep(500);
 			System.out.printf("%-20s %-10s\n", player.getPlayerName(), player.getCountOfTimesPlayerDeclinedResources());
 		}
 
@@ -1071,10 +1148,11 @@ public class Game {
 			}
 
 			messageText = nameOfPlayersWithMostDeclines + " declined " + RESOURCE_NAME + " on the most occasions.";
-
+			Thread.sleep(1000);
 			System.out.println("\n" + messageText);
 		} else {
-			System.out.println("At no point in the game did a player refuse to accept resources");
+			Thread.sleep(1000);
+			System.out.println("\nAt no point in the game did a player refuse to accept resources");
 		}
 
 	}
