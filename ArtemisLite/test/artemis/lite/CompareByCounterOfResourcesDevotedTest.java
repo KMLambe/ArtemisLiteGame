@@ -32,8 +32,8 @@ class CompareByCounterOfResourcesDevotedTest {
 		resourcesDevotedValid1 = 1;
 		resourcesDevotedValid2 = 2;
 		
-		testComponent1.setTotalResourcessDevotedToComponent(resourcesDevotedValid1);
-		testComponent2.setTotalResourcessDevotedToComponent(resourcesDevotedValid2);
+		testComponent1.setTotalResourcesDevotedToComponent(resourcesDevotedValid1);
+		testComponent2.setTotalResourcesDevotedToComponent(resourcesDevotedValid2);
 		
 	}
 
@@ -50,8 +50,8 @@ class CompareByCounterOfResourcesDevotedTest {
 		
 		// testComponent1 > testComponent2
 		
-		testComponent1.setTotalResourcessDevotedToComponent(resourcesDevotedValid2);
-		testComponent2.setTotalResourcessDevotedToComponent(resourcesDevotedValid1);
+		testComponent1.setTotalResourcesDevotedToComponent(resourcesDevotedValid2);
+		testComponent2.setTotalResourcesDevotedToComponent(resourcesDevotedValid1);
 		
 		expectedValue = -1;
 		
@@ -60,8 +60,8 @@ class CompareByCounterOfResourcesDevotedTest {
 		
 		// testComponent1 == testComponent2
 		
-		testComponent1.setTotalResourcessDevotedToComponent(resourcesDevotedValid2);
-		testComponent2.setTotalResourcessDevotedToComponent(resourcesDevotedValid2);
+		testComponent1.setTotalResourcesDevotedToComponent(resourcesDevotedValid2);
+		testComponent2.setTotalResourcesDevotedToComponent(resourcesDevotedValid2);
 		
 		expectedValue = 0;
 		
