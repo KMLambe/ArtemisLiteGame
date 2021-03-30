@@ -171,10 +171,10 @@ class GameTest {
 		// tests that Array return at correct size with names and starting resources and
 		// board position
 		assertEquals(2, players.size());
-		assertTrue(player1.getPlayerName().equals("player1"));
+		assertEquals("player1", player1.getPlayerName());
 		assertEquals(500, player1.getResourceBalance());
 		assertEquals(0, player1.getCurrentBoardPosition());
-		assertTrue(player2.getPlayerName().equals("player2"));
+		assertEquals("player2", player2.getPlayerName());
 		assertEquals(500, player2.getResourceBalance());
 		assertEquals(0, player2.getCurrentBoardPosition());
 
@@ -189,14 +189,14 @@ class GameTest {
 		Player player2 = players.get(1);
 		// tests
 		assertEquals(2, players.size());
-		assertTrue(player1.getPlayerName().equals("name1"));
-		assertTrue(player2.getPlayerName().equals("name2"));
+		assertEquals("name1", player1.getPlayerName());
+		assertEquals("name2", player2.getPlayerName());
 	}
 
 	@Test
 	void testGeneratePlayerOrderValid() {
 		// test array for create players
-		ArrayList<Player> playerstest = new ArrayList<Player>();
+		ArrayList<Player> playersTest = new ArrayList<Player>();
 		int STARTING_RESOURCES = 500;
 		int STARTING_POSITION = 0;
 		String validPlayer1, validPlayer2;
@@ -205,13 +205,13 @@ class GameTest {
 		validPlayer1 = "name1";
 		validPlayer2 = "name2";
 
-		playerstest.add(new Player(validPlayer1, STARTING_RESOURCES, STARTING_POSITION));
-		playerstest.add(new Player(validPlayer2, STARTING_RESOURCES, STARTING_POSITION));
+		playersTest.add(new Player(validPlayer1, STARTING_RESOURCES, STARTING_POSITION));
+		playersTest.add(new Player(validPlayer2, STARTING_RESOURCES, STARTING_POSITION));
 
 		// run method
-		Game.generatePlayerOrder(playerstest);
+		Game.generatePlayerOrder(playersTest);
 		// test that Array List still contains same amount of items
-		assertEquals(2, playerstest.size());
+		assertEquals(2, playersTest.size());
 	}
 
 	@Test
@@ -345,11 +345,6 @@ class GameTest {
 	}
 
 	@Test
-	void testDisplayMenu() {
-		fail("Not yet implemented");
-	}
-
-	@Test
 	void testAllocateResourcesValidPlayer() {
 
 		int expectedResourceBalance, actualResourceBalance;
@@ -393,11 +388,6 @@ class GameTest {
 		
 		assertEquals(testPlayerList, Game.getPlayers());
 		
-	}
-
-	@Test
-	void testEndGame() {
-		fail("Not yet implemented");
 	}
 
 	@Test
@@ -484,19 +474,9 @@ class GameTest {
 		Component componentForTrade = Game.getPlayerComponentSelection(new Scanner("na end"),
 				player1ComponentsAvailable);
 
-		assertTrue(componentForTrade == null);
+		assertNull(componentForTrade);
 	}
 
-	@Test
-	void testTradeMenuValidSelection() {
-		
-
-	}
-
-	@Test
-	void testTradeMenuToPlayerTradeIntegration() {
-		fail("TBC");
-	}
 
 	@Test
 	void testGetHighestRollerValidMultiplePlayers() {
@@ -510,7 +490,7 @@ class GameTest {
 		Player winner = Game.getHighestRoll(playerList);
 
 		assertTrue(playerList.contains(winner));
-		assertTrue(winner instanceof Player);
+		assertNotNull(winner);
 	}
 
 	@Test
