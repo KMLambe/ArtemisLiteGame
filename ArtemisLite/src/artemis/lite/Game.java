@@ -1361,7 +1361,8 @@ public class Game {
 	}
 
 	/**
-	 * Sets the value of testMode. True is indicative of the code being run in test mode.
+	 * Sets the value of testMode. When in testMode all code delays are ignored to enable testing to run quickly.
+	 *
 	 * @param testMode true -> game is being run in test mode. false -> game is being run normally.
 	 */
 	public static void setTestMode(boolean testMode) {
