@@ -111,7 +111,9 @@ class ArtemisSystemTest {
 		
 		player1 = new Player(validPlayerName1, validResourceBalance1, validCurrentBoardPosition1);
 		player2 = new Player(validPlayerName2, validResourceBalance2, validCurrentBoardPosition2);
-		
+
+		// let game class know it is running tests
+		Game.setTestMode(true);
 	}
 
 	@Test

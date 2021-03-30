@@ -91,6 +91,9 @@ class PlayerTest {
         // add components to list
         fullyDevelopedComponents = new ArrayList<Component>();
         fullyDevelopedComponents.add(c3);
+
+        // let game class know it is running tests
+        Game.setTestMode(true);
     }
 
     @Test

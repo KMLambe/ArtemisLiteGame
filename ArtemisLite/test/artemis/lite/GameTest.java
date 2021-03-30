@@ -135,6 +135,9 @@ class GameTest {
 		players.add(player1);
 		players.add(player2);
 		Game.setPlayers(players);
+
+		// let game class know it is running tests
+		Game.setTestMode(true);
 	}
 
 	@Test

@@ -55,6 +55,9 @@ class BoardTest {
 
         // create test objects
         b = new Board();
+
+        // let game class know it is running tests
+        Game.setTestMode(true);
     }
 
     // tests for creating systems
