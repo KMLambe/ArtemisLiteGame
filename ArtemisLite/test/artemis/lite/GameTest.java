@@ -644,4 +644,13 @@ class GameTest {
 		assertEquals(expectedOutcome2, actualResult);
 	}
 
+
+	@Test
+	void getSetTestMode() {
+		Game.setTestMode(false);
+		assertFalse(Game.isTestMode());
+
+		Game.setTestMode(true);
+		assertTrue(Game.isTestMode());
+	}
 }
