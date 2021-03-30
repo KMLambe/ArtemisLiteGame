@@ -379,7 +379,7 @@ public class Game {
 			Component component = (Component) playerPosition;
 
 			if (!component.isOwned()) {
-				displayComponentIfPurchasable(currentPlayer, playerPosition);
+				displayComponentIfPurchasable(currentPlayer, playerPosition, Scanner);
 			} else if (component.isOwned() && component.getComponentOwner() != currentPlayer) {
 				component.checkOwnerWantsResources(currentPlayer, scanner);
 			} else {
@@ -474,7 +474,7 @@ public class Game {
 						break;
 					case 6:
 						// this breaks the loop and within gameLoop the endGame method is called
-						boolean playerWantsToLeave = confirmPlayerWantsToLeave(currentPlayer);
+						boolean playerWantsToLeave = confirmPlayerWantsToLeave(currentPlayer, scanner);
 						if (playerWantsToLeave) {
 							endGame = true;
 						}
