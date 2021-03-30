@@ -209,51 +209,33 @@ class GameTest {
 		playersTest.add(new Player(validPlayer2, STARTING_RESOURCES, STARTING_POSITION));
 
 		// run method
-		Game.generatePlayerOrder(playersTest);
+		Game.generatePlayerOrder();
 		// test that Array List still contains same amount of items
 		assertEquals(2, playersTest.size());
 	}
 
 	@Test
 	void testGetNextPlayerValid() {
-
-		ArrayList<Player> playersTest = new ArrayList<Player>();
-		int STARTING_RESOURCES = 500;
-		int STARTING_POSITION = 0;
-		String validPlayer1, validPlayer2, validPlayer3, validPlayer4;
+		List<Player> players = new ArrayList<Player>();
+		players.add(player1);
+		players.add(player2);
+		Game.setPlayers(players);
 		Player currentPlayer;
-
-		// player info to pass into array for player test
-		validPlayer1 = "name1";
-		validPlayer2 = "name2";
-		validPlayer3 = "name3";
-		validPlayer4 = "name4";
-
-		playersTest.add(new Player(validPlayer1, STARTING_RESOURCES, STARTING_POSITION));
-		playersTest.add(new Player(validPlayer2, STARTING_RESOURCES, STARTING_POSITION));
-		playersTest.add(new Player(validPlayer3, STARTING_RESOURCES, STARTING_POSITION));
-		playersTest.add(new Player(validPlayer4, STARTING_RESOURCES, STARTING_POSITION));
-
+		
 		// set first player in arrayList to last player in arraylist -> so that
 		// nextPlayer will be the first player
-		currentPlayer = playersTest.get(playersTest.size() - 1);
+		currentPlayer = players.get(players.size() - 1);
 
 		// test that the method will get the first player
-		currentPlayer = Game.getNextPlayer(playersTest, currentPlayer);
-		assertEquals("name1", currentPlayer.getPlayerName());
+		currentPlayer = Game.getNextPlayer(currentPlayer);
+		assertEquals("validPlayerName1", currentPlayer.getPlayerName());
 		// test that the method will get the second player
-		currentPlayer = Game.getNextPlayer(playersTest, currentPlayer);
-		assertEquals("name2", currentPlayer.getPlayerName());
-		// test that the method will get the third player
-		currentPlayer = Game.getNextPlayer(playersTest, currentPlayer);
-		assertEquals("name3", currentPlayer.getPlayerName());
-		// test that the method will get the fourth player
-		currentPlayer = Game.getNextPlayer(playersTest, currentPlayer);
-		assertEquals("name4", currentPlayer.getPlayerName());
+		currentPlayer = Game.getNextPlayer(currentPlayer);
+		assertEquals("validPlayerName2", currentPlayer.getPlayerName());
 		// test that the method will revert back to the first player after it reaches
 		// the end of the list
-		currentPlayer = Game.getNextPlayer(playersTest, currentPlayer);
-		assertEquals("name1", currentPlayer.getPlayerName());
+		currentPlayer = Game.getNextPlayer(currentPlayer);
+		assertEquals("validPlayerName1", currentPlayer.getPlayerName());
 	}
 
 	@Test
@@ -591,16 +573,20 @@ class GameTest {
 	
 	@Test
 	void testcheckAllSystemsFullyDevelopedValid() {
+		
 		Player currentPlayer;
+		// Set expected outcomes
 		boolean actualResult;
 		boolean expectedOutcome1=false;
 		boolean expectedOutcome2=true;
 		Square[] squares = board1.getSquares();
+		//set resources and balances higher so this doesn't stop test
 		player1.setResourceBalance(5000);
 		player2.setResourceBalance(5000);
 		player1.setActionPoints(10);
 		player2.setActionPoints(10);
 		
+		// purchase all Components
 		currentPlayer=player1;
 		
 		player1.purchaseComponent(squares[1]);
@@ -616,9 +602,11 @@ class GameTest {
 		player2.purchaseComponent(squares[10]);
 		player2.purchaseComponent(squares[11]);
 		
+		// test that all systems developed is false
 		actualResult=Game.checkAllSystemsFullyDeveloped();
 		assertEquals(expectedOutcome1, actualResult);
 		
+		// fully develop all components
 		Component testComponent1 = (Component) squares[1];
 		testComponent1.setDevelopmentStage(4);
 		Component testComponent2 = (Component) squares[2];
@@ -640,6 +628,7 @@ class GameTest {
 		Component testComponent11 = (Component) squares[11];
 		testComponent11.setDevelopmentStage(4);
 		
+		//test that all components have been fully developed
 		actualResult=Game.checkAllSystemsFullyDeveloped();
 		assertEquals(expectedOutcome2, actualResult);
 	}
