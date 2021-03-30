@@ -37,21 +37,22 @@ public class Game {
 	private static boolean endGame = false;
 	private static boolean winGame = false;
 
+	private static boolean testMode;
+
 	/**
-	 * @param args
+	 * @param args accepts commandline arguments - however, it does not use them for any purpose
 	 */
 	public static void main(String[] args) {
+		// let game know it is not being run as a test
+		testMode = false;
+
 		Scanner scanner = new Scanner(System.in);
 
 		gameBriefing();
 
 		setupGame(scanner);
 
-		try {
-			gameLoop(scanner);
-		} catch (InterruptedException interruptedException) {
-			System.out.println("Game was interrupted");
-		}
+		gameLoop(scanner);
 	}
 
 	/**
@@ -89,11 +90,7 @@ public class Game {
 
 		for (String output : mission) {
 			System.out.printf("%s\n", output);
-			try {
-				Thread.sleep(800);
-			} catch (InterruptedException interruptedException) {
-				System.out.println("Mission Briefing interrupted");
-			}
+			delay(800);
 		}
 
 		new Scanner(System.in).nextLine();
@@ -134,7 +131,7 @@ public class Game {
 	 * @param scanner a scanner object
 	 * @throws InterruptedException
 	 */
-	public static void gameLoop(Scanner scanner) throws InterruptedException {
+	public static void gameLoop(Scanner scanner) {
 		// set currentPlayer to the first player in the arraylist
 		Player currentPlayer = players.get(0);
 
@@ -148,9 +145,9 @@ public class Game {
 
 				// let everyone know the player has moved
 				announce("is rolling the dice...", currentPlayer);
-				Thread.sleep(2000);
+				delay(2000);
 				announce("rolled a " + rollDice + " and moves accordingly.", currentPlayer);
-				Thread.sleep(1000);
+				delay(1000);
 				Square playerPosition = updatePlayerPosition(currentPlayer, rollDice);
 
 				checkIfSquareIsPurchasable(currentPlayer, playerPosition);
@@ -318,8 +315,7 @@ public class Game {
 	 * @param currentPlayer - the current player, passed as a parameter argument
 	 * @param sumOfDice     - the sum of two dice returned by the rollDice() method,
 	 */
-	public static Square updatePlayerPosition(Player currentPlayer, int sumOfDice) throws IllegalArgumentException,
-			InterruptedException {
+	public static Square updatePlayerPosition(Player currentPlayer, int sumOfDice) throws IllegalArgumentException {
 
 		int movementCalculation, newBoardPosition, boardLength;
 		String positionChangeAnnouncement, squareName;
@@ -360,7 +356,7 @@ public class Game {
 			positionChangeAnnouncement += " which is part of " + component.getComponentSystem().getSystemName() + ".";
 		}
 
-		Thread.sleep(1000);
+		delay(1000);
 		announce(positionChangeAnnouncement, currentPlayer);
 
 		return board.getSquares()[newBoardPosition];
@@ -375,7 +371,7 @@ public class Game {
 	 * @param currentPlayer
 	 * @throws InterruptedException
 	 */
-	public static void checkIfSquareIsPurchasable(Player currentPlayer, Square playerPosition) throws InterruptedException {
+	public static void checkIfSquareIsPurchasable(Player currentPlayer, Square playerPosition) {
 
 		Scanner scanner = new Scanner(System.in);
 		playerPosition.displayAllDetails();
@@ -407,13 +403,12 @@ public class Game {
 	 * @param playerPosition
 	 * @throws InterruptedException interrupts thread
 	 */
-	public static void displayComponentIfPurchasable(Player currentPlayer, Square playerPosition) throws
-			InterruptedException {
+	public static void displayComponentIfPurchasable(Player currentPlayer, Square playerPosition) {
 
 		Scanner scanner = new Scanner(System.in);
 		String response;
 
-		Thread.sleep(1000);
+		delay(1000);
 		currentPlayer.displayTurnStats();
 
 		if (playerPosition instanceof Component) {
@@ -443,7 +438,7 @@ public class Game {
 	 * @param currentPlayer takes an arraylist of players
 	 */
 
-	public static void playTurn(Player currentPlayer, Scanner scanner) throws InterruptedException {
+	public static void playTurn(Player currentPlayer, Scanner scanner) {
 		int playerChoice;
 		String[] menuOptions = {"...MENU...", "1. Develop Component", "2. Trade components", "3. Display board status",
 				"4. Display my components", "5. End turn", "6. Leave game", "Selection..."};
@@ -645,29 +640,25 @@ public class Game {
 		try {
 			Component component;
 			System.out.println();
-			try {
-				Thread.sleep(500);
-				if (components.size() == 0) {
-					announce("You do not own any Artemis Systems containing components available for development");
-					return;
-				}
-				Thread.sleep(500);
-				System.out.printf("%-5s %-40s %-30s %-20s %-30s %-25s\n", "REF", "COMPONENT NAME", "SYSTEM", "OWNER",
-						"DEVELOPMENT STAGE", Game.RESOURCE_NAME + " REQUIRED TO DEVELOP");
-				Thread.sleep(200);
-				for (Map.Entry<Integer, Component> componentEntry : components.entrySet()) {
-					component = componentEntry.getValue();
-					System.out.printf("%-5s %-40s %-30s %-20s %-30s %-25s\n", componentEntry.getKey(), component,
-							component.getComponentSystem().getSystemName(), component.getComponentOwner(),
-							component.getDevelopmentStage() + " - "
-									+ component.getDevelopmentStageNamesMap().get(component.getDevelopmentStage()),
-							component.getCostToDevelop());
-				}
-				System.out.println();
-			} catch (InterruptedException interruptedException) {
-				System.out.println("Error: This operation has been interrupted");
+			delay(500);
+			if (components.size() == 0) {
+				announce("You do not own any Artemis Systems containing components available for development");
 				return;
 			}
+			delay(500);
+			System.out.printf("%-5s %-40s %-30s %-20s %-30s %-25s\n", "REF", "COMPONENT NAME", "SYSTEM", "OWNER",
+					"DEVELOPMENT STAGE", Game.RESOURCE_NAME + " REQUIRED TO DEVELOP");
+			delay(200);
+			for (Map.Entry<Integer, Component> componentEntry : components.entrySet()) {
+				component = componentEntry.getValue();
+				System.out.printf("%-5s %-40s %-30s %-20s %-30s %-25s\n", componentEntry.getKey(), component,
+						component.getComponentSystem().getSystemName(), component.getComponentOwner(),
+						component.getDevelopmentStage() + " - "
+								+ component.getDevelopmentStageNamesMap().get(component.getDevelopmentStage()),
+						component.getCostToDevelop());
+			}
+			System.out.println();
+
 		} catch (NullPointerException nullPointerException) {
 			System.out.println("Error: Component map cannot be null");
 			return;
@@ -677,7 +668,7 @@ public class Game {
 	/**
 	 * Sorts the board's components according to the number of resources devoted.
 	 */
-	public static void sortComponentsByTotalResourcesDevoted() throws InterruptedException {
+	public static void sortComponentsByTotalResourcesDevoted() {
 
 		List<Component> gameComponents = new ArrayList<>();
 
@@ -703,7 +694,7 @@ public class Game {
 	 * @param scanner - used to receive player input
 	 * @throws InterruptedException if interrupted
 	 */
-	public static void displayDevelopComponentMenu(Player player, Scanner scanner) throws InterruptedException {
+	public static void displayDevelopComponentMenu(Player player, Scanner scanner) {
 
 		Map<Integer, Component> componentsAvailable = player.getOwnedComponentsThatCanBeDeveloped();
 		List<Component> componentsFullyDeveloped = player.getFullyDevelopedComponents();
@@ -713,13 +704,13 @@ public class Game {
 		}
 
 		if (componentsAvailable.size() == 0) {
-			Thread.sleep(200);
+			delay(200);
 			Game.announce("does not have any components that meet the criteria for development.", player);
 		} else {
-			Thread.sleep(200);
+			delay(200);
 			Game.announce("has " + player.getResourceBalance() + " " + RESOURCE_NAME.toLowerCase()
 					+ " to commit to developing a component...", player);
-			Thread.sleep(200);
+			delay(200);
 			Game.announce("has the following components to develop:\n", player);
 
 			// display components
@@ -756,17 +747,17 @@ public class Game {
 	 *
 	 * @param player - the current player.
 	 */
-	public static void displayPlayerFullyDevelopedComponents(Player player) throws InterruptedException {
+	public static void displayPlayerFullyDevelopedComponents(Player player) {
 
 		List<Component> fullyDevelopedComponents = player.getFullyDevelopedComponents();
 
 		if (fullyDevelopedComponents.isEmpty()) {
-			Thread.sleep(200);
+			delay(200);
 			Game.announce("has not fully developed any components yet.", player);
 		} else {
-			Thread.sleep(200);
+			delay(200);
 			Game.announce("has fully developed the following components so far:\n", player);
-			Thread.sleep(200);
+			delay(200);
 			System.out.printf("%-12s %-40s %-30s %-30s\n", "POSITION", "NAME", "SYSTEM", "DEVELOPMENT STAGE");
 
 			fullyDevelopedComponents.sort(new CompareByPosition());
@@ -879,142 +870,138 @@ public class Game {
 	 * game
 	 */
 	public static void winGame() {
-		try {
-			int totalNumberOfExperts = 0;
-			ArtemisSystem spaceLaunchSystem = board.getSystems()[0];
-			ArtemisSystem preStagingSystem = board.getSystems()[1];
-			ArtemisSystem orionSpacecraft = board.getSystems()[2];
-			ArtemisSystem gatewayLunarSystem = board.getSystems()[3];
+		int totalNumberOfExperts = 0;
+		ArtemisSystem spaceLaunchSystem = board.getSystems()[0];
+		ArtemisSystem preStagingSystem = board.getSystems()[1];
+		ArtemisSystem orionSpacecraft = board.getSystems()[2];
+		ArtemisSystem gatewayLunarSystem = board.getSystems()[3];
 
-			System.out.print("Congratulations ");
-			for (int loop = 0; loop < players.size(); loop++) {
-				if (loop < players.size() - 1) {
-					System.out.print(players.get(loop).getPlayerName() + ", ");
-				} else {
-					System.out.print("and " + players.get(loop).getPlayerName() + " ");
-				}
+		System.out.print("Congratulations ");
+		for (int loop = 0; loop < players.size(); loop++) {
+			if (loop < players.size() - 1) {
+				System.out.print(players.get(loop).getPlayerName() + ", ");
+			} else {
+				System.out.print("and " + players.get(loop).getPlayerName() + " ");
 			}
-			System.out.print("the Artemis system has successfully launched.\n");
-			Thread.sleep(2000);
-
-			for (ArtemisSystem system : board.getSystems()) {
-				system.displaySystemOwnerForEndGame();
-				Thread.sleep(2000);
-			}
-
-			displayTotalNumberOfTurns();
-			Thread.sleep(2000);
-
-			for (Square square : board.getSquares()) {
-				if (square instanceof Component) {
-					Component component = (Component) square;
-					totalNumberOfExperts += component.getTotalResourcesDevotedToComponent();
-				}
-			}
-
-			for (Player player : players) {
-				totalNumberOfExperts += player.getResourceBalance();
-			}
-
-			System.out.println(
-					"\n\nThere were " + totalNumberOfExperts + " experts needed to launch the Artemis Project.\n");
-			Thread.sleep(2000);
-			sortComponentsByTotalResourcesDevoted();
-
-			System.out.println("\n");
-			Thread.sleep(4000);
-			List<Player> listOfPlayersSortedByTimesDeclinedResources = sortPlayersByCounterOfTimesDeclinedResources();
-			displayTimesDeclinedResourcesStats(listOfPlayersSortedByTimesDeclinedResources);
-
-			System.out.println("\n");
-			Thread.sleep(2000);
-
-			announce("In 2021");
-			System.out.println(
-					"Artemis I launches with an uncrewed spacecraft providing a glimpse of what the project might hold...\n");
-			Thread.sleep(2000);
-			System.out.println(
-					"The spacecraft travels 280,000 miles from home, passing the moon and returning to Earth without ever touching down on the lunar surface.");
-			Thread.sleep(2000);
-			System.out.println("A taste of things to come, a promise for another day...");
-			Thread.sleep(1000);
-			Game.announce("Thanks to " + orionSpacecraft.getSystemOwner().getPlayerName()
-					+ " and their team of resourceful " + RESOURCE_NAME
-					+ ", the " + orionSpacecraft + " proves a fitting vessel for future astronauts daring to venture into space.");
-			Thread.sleep(2000);
-			announce("In 2022");
-			Thread.sleep(2000);
-			System.out.println(
-					"Following the success of the crewless expedition, the brave crew of Artemis II partcipates in the first manned test flight to check critical systems.");
-			Thread.sleep(2000);
-			System.out.println("The spacecraft manages to orbit the Moon and its crew returns home safely.");
-			Thread.sleep(2000);
-			announce("In 2024");
-			Thread.sleep(2000);
-			System.out.println("The time has come for Artemis III...");
-			Thread.sleep(2000);
-			Game.announce("Thanks to the skill of " + spaceLaunchSystem.getSystemOwner() + " and their team of " + RESOURCE_NAME + " who worked tirelessly on " + spaceLaunchSystem.getSystemName() + ", the Orion spacecraft is able to safely depart our planet");
-			Thread.sleep(2000);
-			System.out.println("The Orion is on its way.");
-			System.out.println(
-					"The crew members of the Orion are preparing for the moment they have been waiting for...");
-			Thread.sleep(2000);
-			System.out.println(
-					"The moment they've been waiting for since they first stared up at the night sky in wonder.");
-			Thread.sleep(2000);
-			System.out.println(
-					"However, before they can land on the lunar surface the Orion needs to match the elliptical orbit of "
-							+ gatewayLunarSystem.getSystemName() + "...");
-			Thread.sleep(2000);
-			Game.announce(gatewayLunarSystem.getSystemOwner().getPlayerName() + " and their team of " + RESOURCE_NAME
-					+ " watch in anticipation...");
-			Thread.sleep(2000);
-			System.out.println("Will their countless hours of work have paid off?");
-			Thread.sleep(2000);
-			System.out.println("The Orion safely docks with " + gatewayLunarSystem.getSystemName()
-					+ " and from there the crew descends towards the lunar surface.");
-			Thread.sleep(2000);
-			System.out.println("The world holds its breath.");
-			Thread.sleep(2000);
-			System.out.println("Finally, after years of dedication, ingenuity and cooperation...");
-			Thread.sleep(2000);
-			System.out.println("After half a century of waiting...");
-			Thread.sleep(3000);
-			System.out.println("Humans once again walk on the surface of the moon.");
-			Thread.sleep(2000);
-			System.out.println("Among them, the first woman to land on the lunar surface.");
-			Thread.sleep(2000);
-			System.out.println("This time we plan to stay a while...");
-			Thread.sleep(2000);
-			Game.announce("Thanks to the careful planning of " + preStagingSystem.getSystemOwner().getPlayerName()
-					+ " and their team of " + RESOURCE_NAME + ", everything the crew needs is in place...");
-			Thread.sleep(2000);
-			System.out.println("This includes " + preStagingSystem.getComponentsInSystem().get(0).getSquareName()
-					+ " and " + preStagingSystem.getComponentsInSystem().get(1).getSquareName() + ".");
-			Thread.sleep(2000);
-			System.out.println(
-					"The crew members find themselves on the Moon's South Pole. Never before have humans explored this region of the Moon.");
-			Thread.sleep(2000);
-			System.out.println(
-					"As they begin their experiments they take a moment to glance back towards home, towards Earth.");
-			Thread.sleep(2000);
-			System.out.println("They see our home as so few have seen it.\n");
-			Thread.sleep(3000);
-			System.out.println("This would not have been possible without you.\n");
-			Thread.sleep(2000);
-			for (Player player : players) {
-				Thread.sleep(2000);
-				System.out.println(player.getPlayerName());
-				System.out.println();
-			}
-			Thread.sleep(2000);
-			System.out.println("Thank you for playing ArtemisLite...\n");
-			Thread.sleep(2000);
-			Game.announce("Mission accomplished.");
-
-		} catch (InterruptedException e) {
-			System.out.println("Thread interrupted");
 		}
+		System.out.print("the Artemis system has successfully launched.\n");
+		delay(2000);
+
+		for (ArtemisSystem system : board.getSystems()) {
+			system.displaySystemOwnerForEndGame();
+			delay(2000);
+		}
+
+		displayTotalNumberOfTurns();
+		delay(2000);
+
+		for (Square square : board.getSquares()) {
+			if (square instanceof Component) {
+				Component component = (Component) square;
+				totalNumberOfExperts += component.getTotalResourcesDevotedToComponent();
+			}
+		}
+
+		for (Player player : players) {
+			totalNumberOfExperts += player.getResourceBalance();
+		}
+
+		System.out.println(
+				"\n\nThere were " + totalNumberOfExperts + " experts needed to launch the Artemis Project.\n");
+		delay(2000);
+		sortComponentsByTotalResourcesDevoted();
+
+		System.out.println("\n");
+		delay(4000);
+		List<Player> listOfPlayersSortedByTimesDeclinedResources = sortPlayersByCounterOfTimesDeclinedResources();
+		displayTimesDeclinedResourcesStats(listOfPlayersSortedByTimesDeclinedResources);
+
+		System.out.println("\n");
+		delay(2000);
+
+		announce("In 2021");
+		System.out.println(
+				"Artemis I launches with an uncrewed spacecraft providing a glimpse of what the project might hold...\n");
+		delay(2000);
+		System.out.println(
+				"The spacecraft travels 280,000 miles from home, passing the moon and returning to Earth without ever touching down on the lunar surface.");
+		delay(2000);
+		System.out.println("A taste of things to come, a promise for another day...");
+		delay(1000);
+		Game.announce("Thanks to " + orionSpacecraft.getSystemOwner().getPlayerName()
+				+ " and their team of resourceful " + RESOURCE_NAME
+				+ ", the " + orionSpacecraft + " proves a fitting vessel for future astronauts daring to venture into space.");
+		delay(2000);
+		announce("In 2022");
+		delay(2000);
+		System.out.println(
+				"Following the success of the crewless expedition, the brave crew of Artemis II partcipates in the first manned test flight to check critical systems.");
+		delay(2000);
+		System.out.println("The spacecraft manages to orbit the Moon and its crew returns home safely.");
+		delay(2000);
+		announce("In 2024");
+		delay(2000);
+		System.out.println("The time has come for Artemis III...");
+		delay(2000);
+		Game.announce("Thanks to the skill of " + spaceLaunchSystem.getSystemOwner() + " and their team of " + RESOURCE_NAME + " who worked tirelessly on " + spaceLaunchSystem.getSystemName() + ", the Orion spacecraft is able to safely depart our planet");
+		delay(2000);
+		System.out.println("The Orion is on its way.");
+		System.out.println(
+				"The crew members of the Orion are preparing for the moment they have been waiting for...");
+		delay(2000);
+		System.out.println(
+				"The moment they've been waiting for since they first stared up at the night sky in wonder.");
+		delay(2000);
+		System.out.println(
+				"However, before they can land on the lunar surface the Orion needs to match the elliptical orbit of "
+						+ gatewayLunarSystem.getSystemName() + "...");
+		delay(2000);
+		Game.announce(gatewayLunarSystem.getSystemOwner().getPlayerName() + " and their team of " + RESOURCE_NAME
+				+ " watch in anticipation...");
+		delay(2000);
+		System.out.println("Will their countless hours of work have paid off?");
+		delay(2000);
+		System.out.println("The Orion safely docks with " + gatewayLunarSystem.getSystemName()
+				+ " and from there the crew descends towards the lunar surface.");
+		delay(2000);
+		System.out.println("The world holds its breath.");
+		delay(2000);
+		System.out.println("Finally, after years of dedication, ingenuity and cooperation...");
+		delay(2000);
+		System.out.println("After half a century of waiting...");
+		delay(3000);
+		System.out.println("Humans once again walk on the surface of the moon.");
+		delay(2000);
+		System.out.println("Among them, the first woman to land on the lunar surface.");
+		delay(2000);
+		System.out.println("This time we plan to stay a while...");
+		delay(2000);
+		Game.announce("Thanks to the careful planning of " + preStagingSystem.getSystemOwner().getPlayerName()
+				+ " and their team of " + RESOURCE_NAME + ", everything the crew needs is in place...");
+		delay(2000);
+		System.out.println("This includes " + preStagingSystem.getComponentsInSystem().get(0).getSquareName()
+				+ " and " + preStagingSystem.getComponentsInSystem().get(1).getSquareName() + ".");
+		delay(2000);
+		System.out.println(
+				"The crew members find themselves on the Moon's South Pole. Never before have humans explored this region of the Moon.");
+		delay(2000);
+		System.out.println(
+				"As they begin their experiments they take a moment to glance back towards home, towards Earth.");
+		delay(2000);
+		System.out.println("They see our home as so few have seen it.\n");
+		delay(3000);
+		System.out.println("This would not have been possible without you.\n");
+		delay(2000);
+
+		for (Player player : players) {
+			delay(2000);
+			System.out.println(player.getPlayerName());
+			System.out.println();
+		}
+		delay(2000);
+		System.out.println("Thank you for playing ArtemisLite...\n");
+		delay(2000);
+		Game.announce("Mission accomplished.");
 	}
 
 	/**
@@ -1047,14 +1034,13 @@ public class Game {
 
 	}
 
-	public static void displayAllComponentsNameSystemResourcesDevoted(List<Component> componentList) throws
-			InterruptedException {
+	public static void displayAllComponentsNameSystemResourcesDevoted(List<Component> componentList) {
 
-		Thread.sleep(500);
+		delay(500);
 		System.out.printf("%-40s %-30s %-30s\n", "COMPONENT", "SYSTEM", "TOTAL " + Game.RESOURCE_NAME + " DEVOTED");
 
 		for (Component component : componentList) {
-			Thread.sleep(500);
+			delay(500);
 			component.displayNameSystemAndTotalResourcesDevoted();
 		}
 	}
@@ -1091,15 +1077,15 @@ public class Game {
 	 *
 	 * @param playerList
 	 */
-	public static void displayTimesDeclinedResourcesStats(List<Player> playerList) throws InterruptedException {
+	public static void displayTimesDeclinedResourcesStats(List<Player> playerList) {
 
 		// column headers
-		Thread.sleep(1000);
+		delay(1000);
 		System.out.printf("%-20s %-10s\n", "PLAYER", "NUMBER OF TIMES DECLINED RESOURCES");
 
 		// print stats to screen
 		for (Player player : playerList) {
-			Thread.sleep(500);
+			delay(500);
 			System.out.printf("%-20s %-10s\n", player.getPlayerName(), player.getCountOfTimesPlayerDeclinedResources());
 		}
 
@@ -1143,10 +1129,10 @@ public class Game {
 			}
 
 			messageText = nameOfPlayersWithMostDeclines + " declined " + RESOURCE_NAME + " on the most occasions.";
-			Thread.sleep(1000);
+			delay(1000);
 			System.out.println("\n" + messageText);
 		} else {
-			Thread.sleep(1000);
+			delay(1000);
 			System.out.println("\nAt no point in the game did a player refuse to accept resources");
 		}
 
@@ -1160,7 +1146,7 @@ public class Game {
 	 * @return false if user input is no stopping the game from ending
 	 * @throws InterruptedException
 	 */
-	public static boolean confirmPlayerWantsToLeave(Player currentPlayer) throws InterruptedException {
+	public static boolean confirmPlayerWantsToLeave(Player currentPlayer) {
 		Scanner scanner = new Scanner(System.in);
 		String response;
 
@@ -1170,7 +1156,7 @@ public class Game {
 			response = scanner.next();
 
 			if (response.equalsIgnoreCase("yes")) {
-				Thread.sleep(1000);
+				delay(1000);
 				System.out.println(currentPlayer.getPlayerName() + " has chosen to abort the mission");
 				return true;
 			} else if (response.equalsIgnoreCase("no")) {
@@ -1191,41 +1177,41 @@ public class Game {
 	 *
 	 * @throws InterruptedException
 	 */
-	public static void endGame() throws InterruptedException {
+	public static void endGame() {
 
 		int totalNumberOfExperts = 0;
 
-		Thread.sleep(1000);
+		delay(1000);
 		announce("Houston... we've had a problem");
 		System.out.println("MISSION ABORTED!");
-		Thread.sleep(1000);
+		delay(1000);
 
 		for (Player player : players) {
 			totalNumberOfExperts += player.getResourceBalance();
 		}
 		System.out.println(totalNumberOfExperts + " " + RESOURCE_NAME + " were required to launch Artemis");
-		Thread.sleep(1000);
+		delay(1000);
 
 		System.out.printf("\n%-20s %-10s\n", "PLAYER", "REMAINING RESOURCES");
 		System.out.println("-----------------------------------------");
 		for (Player player : players) {
 			System.out.printf("%-20s %-10s\n", player.getPlayerName(), player.getResourceBalance());
 		}
-		Thread.sleep(1000);
+		delay(1000);
 
 		System.out.printf("\n%-20s %-10s\n", "PLAYER", "OWNED COMPONENTS");
 		System.out.println("-----------------------------------------");
 		for (Player player : players) {
 			System.out.printf("\n%-20s %-10s\n", player.getPlayerName(), player.getOwnedComponents());
 		}
-		Thread.sleep(1000);
+		delay(1000);
 
 		System.out.printf("\n%-20s %-10s\n", "PLAYER", "OWNED SYSTEMS");
 		System.out.println("-----------------------------------------");
 		for (Player player : players) {
 			System.out.printf("\n%-20s %-10s\n", player.getPlayerName(), player.getOwnedSystems());
 		}
-		Thread.sleep(1000);
+		delay(1000);
 
 		// get the sorted list
 		System.out.println();
@@ -1304,6 +1290,26 @@ public class Game {
 		return winner;
 	}
 
+	/**
+	 * Invokes Thread.sleep to pause programme execution for the specified number of milliseconds. This will only
+	 * execute if the game is not in test mode, otherwise, the code does not execute (i.e. THread.sleep is not invoked).
+	 * <p>
+	 * This method also handles the exceptions so that try-catch blocks are not required each time.
+	 *
+	 * @param milliseconds the number of milliseconds to pause code execution
+	 */
+	public static void delay(long milliseconds) {
+		if (testMode) {
+			return;
+		}
+
+		try {
+			Thread.sleep(milliseconds);
+		} catch (InterruptedException interruptedException) {
+			System.out.println("Interrupted");
+		}
+	}
+
 	// getters and setters
 
 	/**
@@ -1344,5 +1350,21 @@ public class Game {
 	 */
 	public static void setBoard(Board board) {
 		Game.board = board;
+	}
+
+
+	/**
+	 * @return the value of testMode
+	 */
+	public static boolean isTestMode() {
+		return testMode;
+	}
+
+	/**
+	 * Sets the value of testMode. True is indicative of the code being run in test mode.
+	 * @param testMode true -> game is being run in test mode. false -> game is being run normally.
+	 */
+	public static void setTestMode(boolean testMode) {
+		Game.testMode = testMode;
 	}
 }
