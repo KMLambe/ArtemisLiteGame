@@ -224,12 +224,13 @@ public class Component extends Square {
 	 * Deducts the required fee from the current player upon landing on an owned
 	 * component
 	 *
+	 * @throws InterruptedException if interrupted
 	 * @param currentPlayer - the current player
 	 * @param ownerResponse - the component owner's decision as to whether they wish
 	 *                      to receive resources or not. This is the result of the
 	 *                      checkOwnerWantsResources() method.
 	 */
-	public void chargePlayerForLanding(Player currentPlayer, boolean ownerResponse) {
+	public void chargePlayerForLanding(Player currentPlayer, boolean ownerResponse) throws InterruptedException {
 		if (ownerResponse == true) {
 			if (currentPlayer.getResourceBalance() < costForLanding) {
 				currentPlayer.setResourceBalance(0);
