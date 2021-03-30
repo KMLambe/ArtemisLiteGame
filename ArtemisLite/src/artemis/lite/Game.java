@@ -402,9 +402,8 @@ public class Game {
 	 * @param playerPosition
 	 * @throws InterruptedException interrupts thread
 	 */
-	public static void displayComponentIfPurchasable(Player currentPlayer, Square playerPosition) {
+	public static void displayComponentIfPurchasable(Player currentPlayer, Square playerPosition, Scanner scanner) {
 
-		Scanner scanner = new Scanner(System.in);
 		String response;
 
 		delay(1000);
@@ -1143,10 +1142,9 @@ public class Game {
 	 *
 	 * @param currentPlayer is the player opting to leave
 	 * @return false if user input is no stopping the game from ending
-	 * @throws InterruptedException
 	 */
-	public static boolean confirmPlayerWantsToLeave(Player currentPlayer) {
-		Scanner scanner = new Scanner(System.in);
+	public static boolean confirmPlayerWantsToLeave(Player currentPlayer, Scanner scanner) {
+		
 		String response;
 
 		do {

@@ -372,26 +372,45 @@ class GameTest {
 		
 	}
 
-	@Test
-	void testDisplayPurchasableComponentValid() {
-		String validInputToPurchase = "Yes";
-		String validInputNotToPurchase = "No";
-
-		Player player1 = new Player("Player1", 400, 2);
-		Component component = (Component) board1.getSquares()[2];
-
-		assertEquals(validInputToPurchase, new Scanner("Yes"));
-		assertEquals(validInputNotToPurchase, new Scanner("No"));
-
-	}
 
 	@Test
-	void testDisplayPurchasableComponentInvalid() {
+	void testDisplayComponentIfPurchasable() throws InterruptedException {
 
-		// test that invalid input will not be accepted
-		String invalidInputToPurchase = "";
+		Square[] squares = board1.getSquares();
 
-		assertEquals(invalidInputToPurchase, new Scanner("Yes"));
+		player1.setCurrentBoardPosition(1);
+		Component testComponent1 = (Component) squares[1];
+		Component testComponent2 = (Component) squares[2];
+		Component testComponent3 = (Component) squares[3];
+		Component testComponent4 = (Component) squares[4];
+		Player expectedPlayerName = player1;
+		Player expectedPlayerName2 = player2;
+		player1.setResourceBalance(1000);
+		player2.setResourceBalance(1000);
+		
+		// testing that player1 purchases component and is updated as component owner
+		Game.displayComponentIfPurchasable(player1, testComponent1, new Scanner("yes"));
+		// expected is player 1 owns component
+		assertEquals(expectedPlayerName, testComponent1.getComponentOwner());
+		
+		player1.setCurrentBoardPosition(2);
+		
+		// testing that player1 doesn't purchase and offers to other player
+		Game.displayComponentIfPurchasable(player1, testComponent2, new Scanner("no yes"));
+		// expected is player 2 to own component
+		assertEquals(expectedPlayerName2, testComponent2.getComponentOwner());
+		
+		player1.setCurrentBoardPosition(3);
+		
+		// testing invalid input then opting to purchase
+		Game.displayComponentIfPurchasable(player1, testComponent3, new Scanner("invalid yes"));
+		assertEquals(expectedPlayerName, testComponent3.getComponentOwner());
+		
+		player1.setCurrentBoardPosition(4);
+		
+		// testing invalid input then opting to offer to other player
+		Game.displayComponentIfPurchasable(player1, testComponent4, new Scanner("invalid no yes"));
+		assertEquals(expectedPlayerName2, testComponent4.getComponentOwner());
 	}
 
 	// tradeable component testing
@@ -569,6 +588,21 @@ class GameTest {
 		// check that message is as expected
 		assertTrue(exception.getMessage().contains("cannot be null"));
 		
+	}
+	
+	@Test
+	void testConfirmPlayerWantsToLeaveGame() throws InterruptedException {
+
+		Player currentPlayer = player1;
+		boolean playerWantsToLeave = true;
+		boolean playerWontLeave = false;
+
+		// check game will end when user inputs yes
+		assertEquals(playerWantsToLeave, Game.confirmPlayerWantsToLeave(currentPlayer, new Scanner("yes")));
+		// check game will not end when user inputs no
+		assertEquals(playerWontLeave, Game.confirmPlayerWantsToLeave(currentPlayer, new Scanner("no")));
+		// check invalid input will ask again to leave game
+		assertEquals(playerWantsToLeave, Game.confirmPlayerWantsToLeave(currentPlayer, new Scanner("invalid yes")));
 	}
 	
 	@Test
