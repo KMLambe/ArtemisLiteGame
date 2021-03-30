@@ -17,8 +17,8 @@ public class Component extends Square {
 	 * Constants to define the minimum and maximum development levels for all
 	 * components
 	 */
-	private final int MINIMUM_DEVELOPMENT_LEVEL = 0;
-	private final int MAXIMUM_DEVELOPMENT_LEVEL = 4;
+	private final static int MINIMUM_DEVELOPMENT_LEVEL = 0;
+	private final static int MAXIMUM_DEVELOPMENT_LEVEL = 4;
 	private final static int MINOR_DEVELOPMENT_ADDITIONAL_PURCHASE_COST = 10;
 	private final static int MAJOR_DEVELOPMENT_ADDITIONAL_PURCHASE_COST = 20;
 	private final static int MINOR_DEVELOPMENT_ADDITIONAL_DEVELOPMENT_COST = 10;
@@ -196,7 +196,7 @@ public class Component extends Square {
 
 		do {
 			// confirm if owner wishes to take their fee
-			Game.announce("do you require " + Game.RESOURCE_NAME + " from " + currentPlayer.getPlayerName() + "?",componentOwner);
+			Game.announce("do you require " + Game.RESOURCE_NAME + " from " + currentPlayer.getPlayerName() + "?", componentOwner);
 			System.out.println(
 					"Please input yes or no...");
 
@@ -224,14 +224,13 @@ public class Component extends Square {
 	 * Deducts the required fee from the current player upon landing on an owned
 	 * component
 	 *
-	 * @throws InterruptedException if interrupted
 	 * @param currentPlayer - the current player
 	 * @param ownerResponse - the component owner's decision as to whether they wish
 	 *                      to receive resources or not. This is the result of the
 	 *                      checkOwnerWantsResources() method.
 	 */
-	public void chargePlayerForLanding(Player currentPlayer, boolean ownerResponse) throws InterruptedException {
-		if (ownerResponse == true) {
+	public void chargePlayerForLanding(Player currentPlayer, boolean ownerResponse) {
+		if (ownerResponse) {
 			if (currentPlayer.getResourceBalance() < costForLanding) {
 				currentPlayer.setResourceBalance(0);
 				Game.endGame();
@@ -302,11 +301,11 @@ public class Component extends Square {
 	}
 
 	/**
-	 * @param totalResourcessDevotedToComponent the totalResourcesDevotedToComponent
-	 *                                          to set
+	 * @param totalResourcesDevotedToComponent the totalResourcesDevotedToComponent
+	 *                                         to set
 	 */
-	public void setTotalResourcessDevotedToComponent(int totalResourcessDevotedToComponent) {
-		this.totalResourcesDevotedToComponent = totalResourcessDevotedToComponent;
+	public void setTotalResourcesDevotedToComponent(int totalResourcesDevotedToComponent) {
+		this.totalResourcesDevotedToComponent = totalResourcesDevotedToComponent;
 	}
 
 	/**
@@ -352,8 +351,7 @@ public class Component extends Square {
 	 * Checks if a component meets the criteria to permit development i.e. 1) it is
 	 * owned by a player 2) its owner also owns the system in which the component is
 	 * located, and 3) the development stage is above or equal to
-	 * {@value #MINIMUM_DEVELOPMENT_LEVEL} and less than
-	 * {@value #MAXIMUM_DEVELOPMENT_LEVEL}
+	 * {@value #MINIMUM_DEVELOPMENT_LEVEL} and less than {@value #MAXIMUM_DEVELOPMENT_LEVEL}
 	 *
 	 * @return - this method returns true if the component can be developed, false
 	 * if otherwise.
@@ -361,9 +359,6 @@ public class Component extends Square {
 	public boolean checkComponentCanBeDeveloped() {
 		return (componentOwner != null && componentOwner.equals(componentSystem.getSystemOwner())
 				&& developmentStage >= MINIMUM_DEVELOPMENT_LEVEL && developmentStage < MAXIMUM_DEVELOPMENT_LEVEL);
-
-		//return (componentOwner != null && componentOwner.getOwnedSystems().contains(componentSystem)
-		//	&& developmentStage >= MINIMUM_DEVELOPMENT_LEVEL && developmentStage < MAXIMUM_DEVELOPMENT_LEVEL);
 	}
 
 	/**
@@ -484,54 +479,53 @@ public class Component extends Square {
 
 	/**
 	 * This method prints to screen key information about this component.
-	 * Thread.sleep() is used to delay each output slightly for readability.
-	 * @throws InterruptedException in the event of Thread.sleep() being interrupted.
+	 * Game.delay() is used to delay each output slightly for readability.
 	 */
 	@Override
-	public void displayAllDetails() throws InterruptedException {
-		
+	public void displayAllDetails() {
+
 		int maximumLineLength = 60;
-		
+
 		System.out.println();
-		
+
 		for (int loop = 0; loop < maximumLineLength; loop++) {
 			System.out.print("-");
 		}
-		
+
 		System.out.println("\nDISPLAYING COMPONENT DETAILS...");
-		Thread.sleep(200);
-		System.out.printf("\n%-25s %-20s\n","COMPONENT NAME:",getSquareName());
-		Thread.sleep(200);
-		System.out.printf("%-25s %-20s\n","COMPONENT SYSTEM:",getComponentSystem().getSystemName());
-		Thread.sleep(200);
-		System.out.printf("%-25s %-20s\n","BOARD POSITION:",getSquarePosition());
-		Thread.sleep(200);
-		System.out.printf("%-25s %-20s\n","DEVELOPMENT STAGE:",getDevelopmentStageName());
-		Thread.sleep(200);
-		System.out.printf("%-25s %-20s\n","COMPONENT NAME:",getSquareName());
-		Thread.sleep(200);
-		System.out.printf("%-25s %-20s\n","COMPONENT COST:",componentCost);
+		Game.delay(200);
+		System.out.printf("\n%-25s %-20s\n", "COMPONENT NAME:", getSquareName());
+		Game.delay(200);
+		System.out.printf("%-25s %-20s\n", "COMPONENT SYSTEM:", getComponentSystem().getSystemName());
+		Game.delay(200);
+		System.out.printf("%-25s %-20s\n", "BOARD POSITION:", getSquarePosition());
+		Game.delay(200);
+		System.out.printf("%-25s %-20s\n", "DEVELOPMENT STAGE:", getDevelopmentStageName());
+		Game.delay(200);
+		System.out.printf("%-25s %-20s\n", "COMPONENT NAME:", getSquareName());
+		Game.delay(200);
+		System.out.printf("%-25s %-20s\n", "COMPONENT COST:", componentCost);
 		if (this.checkFullyDeveloped()) {
-			Thread.sleep(200);
-			System.out.printf("%-25s %-20s\n","COST TO DEVELOP:","This component is fully developed");
+			Game.delay(200);
+			System.out.printf("%-25s %-20s\n", "COST TO DEVELOP:", "This component is fully developed");
 		} else {
-			Thread.sleep(200);
-			System.out.printf("%-25s %-20s\n","COST TO DEVELOP:",getSquareName());
+			Game.delay(200);
+			System.out.printf("%-25s %-20s\n", "COST TO DEVELOP:", getSquareName());
 		}
-		Thread.sleep(200);
-		System.out.printf("%-25s %-20s\n","COST FOR LANDING:",costForLanding);
-		if (componentOwner!=null) {
-			Thread.sleep(200);
-			System.out.printf("%-25s %-20s\n","COMPONENT OWNER:",componentOwner.getPlayerName());
+		Game.delay(200);
+		System.out.printf("%-25s %-20s\n", "COST FOR LANDING:", costForLanding);
+		if (componentOwner != null) {
+			Game.delay(200);
+			System.out.printf("%-25s %-20s\n", "COMPONENT OWNER:", componentOwner.getPlayerName());
 		} else {
-			Thread.sleep(200);
-			System.out.printf("%-25s %-20s\n","COMPONENT OWNER:","UNOWNED");
+			Game.delay(200);
+			System.out.printf("%-25s %-20s\n", "COMPONENT OWNER:", "UNOWNED");
 		}
-		
+
 		for (int loop = 0; loop < maximumLineLength; loop++) {
 			System.out.print("-");
 		}
-		
+
 		System.out.println();
 		System.out.println();
 	}
