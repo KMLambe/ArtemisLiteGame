@@ -32,7 +32,7 @@ public class Square {
 	/**
 	 * Constructor for creating square object with only the name of the square
 	 *
-	 * @param squareName
+	 * @param squareName the name of the square which will be shown to the player.
 	 */
 	public Square(String squareName) {
 		this.setSquareName(squareName);

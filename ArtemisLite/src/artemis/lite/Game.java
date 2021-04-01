@@ -924,7 +924,7 @@ public class Game {
 		delay(2000);
 		System.out.println("A taste of things to come, a promise for another day...");
 		delay(1000);
-		Game.announce("Thanks to " + orionSpacecraft.getSystemOwner().getPlayerName()
+		Game.announce("Thanks to " + orionSpacecraft.getSystemOwner()
 				+ " and their team of resourceful " + RESOURCE_NAME
 				+ ", the " + orionSpacecraft + " proves a fitting vessel for future astronauts daring to venture into space.");
 		delay(2000);
@@ -939,7 +939,7 @@ public class Game {
 		delay(2000);
 		System.out.println("The time has come for Artemis III...");
 		delay(2000);
-		Game.announce("Thanks to the skill of " + spaceLaunchSystem.getSystemOwner() + " and their team of " + RESOURCE_NAME + " who worked tirelessly on " + spaceLaunchSystem.getSystemName() + ", the Orion spacecraft is able to safely depart our planet");
+		Game.announce("Thanks to the skill of " + spaceLaunchSystem.getSystemOwner() + " and their team of " + RESOURCE_NAME + " who worked tirelessly on " + spaceLaunchSystem + ", the Orion spacecraft is able to safely depart our planet");
 		delay(2000);
 		System.out.println("The Orion is on its way.");
 		System.out.println(
@@ -950,14 +950,14 @@ public class Game {
 		delay(2000);
 		System.out.println(
 				"However, before they can land on the lunar surface the Orion needs to match the elliptical orbit of "
-						+ gatewayLunarSystem.getSystemName() + "...");
+						+ gatewayLunarSystem + "...");
 		delay(2000);
-		Game.announce(gatewayLunarSystem.getSystemOwner().getPlayerName() + " and their team of " + RESOURCE_NAME
+		Game.announce(gatewayLunarSystem.getSystemOwner() + " and their team of " + RESOURCE_NAME
 				+ " watch in anticipation...");
 		delay(2000);
 		System.out.println("Will their countless hours of work have paid off?");
 		delay(2000);
-		System.out.println("The Orion safely docks with " + gatewayLunarSystem.getSystemName()
+		System.out.println("The Orion safely docks with " + gatewayLunarSystem
 				+ " and from there the crew descends towards the lunar surface.");
 		delay(2000);
 		System.out.println("The world holds its breath.");
@@ -972,11 +972,11 @@ public class Game {
 		delay(2000);
 		System.out.println("This time we plan to stay a while...");
 		delay(2000);
-		Game.announce("Thanks to the careful planning of " + preStagingSystem.getSystemOwner().getPlayerName()
+		Game.announce("Thanks to the careful planning of " + preStagingSystem.getSystemOwner()
 				+ " and their team of " + RESOURCE_NAME + ", everything the crew needs is in place...");
 		delay(2000);
-		System.out.println("This includes " + preStagingSystem.getComponentsInSystem().get(0).getSquareName()
-				+ " and " + preStagingSystem.getComponentsInSystem().get(1).getSquareName() + ".");
+		System.out.println("This includes " + preStagingSystem.getComponentsInSystem().get(0)
+				+ " and " + preStagingSystem.getComponentsInSystem().get(1) + ".");
 		delay(2000);
 		System.out.println(
 				"The crew members find themselves on the Moon's South Pole. Never before have humans explored this region of the Moon.");
