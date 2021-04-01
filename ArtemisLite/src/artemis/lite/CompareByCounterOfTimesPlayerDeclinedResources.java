@@ -1,6 +1,3 @@
-/**
- * 
- */
 package artemis.lite;
 
 import java.util.Comparator;
