@@ -224,17 +224,18 @@ public class Player {
         // announcement
         Game.announce("initiated a trade with " + componentOwner.getPlayerName() + "...", this);
 
-        message = String.format("Do you wish to trade the component %s for %s %s?\n\n Input 'yes' to accept, or anything else to reject",
+        message = String.format("Do you wish to trade the component %s for %s %s?\n",
                 component.getSquareName(), component.getComponentCost(), Game.RESOURCE_NAME);
         Game.announce(message, componentOwner);
 
-
-        // get user input
-        System.out.print("Decision: ");
-        String playerInput = scanner.next();
-        System.out.println();
-
         String additionalMessage = "";
+        String playerInput;
+
+        do {
+            // get user input
+            System.out.println("Please input yes or no... ");
+            playerInput = scanner.next();
+        } while(!playerInput.equalsIgnoreCase("yes") && !playerInput.equalsIgnoreCase("no"));
 
         if (playerInput.equalsIgnoreCase("yes")) {
             Game.announce("has accepted the trade", componentOwner);
@@ -257,7 +258,7 @@ public class Player {
             }
 
         } else {
-            // trade rejected (input was not yes)
+            // trade rejected
             Game.announce(String.format("%s rejected the trade with %s", componentOwner, this));
         }
 
