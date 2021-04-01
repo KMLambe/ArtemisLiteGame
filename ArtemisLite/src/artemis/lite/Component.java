@@ -2,7 +2,6 @@ package artemis.lite;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 /**
  * This class facilitates the creation of component objects. This class is a
@@ -175,15 +174,9 @@ public class Component extends Square {
 	 * decline their right to receive a fee and their response is returned as either
 	 * true or false
 	 *
-	 * @param currentPlayer - the current player who has landed on an owned
-	 *                      component
-	 * @param scanner       - allows the component owner to register their response
+	 * @param currentPlayer - the current player who has landed on an owned component
 	 */
-	public void checkOwnerWantsResources(Player currentPlayer, Scanner scanner) {
-
-		String ownerResponse;
-		boolean decision = false;
-
+	public void checkOwnerWantsResources(Player currentPlayer) {
 		// notify players of cost for landing
 		System.out.println("The cost of landing on this component is " + costForLanding);
 		Game.announce("is the owner of this component - meaning they can choose whether they want to take their fee or not!", componentOwner);
@@ -194,30 +187,16 @@ public class Component extends Square {
 					+ " and the game will end!");
 		}
 
-		do {
-			// confirm if owner wishes to take their fee
-			Game.announce("do you require " + Game.RESOURCE_NAME + " from " + currentPlayer.getPlayerName() + "?", componentOwner);
-			System.out.println(
-					"Please input yes or no...");
+		// confirm if owner wishes to take their fee
+		Game.announce("do you require " + Game.RESOURCE_NAME + " from " + currentPlayer.getPlayerName() + "?", componentOwner);
+		boolean ownerResponse = Game.getPlayerConfirmation();
 
-			ownerResponse = scanner.next();
+		if (!ownerResponse) {
+			// rejected the resources
+			componentOwner.incrementCountOfTimesPlayerDeclinedResources();
+		}
 
-			if (!ownerResponse.equalsIgnoreCase("Yes") && !ownerResponse.equalsIgnoreCase("No")) {
-				System.out.println("Oops - that's not a valid response.");
-			} else if (ownerResponse.equalsIgnoreCase("Yes")) {
-				decision = true;
-			} else {
-				// owner has declined resources, update counter
-				componentOwner.incrementCountOfTimesPlayerDeclinedResources();
-				decision = false;
-			}
-
-		} while (!ownerResponse.equalsIgnoreCase("Yes") && !ownerResponse.equalsIgnoreCase("No"));
-
-		// scanner.close();
-
-		// call chargePlayerForLanding method
-		chargePlayerForLanding(currentPlayer, decision);
+		chargePlayerForLanding(currentPlayer, ownerResponse);
 	}
 
 	/**

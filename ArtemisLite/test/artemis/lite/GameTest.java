@@ -9,16 +9,16 @@ import java.util.*;
 
 /**
  * This class tests the functionality of the Game class.
- * @author Kieran Lambe 40040696
  *
+ * @author Kieran Lambe 40040696
  */
 class GameTest {
 
 	// test players
-	Player player1,player2,player3,player4;
-	String validPlayerName1,validPlayerName2,validPlayerName3,validPlayerName4;
-	int validResourceBalance1, validCurrentBoardPosition1,validCurrentBoardPosition2,validCurrentBoardPosition3,validCurrentBoardPosition4;
-	int validCounterOfTimesPlayerDeclinedResources1,validCounterOfTimesPlayerDeclinedResources2,validCounterOfTimesPlayerDeclinedResources3,validCounterOfTimesPlayerDeclinedResources4;
+	Player player1, player2, player3, player4;
+	String validPlayerName1, validPlayerName2, validPlayerName3, validPlayerName4;
+	int validResourceBalance1, validCurrentBoardPosition1, validCurrentBoardPosition2, validCurrentBoardPosition3, validCurrentBoardPosition4;
+	int validCounterOfTimesPlayerDeclinedResources1, validCounterOfTimesPlayerDeclinedResources2, validCounterOfTimesPlayerDeclinedResources3, validCounterOfTimesPlayerDeclinedResources4;
 
 	// test board
 	Board board1;
@@ -78,7 +78,7 @@ class GameTest {
 		validCurrentBoardPosition2 = 3;
 		validPlayerName4 = "validPlayerName4";
 		validCurrentBoardPosition2 = 4;
-		
+
 		// create test systems
 		ArtemisSystem system1 = board1.createSystem(validSystemName1);
 		ArtemisSystem system2 = board1.createSystem(validSystemName2);
@@ -113,7 +113,7 @@ class GameTest {
 		validDiceRollLower = 2;
 		validDiceRollMid = 8;
 		validDiceRollUpper = 12;
-		
+
 		// declined resources counters
 		validCounterOfTimesPlayerDeclinedResources1 = 1;
 		validCounterOfTimesPlayerDeclinedResources2 = 2;
@@ -130,7 +130,7 @@ class GameTest {
 		testComponent3 = (Component) board1.getSquares()[3];
 
 		system1.setSystemOwner(player1);
-		
+
 		List<Player> players = new ArrayList<Player>();
 		players.add(player1);
 		players.add(player2);
@@ -148,9 +148,12 @@ class GameTest {
 		int validNumberOfPlayersUpper = 4;
 
 		// test that valid number of players is accepted
-		assertEquals(validNumberOfPlayersLower, Game.playersInTheGame(new Scanner("2")));
-		assertEquals(validNumberOfPlayersMid, Game.playersInTheGame(new Scanner("3")));
-		assertEquals(validNumberOfPlayersUpper, Game.playersInTheGame(new Scanner("4")));
+		Game.setScanner(new Scanner("2"));
+		assertEquals(validNumberOfPlayersLower, Game.playersInTheGame());
+		Game.setScanner(new Scanner("3"));
+		assertEquals(validNumberOfPlayersMid, Game.playersInTheGame());
+		Game.setScanner(new Scanner("4"));
+		assertEquals(validNumberOfPlayersUpper, Game.playersInTheGame());
 
 	}
 
@@ -159,13 +162,16 @@ class GameTest {
 
 		// test that invalid number of players will not be accepted
 		int invalidNumberOfPlayers = -1;
-		assertEquals(invalidNumberOfPlayers, Game.playersInTheGame(new Scanner("1")));
-		assertEquals(invalidNumberOfPlayers, Game.playersInTheGame(new Scanner("5")));
+		Game.setScanner(new Scanner("1"));
+		assertEquals(invalidNumberOfPlayers, Game.playersInTheGame());
+		Game.setScanner(new Scanner("5"));
+		assertEquals(invalidNumberOfPlayers, Game.playersInTheGame());
 	}
 
 	@Test
 	void createPlayersValid() {
-		ArrayList<Player> players = Game.createPlayers(new Scanner("2 player1 player2"));
+		Game.setScanner(new Scanner("2 player1 player2"));
+		ArrayList<Player> players = Game.createPlayers();
 		Player player1 = players.get(0);
 		Player player2 = players.get(1);
 		// tests that Array return at correct size with names and starting resources and
@@ -184,7 +190,8 @@ class GameTest {
 	void createPlayersValidWithDuplicateName() {
 		// test showing duplicate name not accepted for second player and having to
 		// enter a third input to set player2 name
-		ArrayList<Player> players = Game.createPlayers(new Scanner("2 name1 name1 name2"));
+		Game.setScanner(new Scanner("2 name1 name1 name2"));
+		ArrayList<Player> players = Game.createPlayers();
 		Player player1 = players.get(0);
 		Player player2 = players.get(1);
 		// tests
@@ -221,7 +228,7 @@ class GameTest {
 		players.add(player2);
 		Game.setPlayers(players);
 		Player currentPlayer;
-		
+
 		// set first player in arrayList to last player in arraylist -> so that
 		// nextPlayer will be the first player
 		currentPlayer = players.get(players.size() - 1);
@@ -361,20 +368,20 @@ class GameTest {
 
 	@Test
 	void testGetSetPlayers() {
-		
+
 		ArrayList<Player> testPlayerList = new ArrayList<>();
 		testPlayerList.add(player1);
 		testPlayerList.add(player2);
-		
+
 		Game.setPlayers(testPlayerList);
-		
+
 		assertEquals(testPlayerList, Game.getPlayers());
-		
+
 	}
 
 
 	@Test
-	void testDisplayComponentIfPurchasable() throws InterruptedException {
+	void testOfferComponentForPurchase()  {
 
 		Square[] squares = board1.getSquares();
 
@@ -387,29 +394,33 @@ class GameTest {
 		Player expectedPlayerName2 = player2;
 		player1.setResourceBalance(1000);
 		player2.setResourceBalance(1000);
-		
+
 		// testing that player1 purchases component and is updated as component owner
-		Game.displayComponentIfPurchasable(player1, testComponent1, new Scanner("yes"));
+		Game.setScanner(new Scanner("yes"));
+		Game.offerComponentForPurchase(player1, testComponent1);
 		// expected is player 1 owns component
 		assertEquals(expectedPlayerName, testComponent1.getComponentOwner());
-		
+
 		player1.setCurrentBoardPosition(2);
-		
+
 		// testing that player1 doesn't purchase and offers to other player
-		Game.displayComponentIfPurchasable(player1, testComponent2, new Scanner("no yes"));
+		Game.setScanner(new Scanner("no yes"));
+		Game.offerComponentForPurchase(player1, testComponent2);
 		// expected is player 2 to own component
 		assertEquals(expectedPlayerName2, testComponent2.getComponentOwner());
-		
+
 		player1.setCurrentBoardPosition(3);
-		
+
 		// testing invalid input then opting to purchase
-		Game.displayComponentIfPurchasable(player1, testComponent3, new Scanner("invalid yes"));
+		Game.setScanner(new Scanner("invalid yes"));
+		Game.offerComponentForPurchase(player1, testComponent3);
 		assertEquals(expectedPlayerName, testComponent3.getComponentOwner());
-		
+
 		player1.setCurrentBoardPosition(4);
-		
+
 		// testing invalid input then opting to offer to other player
-		Game.displayComponentIfPurchasable(player1, testComponent4, new Scanner("invalid no yes"));
+		Game.setScanner(new Scanner("invalid no yes"));
+		Game.offerComponentForPurchase(player1, testComponent4);
 		assertEquals(expectedPlayerName2, testComponent4.getComponentOwner());
 	}
 
@@ -420,7 +431,6 @@ class GameTest {
 		// manually override default action points to allow more components to be
 		// purchase
 		player2.setActionPoints(6);
-		Component component;
 
 		// player2 purchases number of components
 		Square[] squares = board1.getSquares();
@@ -456,7 +466,6 @@ class GameTest {
 		// manually override default action points to allow more components to be
 		// purchase
 		player2.setActionPoints(6);
-		Component component;
 
 		// player2 purchases number of components
 		Square[] squares = board1.getSquares();
@@ -472,8 +481,8 @@ class GameTest {
 
 		// simulate user inputting wrong data, followed by 'end', which should return
 		// null (indicating no component selected)
-		Component componentForTrade = Game.getPlayerComponentSelection(new Scanner("na end"),
-				player1ComponentsAvailable);
+		Game.setScanner(new Scanner("na end"));
+		Component componentForTrade = Game.getPlayerComponentSelection(player1ComponentsAvailable);
 
 		assertNull(componentForTrade);
 	}
@@ -517,12 +526,9 @@ class GameTest {
 	}
 
 
-	
 	@Test
 	void testDisplayComponentsPlayerCanDevelop() {
 
-		// TEMPORARY TEST CREATED WHEN DESIGNING FUNCTIONALITY - KL
-		
 		player1.setActionPoints(10);
 
 		player1.purchaseComponent(testComponent1);
@@ -533,63 +539,64 @@ class GameTest {
 		player1.purchaseComponent(testComponent2);
 
 		player1.purchaseComponent(testComponent3);
-		
-		Game.displayDevelopComponentMenu(player1, new Scanner("2"));
+
+		Game.setScanner(new Scanner("2"));
+		Game.displayDevelopComponentMenu(player1);
 	}
-	
+
 	@Test
 	void testSortPlayersByCounterOfTimesDeclinedResourcesValid() {
-		
+
 		// update values of players' counters
 		player1.setCountOfTimesPlayerDeclinedResources(validCounterOfTimesPlayerDeclinedResources4); // most times declined resources
 		player2.setCountOfTimesPlayerDeclinedResources(validCounterOfTimesPlayerDeclinedResources2);
 		player3.setCountOfTimesPlayerDeclinedResources(validCounterOfTimesPlayerDeclinedResources3);
 		player4.setCountOfTimesPlayerDeclinedResources(validCounterOfTimesPlayerDeclinedResources1); // least times declined resources
-		
+
 		// group players in list for testing purposes
 		ArrayList<Player> playerList = new ArrayList<Player>();
 		playerList.add(player1);
 		playerList.add(player2);
 		playerList.add(player3);
 		playerList.add(player4);
-		
+
 		// set players in Game to newly-created list
 		Game.setPlayers(playerList);
-		
+
 		// perform the sort
 		List<Player> sortedList = Game.sortPlayersByCounterOfTimesDeclinedResources();
-		
+
 		// check that array list contains expected number of objects
 		assertEquals(4, sortedList.size());
-		
+
 		// check that the order is as expected
-		assertEquals(player1,sortedList.get(0));
-		assertEquals(player3,sortedList.get(1));
-		assertEquals(player2,sortedList.get(2));
-		assertEquals(player4,sortedList.get(3));
-		
+		assertEquals(player1, sortedList.get(0));
+		assertEquals(player3, sortedList.get(1));
+		assertEquals(player2, sortedList.get(2));
+		assertEquals(player4, sortedList.get(3));
+
 		// checking display method
 		Game.displayTimesDeclinedResourcesStats(sortedList);
 	}
-	
+
 	@Test
 	void testSortPlayersByCounterOfTimesDeclinedResourcesInvalidNullList() {
-		
+
 		// create null list
 		ArrayList<Player> emptyPlayerList = null;
-		
+
 		Game.setPlayers(emptyPlayerList);
-		
+
 		// perform the sort - expected exception
-		Exception exception = assertThrows(NullPointerException.class, ()->{
-		Game.sortPlayersByCounterOfTimesDeclinedResources();
+		Exception exception = assertThrows(NullPointerException.class, () -> {
+			Game.sortPlayersByCounterOfTimesDeclinedResources();
 		});
-		
+
 		// check that message is as expected
 		assertTrue(exception.getMessage().contains("cannot be null"));
-		
+
 	}
-	
+
 	@Test
 	void testConfirmPlayerWantsToLeaveGame() throws InterruptedException {
 
@@ -598,48 +605,66 @@ class GameTest {
 		boolean playerWontLeave = false;
 
 		// check game will end when user inputs yes
-		assertEquals(playerWantsToLeave, Game.confirmPlayerWantsToLeave(currentPlayer, new Scanner("yes")));
+		Game.setScanner(new Scanner("yes"));
+		assertEquals(playerWantsToLeave, Game.confirmPlayerWantsToLeave(currentPlayer));
 		// check game will not end when user inputs no
-		assertEquals(playerWontLeave, Game.confirmPlayerWantsToLeave(currentPlayer, new Scanner("no")));
+		Game.setScanner(new Scanner("no"));
+		assertEquals(playerWontLeave, Game.confirmPlayerWantsToLeave(currentPlayer));
 		// check invalid input will ask again to leave game
-		assertEquals(playerWantsToLeave, Game.confirmPlayerWantsToLeave(currentPlayer, new Scanner("invalid yes")));
+		Game.setScanner(new Scanner("invalid yes"));
+		assertEquals(playerWantsToLeave, Game.confirmPlayerWantsToLeave(currentPlayer));
 	}
-	
+
 	@Test
-	void testcheckAllSystemsFullyDevelopedValid() {
-		
+	void testCheckAllSystemsFullyDevelopedValid() {
+
 		Player currentPlayer;
 		// Set expected outcomes
 		boolean actualResult;
-		boolean expectedOutcome1=false;
-		boolean expectedOutcome2=true;
+		boolean expectedOutcome1 = false;
+		boolean expectedOutcome2 = true;
 		Square[] squares = board1.getSquares();
 		//set resources and balances higher so this doesn't stop test
 		player1.setResourceBalance(5000);
 		player2.setResourceBalance(5000);
 		player1.setActionPoints(10);
 		player2.setActionPoints(10);
-		
+
+		// simulate player's making a number of turns
+		player1.incrementTurnCounter();
+		player1.incrementTurnCounter();
+		player1.incrementTurnCounter();
+		player1.incrementTurnCounter();
+		player1.incrementTurnCounter();
+		player2.incrementTurnCounter();
+		player2.incrementTurnCounter();
+		player2.incrementTurnCounter();
+		player2.incrementTurnCounter();
+		player2.incrementTurnCounter();
+		player2.incrementTurnCounter();
+
+		// simulate declining resources
+		player2.incrementCountOfTimesPlayerDeclinedResources();
+		player2.incrementCountOfTimesPlayerDeclinedResources();
+		player1.incrementCountOfTimesPlayerDeclinedResources();
+
 		// purchase all Components
-		currentPlayer=player1;
-		
 		player1.purchaseComponent(squares[1]);
 		player1.purchaseComponent(squares[2]);
 		player1.purchaseComponent(squares[3]);
 		player1.purchaseComponent(squares[7]);
 		player1.purchaseComponent(squares[8]);
 		player1.purchaseComponent(squares[9]);
-	
-		currentPlayer=player2;
+
 		player2.purchaseComponent(squares[4]);
 		player2.purchaseComponent(squares[5]);
 		player2.purchaseComponent(squares[10]);
 		player2.purchaseComponent(squares[11]);
-		
+
 		// test that all systems developed is false
-		actualResult=Game.checkAllSystemsFullyDeveloped();
+		actualResult = Game.checkAllSystemsFullyDeveloped();
 		assertEquals(expectedOutcome1, actualResult);
-		
+
 		// fully develop all components
 		Component testComponent1 = (Component) squares[1];
 		testComponent1.setDevelopmentStage(4);
@@ -661,9 +686,9 @@ class GameTest {
 		testComponent10.setDevelopmentStage(4);
 		Component testComponent11 = (Component) squares[11];
 		testComponent11.setDevelopmentStage(4);
-		
+
 		//test that all components have been fully developed
-		actualResult=Game.checkAllSystemsFullyDeveloped();
+		actualResult = Game.checkAllSystemsFullyDeveloped();
 		assertEquals(expectedOutcome2, actualResult);
 	}
 
@@ -675,5 +700,13 @@ class GameTest {
 
 		Game.setTestMode(true);
 		assertTrue(Game.isTestMode());
+	}
+
+	@Test
+	void getSetScanner() {
+		Scanner scanner = new Scanner(System.in);
+		Game.setScanner(scanner);
+
+		assertEquals(scanner, Game.getScanner());
 	}
 }

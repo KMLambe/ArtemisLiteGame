@@ -212,7 +212,8 @@ class PlayerTest {
         assertTrue(componentBeingTraded.getComponentOwner() != tradeInitiator);
 
         // invoke trade
-        tradeInitiator.tradeComponent(componentBeingTraded, new Scanner("yes"));
+        Game.setScanner(new Scanner("yes"));
+        tradeInitiator.tradeComponent(componentBeingTraded);
 
         // component owner should be updated
         assertEquals(tradeInitiator, componentBeingTraded.getComponentOwner());
@@ -261,7 +262,8 @@ class PlayerTest {
         int openingActionPointsTradeInitiator = tradeInitiator.getActionPoints();
 
         // player1 starts trade, but component owner rejects it
-        tradeInitiator.tradeComponent(component, new Scanner("no"));
+        Game.setScanner(new Scanner("no"));
+        tradeInitiator.tradeComponent(component);
 
         // make sure the owner hasn't changed
         assertEquals(componentOwner, c3.getComponentOwner());
@@ -296,8 +298,9 @@ class PlayerTest {
         int openingActionPointsTradeInitiator = tradeInitiator.getActionPoints();
 
         // now try to trade the component
+        Game.setScanner(new Scanner("no"));
         IllegalArgumentException illegalArgumentException = assertThrows(IllegalArgumentException.class, () -> {
-            p1.tradeComponent(c3, new Scanner("no"));
+            p1.tradeComponent(c3);
         });
 
         assertTrue(illegalArgumentException.getMessage().toLowerCase().contains("insufficient resources"));
@@ -320,8 +323,9 @@ class PlayerTest {
         component.setComponentOwner(null);
 
         // now try to trade the component
+        Game.setScanner(new Scanner("yes"));
         IllegalArgumentException illegalArgumentException = assertThrows(IllegalArgumentException.class, () -> {
-            tradeInitiator.tradeComponent(component, new Scanner("yes"));
+            tradeInitiator.tradeComponent(component);
         });
 
         assertTrue(illegalArgumentException.getMessage().toLowerCase().contains("cannot be traded"));
@@ -336,8 +340,9 @@ class PlayerTest {
         tradeInitiator.setActionPoints(0);
 
         // now try to trade the component
+        Game.setScanner(new Scanner("yes"));
         IllegalArgumentException illegalArgumentException = assertThrows(IllegalArgumentException.class, () -> {
-            tradeInitiator.tradeComponent(component, new Scanner("yes"));
+            tradeInitiator.tradeComponent(component);
         });
 
         assertTrue(illegalArgumentException.getMessage().toLowerCase().contains("insufficient action points"));
@@ -352,7 +357,8 @@ class PlayerTest {
         int openingResourcesTradeInitiator = tradeInitiator.getResourceBalance();
         int openingActionPointsTradeInitiator = tradeInitiator.getActionPoints();
 
-        tradeInitiator.tradeComponent(component, new Scanner("yes"));
+        Game.setScanner(new Scanner("yes"));
+        tradeInitiator.tradeComponent(component);
 
         // values should be unchanged
         assertEquals(tradeInitiator, component.getComponentOwner());
@@ -368,7 +374,8 @@ class PlayerTest {
         // make sure component is not already owned
         assertTrue(c1.getComponentOwner() == null);
 
-        p1.offerComponentToOtherPlayers(c1, new Scanner("yes yes"));
+        Game.setScanner(new Scanner("yes yes"));
+        p1.offerComponentToOtherPlayers(c1);
 
         // check that one of the other players now owns the component
         assertTrue(c1.getComponentOwner() == p2 || c1.getComponentOwner() == p3);
@@ -383,7 +390,8 @@ class PlayerTest {
         // make sure component is not already owned
         assertNull(c1.getComponentOwner());
 
-        p1.offerComponentToOtherPlayers(c1, new Scanner("no yes"));
+        Game.setScanner(new Scanner("no yes"));
+        p1.offerComponentToOtherPlayers(c1);
 
         // check that the expected player now owns the component
         assertEquals(p3, c1.getComponentOwner());
@@ -397,7 +405,8 @@ class PlayerTest {
         // make sure component is not already owned
         assertNull(c1.getComponentOwner());
 
-        p1.offerComponentToOtherPlayers(c1, new Scanner("no no"));
+        Game.setScanner(new Scanner("no no"));
+        p1.offerComponentToOtherPlayers(c1);
 
         // check that the expected player now owns the component
         assertNull(c1.getComponentOwner());
@@ -413,7 +422,8 @@ class PlayerTest {
 
         // enter anything but yes or no will keep prompting the user until yes/no has
         // been inputted
-        p1.offerComponentToOtherPlayers(c1, new Scanner("asdasd no asdasd no"));
+        Game.setScanner(new Scanner("asdasd no asdasd no"));
+        p1.offerComponentToOtherPlayers(c1);
 
         assertNull(c1.getComponentOwner());
     }
@@ -424,7 +434,7 @@ class PlayerTest {
         Game.setPlayers(new ArrayList<Player>());
 
         assertDoesNotThrow(() -> {
-            p1.offerComponentToOtherPlayers(c1, new Scanner(""));
+            p1.offerComponentToOtherPlayers(c1);
         });
 
         assertNull(c1.getComponentOwner());
@@ -437,7 +447,7 @@ class PlayerTest {
 
         // shouldn't throw any errors
         assertDoesNotThrow(() -> {
-            p1.offerComponentToOtherPlayers(c1, new Scanner(""));
+            p1.offerComponentToOtherPlayers(c1);
         });
 
         assertNull(c1.getComponentOwner());
@@ -446,7 +456,7 @@ class PlayerTest {
     @Test
     void offerComponentToOtherPlayersInvalidComponentAlreadyOwned() {
         IllegalArgumentException illegalArgumentException = assertThrows(IllegalArgumentException.class, () -> {
-            p3.offerComponentToOtherPlayers(c3, new Scanner("yes yes"));
+            p3.offerComponentToOtherPlayers(c3);
         });
 
         String expected = "Component already has an owner";
@@ -467,8 +477,19 @@ class PlayerTest {
 
         // check that the map contains the expected values (c3 as it is owned by p3)
         assertTrue(map.containsValue(c3));
-
     }
+
+
+    @Test
+    void getOwnedComponentsThatCanBeDevelopedDoesNotOwnSystem() {
+
+        assertNull(system1.getSystemOwner());
+
+        Map<Integer, Component> componentsThatCanBeDeveloped = p3.getOwnedComponentsThatCanBeDeveloped();
+
+        assertEquals(0, componentsThatCanBeDeveloped.size());
+    }
+
 
     @Test
     void testIncrementCountOfTimesPlayerDeclinedResources() {

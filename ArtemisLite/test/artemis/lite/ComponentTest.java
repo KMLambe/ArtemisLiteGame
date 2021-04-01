@@ -43,15 +43,11 @@ class ComponentTest {
 	// Component to be assigned an owner
 	Component testComponent;
 
-	// test scanner
-	Scanner scannerAffirmative = new Scanner("Yes");
-	Scanner scannerNegative = new Scanner("No");
-
 	// test system
 	ArtemisSystem testSystem1;
 
 	// test development stage values
-	int developmentStageValidLower, developmentStageValidMid, developmentStageValidUpper, developmentStageInvalidLower,
+	int developmentStageValidLower, developmentStageValidUpper, developmentStageInvalidLower,
 			developmentStageInvalidUpper;
 
 	@BeforeEach

@@ -28,14 +28,12 @@ public class Game {
 
 	// labels - to be used in place of hard coding strings
 	public final static String RESOURCE_NAME = "EXPERTS";
-
-	// player
 	private static List<Player> players = new ArrayList<Player>();
-
-	// board
 	private static Board board;
 	private static boolean endGame = false;
 	private static boolean winGame = false;
+
+	private static Scanner scanner = new Scanner(System.in);
 
 	private static boolean testMode;
 
@@ -50,9 +48,12 @@ public class Game {
 
 		gameBriefing();
 
-		setupGame(scanner);
+		setupGame();
 
-		gameLoop(scanner);
+		gameLoop();
+
+		// clear resources
+		scanner.close();
 	}
 
 	/**
@@ -93,20 +94,21 @@ public class Game {
 			delay(800);
 		}
 
-		new Scanner(System.in).nextLine();
+		// stop execution until user has pressed enter key
+		scanner.nextLine();
 	}
 
 	/**
 	 * Responsible for running the setup sequence, i.e. make sure the board is
 	 * created, players have been created, and randomise the player order.
 	 */
-	public static void setupGame(Scanner scanner) {
+	public static void setupGame() {
 
 		// 1. create board object and store it in class var
 		setBoard(createBoard());
 
 		// 2. get players
-		ArrayList<Player> players = createPlayers(scanner);
+		ArrayList<Player> players = createPlayers();
 
 		// 3. shuffle players
 		generatePlayerOrder();
@@ -127,10 +129,8 @@ public class Game {
 	 * <p>
 	 * The loop will end on any player's turn if a player leaves (setting endGame to
 	 * true).
-	 *
-	 * @param scanner a scanner object
 	 */
-	public static void gameLoop(Scanner scanner) {
+	public static void gameLoop() {
 		// set currentPlayer to the first player in the arraylist
 		Player currentPlayer = players.get(0);
 
@@ -155,7 +155,7 @@ public class Game {
 				System.out.println(illegalArgumentException.getMessage());
 			}
 
-			playTurn(currentPlayer, scanner); // outside the above try-catch to prevent user from missing their turn
+			playTurn(currentPlayer); // outside the above try-catch to prevent user from missing their turn
 
 
 			// current player's turn is over, get the nextPlayer and set to currentPlayer
@@ -166,7 +166,6 @@ public class Game {
 		}
 
 		if (endGame) {
-			System.out.println("Mission has failed due to " + currentPlayer + " running out of " + RESOURCE_NAME);
 			endGame();
 		}
 	}
@@ -212,10 +211,9 @@ public class Game {
 	/**
 	 * Takes an input from the user to confirm the number of players playing
 	 *
-	 * @param scanner
 	 * @return the number of players in the game
 	 */
-	public static int playersInTheGame(Scanner scanner) {
+	public static int playersInTheGame() {
 
 		int numberOfPlayers = 0;
 		while (numberOfPlayers < MINIMUM_PLAYERS || numberOfPlayers > MAXIMUM_PLAYERS) {
@@ -240,13 +238,12 @@ public class Game {
 	/**
 	 * Sets the player names, starting position and starting resources
 	 *
-	 * @param scanner
 	 * @return a List of all the players
 	 */
-	public static ArrayList<Player> createPlayers(Scanner scanner) {
+	public static ArrayList<Player> createPlayers() {
 		int numberOfPlayers;
 		do {
-			numberOfPlayers = playersInTheGame(scanner);
+			numberOfPlayers = playersInTheGame();
 		} while (numberOfPlayers < 0);
 
 		System.out.println("Player names can have a maximum of " + MAXIMUM_PLAYER_NAME_LENGTH + " characters.");
@@ -367,16 +364,15 @@ public class Game {
 	 */
 	public static void handlePlayerLanding(Player currentPlayer, Square playerPosition) {
 
-		Scanner scanner = new Scanner(System.in);
 		playerPosition.displayAllDetails();
 
 		if (playerPosition instanceof Component) {
 			Component component = (Component) playerPosition;
 
 			if (!component.isOwned()) {
-				offerComponentForPurchase(currentPlayer, playerPosition, scanner);
+				offerComponentForPurchase(currentPlayer, playerPosition);
 			} else if (component.isOwned() && component.getComponentOwner() != currentPlayer) {
-				component.checkOwnerWantsResources(currentPlayer, scanner);
+				component.checkOwnerWantsResources(currentPlayer);
 			} else {
 				// TODO - review this logic -> not clear why it's here as the player is not being asked any question
 				//  this happens in offerComponentForPurchase
@@ -384,7 +380,7 @@ public class Game {
 					Game.announce("already owns this component", currentPlayer);
 				} else {
 					announce(currentPlayer.getPlayerName() + " has decided not to purchase " + component);
-					currentPlayer.offerComponentToOtherPlayers(component, scanner);
+					currentPlayer.offerComponentToOtherPlayers(component);
 				}
 			}
 		}
@@ -398,27 +394,20 @@ public class Game {
 	 * @param currentPlayer  takes the current player
 	 * @param playerPosition takes the current board position of the current player
 	 */
-	public static void offerComponentForPurchase(Player currentPlayer, Square playerPosition, Scanner scanner) {
-
-		String response;
-
+	public static void offerComponentForPurchase(Player currentPlayer, Square playerPosition) {
 		delay(1000);
 		currentPlayer.displayTurnStats();
 
 		if (playerPosition instanceof Component) {
 			announce("do you want to purchase " + playerPosition + "?", currentPlayer);
 
-			do {
-				System.out.println("Please input yes or no...");
-				response = scanner.next();
-				if (response.equalsIgnoreCase("Yes")) {
-					currentPlayer.purchaseComponent(playerPosition);
-				} else if (response.equalsIgnoreCase("No")) {
-					currentPlayer.offerComponentToOtherPlayers((Component) playerPosition, scanner);
-				} else {
-					announce("INVALID INPUT");
-				}
-			} while (!response.equalsIgnoreCase("yes") && !response.equalsIgnoreCase("no"));
+			boolean playerResponse = getPlayerConfirmation();
+
+			if (playerResponse) {
+				currentPlayer.purchaseComponent(playerPosition);
+			} else {
+				currentPlayer.offerComponentToOtherPlayers((Component) playerPosition);
+			}
 		}
 	}
 
@@ -432,7 +421,7 @@ public class Game {
 	 * @param currentPlayer takes an arraylist of players
 	 */
 
-	public static void playTurn(Player currentPlayer, Scanner scanner) {
+	public static void playTurn(Player currentPlayer) {
 		int playerChoice;
 		String[] menuOptions = {"...MENU...", "1. Develop Component", "2. Trade components", "3. Display board status",
 				"4. Display my components", "5. End turn", "6. Leave game", "Selection..."};
@@ -452,11 +441,11 @@ public class Game {
 
 				switch (playerChoice) {
 					case 1:
-						displayDevelopComponentMenu(currentPlayer, scanner);
+						displayDevelopComponentMenu(currentPlayer);
 						checkAllSystemsFullyDeveloped();
 						break;
 					case 2:
-						displayTradeMenu(currentPlayer, scanner);
+						displayTradeMenu(currentPlayer);
 						break;
 					case 3:
 						board.displayAllSquares();
@@ -470,7 +459,7 @@ public class Game {
 						break;
 					case 6:
 						// this breaks the loop and within gameLoop the endGame method is called
-						boolean playerWantsToLeave = confirmPlayerWantsToLeave(currentPlayer, scanner);
+						boolean playerWantsToLeave = confirmPlayerWantsToLeave(currentPlayer);
 						if (playerWantsToLeave) {
 							endGame = true;
 						}
@@ -560,12 +549,11 @@ public class Game {
 	 * Takes a map object and uses it to prompt the user to select a valid component
 	 * to perform an action on.
 	 *
-	 * @param scanner    a scanner object
 	 * @param components a map containing components as the value
 	 * @return a component object if a valid selection was made, otherwise will
 	 * return null
 	 */
-	public static Component getPlayerComponentSelection(Scanner scanner, Map<Integer, Component> components) {
+	public static Component getPlayerComponentSelection(Map<Integer, Component> components) {
 		String playerInput;
 		int playerSelection = -1;
 		Component component;
@@ -596,10 +584,9 @@ public class Game {
 	 * user is then prompted to select one of the list of components. If a valid
 	 * selection is made, the purchaseComponent method is invoked.
 	 *
-	 * @param player  the current player
-	 * @param scanner a scanner object
+	 * @param player the current player
 	 */
-	public static void displayTradeMenu(Player player, Scanner scanner) {
+	public static void displayTradeMenu(Player player) {
 		Map<Integer, Component> componentsAvailable = getComponentsForTrading(player);
 
 		boolean menuDisplayed = displayComponentsForTrading(componentsAvailable);
@@ -608,7 +595,7 @@ public class Game {
 		// menu displayed at least one component
 		if (menuDisplayed) {
 			// get user input
-			Component playerSelection = getPlayerComponentSelection(scanner, componentsAvailable);
+			Component playerSelection = getPlayerComponentSelection(componentsAvailable);
 
 			// player did not select a component - return to main main
 			if (playerSelection == null) {
@@ -618,7 +605,7 @@ public class Game {
 			System.out.println(player + " has selected to trade with " + playerSelection.getComponentOwner() + " for "
 					+ playerSelection);
 			// process the trade
-			player.tradeComponent(playerSelection, scanner);
+			player.tradeComponent(playerSelection);
 		}
 	}
 
@@ -684,10 +671,9 @@ public class Game {
 	 * prompted to select one from the list of components. If a valid selection is
 	 * made, the developComponent method is invoked.
 	 *
-	 * @param player  - the current player
-	 * @param scanner - used to receive player input
+	 * @param player - the current player
 	 */
-	public static void displayDevelopComponentMenu(Player player, Scanner scanner) {
+	public static void displayDevelopComponentMenu(Player player) {
 
 		Map<Integer, Component> componentsAvailable = player.getOwnedComponentsThatCanBeDeveloped();
 		List<Component> componentsFullyDeveloped = player.getFullyDevelopedComponents();
@@ -715,7 +701,7 @@ public class Game {
 			}
 
 			// get user input
-			Component playerSelection = getPlayerComponentSelection(scanner, componentsAvailable);
+			Component playerSelection = getPlayerComponentSelection(componentsAvailable);
 
 			// player did not select a component - return to main main
 			if (playerSelection == null) {
@@ -1138,25 +1124,16 @@ public class Game {
 	 * @param currentPlayer is the player opting to leave
 	 * @return boolean to accept true or false conditions
 	 */
-	public static boolean confirmPlayerWantsToLeave(Player currentPlayer, Scanner scanner) {
+	public static boolean confirmPlayerWantsToLeave(Player currentPlayer) {
 
-		String response;
+		announce("Are you sure you want to leave the game?", currentPlayer);
+		boolean playerResponse = getPlayerConfirmation();
 
-		do {
-			System.out.println("Are you sure you want to leave the game?");
-			System.out.println("Please input yes or no...");
-			response = scanner.next();
-
-			if (response.equalsIgnoreCase("yes")) {
-				delay(1000);
-				System.out.println(currentPlayer.getPlayerName() + " has chosen to abort the mission");
-				return true;
-			} else if (response.equalsIgnoreCase("no")) {
-				return false;
-			} else {
-				System.out.println("invalid");
-			}
-		} while (!response.equalsIgnoreCase("yes") && !response.equalsIgnoreCase("no"));
+		if (playerResponse) {
+			delay(1000);
+			announce(currentPlayer + " has chosen to abort the mission");
+			return true;
+		}
 
 		return false;
 	}
@@ -1281,6 +1258,28 @@ public class Game {
 	}
 
 	/**
+	 * Prompts user to input yes or no to the question posed. This will continue to loop until a valid response is
+	 * received.
+	 *
+	 * @return true if the user inputs yes; false if no.
+	 */
+	public static boolean getPlayerConfirmation() {
+		String playerResponse;
+
+		do {
+			System.out.println("Please input yes or no...");
+			playerResponse = scanner.next();
+
+		} while (!playerResponse.equalsIgnoreCase("yes") && !playerResponse.equalsIgnoreCase("no"));
+
+		if (playerResponse.equalsIgnoreCase("yes")) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Invokes Thread.sleep to pause programme execution for the specified number of milliseconds. This will only
 	 * execute if the game is not in test mode, otherwise, the code does not execute (i.e. THread.sleep is not invoked).
 	 * <p>
@@ -1357,5 +1356,21 @@ public class Game {
 	 */
 	public static void setTestMode(boolean testMode) {
 		Game.testMode = testMode;
+	}
+
+	/**
+	 * @return the scanner object
+	 */
+	public static Scanner getScanner() {
+		return scanner;
+	}
+
+	/**
+	 * Set the scanner object.
+	 *
+	 * @param scanner must be a scanner object
+	 */
+	public static void setScanner(Scanner scanner) {
+		Game.scanner = scanner;
 	}
 }
