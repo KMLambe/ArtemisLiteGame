@@ -150,7 +150,7 @@ public class Game {
 				delay(1000);
 				Square playerPosition = updatePlayerPosition(currentPlayer, rollDice);
 
-				checkIfSquareIsPurchasable(currentPlayer, playerPosition);
+				handlePlayerLanding(currentPlayer, playerPosition);
 
 			} catch (IllegalArgumentException illegalArgumentException) {
 				System.out.println(illegalArgumentException.getMessage());
@@ -225,7 +225,6 @@ public class Game {
 			try {
 				numberOfPlayers = scanner.nextInt();
 			} catch (InputMismatchException e) {
-				System.out.println("Input Mismatch! Please enter Numbers");
 				scanner.next();
 			}
 
@@ -369,7 +368,7 @@ public class Game {
 	 *
 	 * @param currentPlayer takes the current player
 	 */
-	public static void checkIfSquareIsPurchasable(Player currentPlayer, Square playerPosition) {
+	public static void handlePlayerLanding(Player currentPlayer, Square playerPosition) {
 
 		Scanner scanner = new Scanner(System.in);
 		playerPosition.displayAllDetails();
@@ -378,10 +377,12 @@ public class Game {
 			Component component = (Component) playerPosition;
 
 			if (!component.isOwned()) {
-				displayComponentIfPurchasable(currentPlayer, playerPosition, Scanner);
+				offerComponentForPurchase(currentPlayer, playerPosition, scanner);
 			} else if (component.isOwned() && component.getComponentOwner() != currentPlayer) {
 				component.checkOwnerWantsResources(currentPlayer, scanner);
 			} else {
+				// TODO - review this logic -> not clear why it's here as the player is not being asked any question
+				//  this happens in offerComponentForPurchase
 				if (component.getComponentOwner() == currentPlayer) {
 					Game.announce("already owns this component", currentPlayer);
 				} else {
@@ -400,7 +401,7 @@ public class Game {
 	 * @param currentPlayer takes the current player
 	 * @param playerPosition takes the current board position of the current player
 	 */
-	public static void displayComponentIfPurchasable(Player currentPlayer, Square playerPosition, Scanner scanner) {
+	public static void offerComponentForPurchase(Player currentPlayer, Square playerPosition, Scanner scanner) {
 
 		String response;
 
@@ -553,7 +554,7 @@ public class Game {
 			return true;
 		}
 
-		Game.announce("There are no available components for you to purchase. This is either because you do not"
+		Game.announce("There are no components available to trade resources for. This is either because you do not "
 				+ "have enough resources and/or there are no components owned by other players at present.");
 		return false;
 	}
