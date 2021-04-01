@@ -129,7 +129,6 @@ public class Game {
 	 * true).
 	 *
 	 * @param scanner a scanner object
-	 * @throws InterruptedException
 	 */
 	public static void gameLoop(Scanner scanner) {
 		// set currentPlayer to the first player in the arraylist
@@ -139,7 +138,7 @@ public class Game {
 			try {
 				announce(String.format("Player %s it's your turn...make it count!", currentPlayer));
 
-				// currentPlayer.incrementTurnCounter();
+				currentPlayer.incrementTurnCounter();
 
 				int rollDice = rollDice();
 
@@ -178,7 +177,6 @@ public class Game {
 	 * take a turn.
 	 *
 	 * @return the populated board object with squares and systems
-	 * @throws IllegalArgumentException if the board object is null
 	 */
 	private static Board createBoard() {
 		Board board = new Board();
@@ -275,8 +273,6 @@ public class Game {
 	/**
 	 * Randomises the list of players so that player turns are not based on the
 	 * order they were created.
-	 *
-	 * 
 	 */
 	public static void generatePlayerOrder() {
 		Collections.shuffle(players);
@@ -312,6 +308,7 @@ public class Game {
 	 *
 	 * @param currentPlayer - the current player, passed as a parameter argument
 	 * @param sumOfDice     - the sum of two dice returned by the rollDice() method,
+	 * @throws IllegalArgumentException when any of the validation criteria is not met.
 	 */
 	public static Square updatePlayerPosition(Player currentPlayer, int sumOfDice) throws IllegalArgumentException {
 
@@ -398,7 +395,7 @@ public class Game {
 	 * updated. takes a user response and allows player to purchase component if
 	 * user enters yes and component is offered to other players if user enters no.
 	 *
-	 * @param currentPlayer takes the current player
+	 * @param currentPlayer  takes the current player
 	 * @param playerPosition takes the current board position of the current player
 	 */
 	public static void offerComponentForPurchase(Player currentPlayer, Square playerPosition, Scanner scanner) {
@@ -689,7 +686,6 @@ public class Game {
 	 *
 	 * @param player  - the current player
 	 * @param scanner - used to receive player input
-	 * @throws InterruptedException if interrupted
 	 */
 	public static void displayDevelopComponentMenu(Player player, Scanner scanner) {
 
@@ -1139,11 +1135,11 @@ public class Game {
 	 * This method confirms if the current player wishes to leave the game. If the
 	 * player inputs yes then game will end and if no then game will continue.
 	 *
- 	 * @param currentPlayer is the player opting to leave
+	 * @param currentPlayer is the player opting to leave
 	 * @return boolean to accept true or false conditions
 	 */
 	public static boolean confirmPlayerWantsToLeave(Player currentPlayer, Scanner scanner) {
-		
+
 		String response;
 
 		do {
@@ -1170,8 +1166,6 @@ public class Game {
 	 * ended. It displays to screen the final resources available to players before
 	 * game ended, owned components and systems and player who refused to accept
 	 * resources most.
-	 *
-	 * @throws InterruptedException
 	 */
 	public static void endGame() {
 
