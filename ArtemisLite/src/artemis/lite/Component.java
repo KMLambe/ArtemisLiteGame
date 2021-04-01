@@ -510,7 +510,7 @@ public class Component extends Square {
 			System.out.printf("%-25s %-20s\n", "COST TO DEVELOP:", "This component is fully developed");
 		} else {
 			Game.delay(200);
-			System.out.printf("%-25s %-20s\n", "COST TO DEVELOP:", getSquareName());
+			System.out.printf("%-25s %-20s\n", "COST TO DEVELOP:", costToDevelop);
 		}
 		Game.delay(200);
 		System.out.printf("%-25s %-20s\n", "COST FOR LANDING:", costForLanding);
