@@ -1,6 +1,3 @@
-/**
- *
- */
 package artemis.lite;
 
 import java.util.ArrayList;
@@ -28,6 +25,7 @@ public class ArtemisSystem {
 
 	/**
 	 * Overloaded constructor that only needs system name to instantiate
+	 *
 	 * @param systemName the name of the system
 	 */
 	public ArtemisSystem(String systemName) {
@@ -56,6 +54,7 @@ public class ArtemisSystem {
 
 	/**
 	 * This method checks if all components in this Artemis System are developed
+	 *
 	 * @return - the method returns true if all components are developed, otherwise it returns false
 	 */
 	public boolean checkFullyDeveloped() {
@@ -108,6 +107,7 @@ public class ArtemisSystem {
 
 	/**
 	 * This method checks if all components contained in this Artemis System are owned by a single player and returns the result as a boolean.
+	 *
 	 * @return - the method returns true if all components in the system are owned, otherwise it returns false.
 	 */
 	public boolean checkSystemIsOwnedByOnePlayer() {
@@ -204,7 +204,13 @@ public class ArtemisSystem {
 			System.out.println(totalDeveloped + " out of " + componentsInSystem.size() + " components in this system are fully developed.");
 
 		}
+	}
 
-
+	/**
+	 * @return the system's name
+	 */
+	@Override
+	public String toString() {
+		return systemName;
 	}
 }
