@@ -146,7 +146,7 @@ public class Game {
 				// let everyone know the player has moved
 				announce("is rolling the dice...", currentPlayer);
 				delay(2000);
-				announce("rolled a " + rollDice + " and moves accordingly.", currentPlayer);
+				announce("rolled " + rollDice + " and moves accordingly.", currentPlayer);
 				delay(1000);
 				Square playerPosition = updatePlayerPosition(currentPlayer, rollDice);
 
@@ -1262,7 +1262,7 @@ public class Game {
 			Player player = activeList.get(playerCounter);
 
 			int playerRoll = Game.rollDice();
-			System.out.printf("[ROUND %s] %s rolled a %s\n", roundCounter, player.getPlayerName(), playerRoll);
+			System.out.printf("[ROUND %s] %s rolled %s\n", roundCounter, player.getPlayerName(), playerRoll);
 
 			if (playerRoll > highestRoll) {
 				highestRoll = playerRoll;
