@@ -381,7 +381,7 @@ class GameTest {
 
 
 	@Test
-	void testOfferComponentForPurchase()  {
+	void testOfferComponentForPurchaseValid()  {
 
 		Square[] squares = board1.getSquares();
 
@@ -400,6 +400,7 @@ class GameTest {
 		Game.offerComponentForPurchase(player1, testComponent1);
 		// expected is player 1 owns component
 		assertEquals(expectedPlayerName, testComponent1.getComponentOwner());
+		assertTrue(player1.getOwnedComponents().contains(testComponent1));
 
 		player1.setCurrentBoardPosition(2);
 
@@ -408,6 +409,7 @@ class GameTest {
 		Game.offerComponentForPurchase(player1, testComponent2);
 		// expected is player 2 to own component
 		assertEquals(expectedPlayerName2, testComponent2.getComponentOwner());
+		assertTrue(player2.getOwnedComponents().contains(testComponent2));
 
 		player1.setCurrentBoardPosition(3);
 
@@ -415,6 +417,7 @@ class GameTest {
 		Game.setScanner(new Scanner("invalid yes"));
 		Game.offerComponentForPurchase(player1, testComponent3);
 		assertEquals(expectedPlayerName, testComponent3.getComponentOwner());
+		assertTrue(player1.getOwnedComponents().contains(testComponent3));
 
 		player1.setCurrentBoardPosition(4);
 
@@ -422,9 +425,27 @@ class GameTest {
 		Game.setScanner(new Scanner("invalid no yes"));
 		Game.offerComponentForPurchase(player1, testComponent4);
 		assertEquals(expectedPlayerName2, testComponent4.getComponentOwner());
+		assertTrue(player2.getOwnedComponents().contains(testComponent4));
 	}
 
-	// tradeable component testing
+
+	@Test
+	void testOfferComponentForPurchaseInsufficientResources()  {
+
+		// set board and resources
+		player1.setCurrentBoardPosition(0);
+		player1.setResourceBalance(99);
+
+		Component playerPosition = (Component) Game.updatePlayerPosition(player1, 2);
+
+		Game.handlePlayerLanding(player1, playerPosition);
+
+		// make sure resources are unchanged, position was updated, and ownedComponents are unchanged
+		assertEquals(99, player1.getResourceBalance());
+		assertEquals(2, playerPosition.getSquarePosition());
+		assertFalse(player1.getOwnedComponents().contains(playerPosition));
+	}
+
 	@Test
 	void testTradeableComponentsValid() {
 		Player player2 = new Player("Player2", 500, 0);

@@ -44,8 +44,6 @@ public class Game {
 		// let game know it is not being run as a test
 		testMode = false;
 
-		Scanner scanner = new Scanner(System.in);
-
 		gameBriefing();
 
 		setupGame();
@@ -374,14 +372,7 @@ public class Game {
 			} else if (component.isOwned() && component.getComponentOwner() != currentPlayer) {
 				component.checkOwnerWantsResources(currentPlayer);
 			} else {
-				// TODO - review this logic -> not clear why it's here as the player is not being asked any question
-				//  this happens in offerComponentForPurchase
-				if (component.getComponentOwner() == currentPlayer) {
-					Game.announce("already owns this component", currentPlayer);
-				} else {
-					announce(currentPlayer.getPlayerName() + " has decided not to purchase " + component);
-					currentPlayer.offerComponentToOtherPlayers(component);
-				}
+				Game.announce("already owns this component", currentPlayer);
 			}
 		}
 	}
@@ -395,18 +386,25 @@ public class Game {
 	 * @param playerPosition takes the current board position of the current player
 	 */
 	public static void offerComponentForPurchase(Player currentPlayer, Square playerPosition) {
-		delay(1000);
 		currentPlayer.displayTurnStats();
 
 		if (playerPosition instanceof Component) {
-			announce("do you want to purchase " + playerPosition + "?", currentPlayer);
+			Component component = (Component) playerPosition;
+
+			if (currentPlayer.getResourceBalance() < component.getComponentCost()) {
+				announce("you do not have sufficient resources to purchase " + component, currentPlayer);
+				return;
+			}
+
+			announce("do you want to purchase " + component + "?", currentPlayer);
 
 			boolean playerResponse = getPlayerConfirmation();
 
 			if (playerResponse) {
 				currentPlayer.purchaseComponent(playerPosition);
 			} else {
-				currentPlayer.offerComponentToOtherPlayers((Component) playerPosition);
+				announce("decided not to purchase " + component + ". It will now be offered to other players.");
+				currentPlayer.offerComponentToOtherPlayers(component);
 			}
 		}
 	}
@@ -1156,7 +1154,7 @@ public class Game {
 		for (Player player : players) {
 			totalNumberOfExperts += player.getResourceBalance();
 		}
-		System.out.println(totalNumberOfExperts + " " + RESOURCE_NAME + " were required to launch Artemis");
+		System.out.println(totalNumberOfExperts + " " + RESOURCE_NAME + " were used trying to launch Artemis");
 		delay(1000);
 
 		System.out.printf("\n%-20s %-10s\n", "PLAYER", "REMAINING RESOURCES");
