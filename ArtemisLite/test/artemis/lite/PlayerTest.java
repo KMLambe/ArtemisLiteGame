@@ -97,7 +97,7 @@ class PlayerTest {
     }
 
     @Test
-    void purchaseComponentValid() throws Exception {
+    void purchaseOneComponentValid() throws Exception {
 
         // owner is null
         assertNull(c1.getComponentOwner());
@@ -116,6 +116,78 @@ class PlayerTest {
     }
 
     @Test
+    void purchaseAllComponentsInSystemValid() {
+        // setup
+        c3.setComponentOwner(null);
+        p1.setResourceBalance(1000);
+
+        assertNull(system1.getSystemOwner());
+        assertEquals(p1.getOwnedSystems().size(), 0);
+
+        p1.purchaseComponent(c1);
+        p1.purchaseComponent(c2);
+
+        // full system is not yet owned
+        assertNull(system1.getSystemOwner());
+        assertEquals(p1.getOwnedSystems().size(), 0);
+
+        // this purchase results in full system being owned by the same player
+        p1.purchaseComponent(c3);
+        assertEquals(p1, system1.getSystemOwner());
+        assertTrue(p1.getOwnedSystems().contains(system1));
+    }
+
+
+    @Test
+    void purchaseAllComponentsInSystemThenTradeOneAwayValid() {
+        // setup
+        c3.setComponentOwner(null);
+        p1.setResourceBalance(1000);
+
+        p1.purchaseComponent(c1);
+        p1.purchaseComponent(c2);
+        p1.purchaseComponent(c3);
+
+        // player owns all components and system
+        assertEquals(p1, system1.getSystemOwner());
+        assertTrue(p1.getOwnedSystems().contains(system1));
+
+        // trade away a component
+        Game.setScanner(new Scanner("yes"));
+        p2.tradeComponent(c3);
+
+        // check that neither player owns the system
+        assertNull(system1.getSystemOwner());
+        assertFalse(p1.getOwnedSystems().contains(system1));
+        assertFalse(p2.getOwnedSystems().contains(system1));
+    }
+
+
+    @Test
+    void purchaseSomeComponentsInSystemThenTradeOneAwayValid() {
+        // setup
+        c3.setComponentOwner(null);
+        p1.setResourceBalance(1000);
+
+        p1.purchaseComponent(c1);
+        p1.purchaseComponent(c3);
+
+        // player does not own all components and system
+        assertNull(system1.getSystemOwner());
+        assertFalse(p1.getOwnedSystems().contains(system1));
+
+        // trade away a component
+        Game.setScanner(new Scanner("yes"));
+        p2.tradeComponent(c3);
+
+        // check that neither player owns the system
+        assertNull(system1.getSystemOwner());
+        assertFalse(p1.getOwnedSystems().contains(system1));
+        assertFalse(p2.getOwnedSystems().contains(system1));
+    }
+
+
+    @Test
     void purchaseComponentUpdatesResources() {
         // check opening balance
         assertEquals(validResourceBalance1, p1.getResourceBalance());
@@ -129,7 +201,7 @@ class PlayerTest {
         // check that the values have changed - if c1.componentCost=0 the above
         // statements would still be true
         // but below would not
-        assertFalse(p1.getResourceBalance() == validResourceBalance1);
+        assertNotEquals(validResourceBalance1, p1.getResourceBalance());
     }
 
     @Test

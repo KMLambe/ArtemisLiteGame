@@ -17,8 +17,8 @@ public class Player {
 	private int resourceBalance;
 	private int currentBoardPosition;
 	private int actionPoints = Game.DEFAULT_ACTION_POINTS;
-	private List<Component> ownedComponents = new ArrayList<>();
-	private List<ArtemisSystem> ownedSystems = new ArrayList<>();
+	private final List<Component> ownedComponents = new ArrayList<>();
+	private final List<ArtemisSystem> ownedSystems = new ArrayList<>();
 	private int CountOfTimesPlayerDeclinedResources;
 	private int turnCounter;
 
@@ -173,9 +173,12 @@ public class Player {
 		ArtemisSystem artemisSystem = component.getComponentSystem();
 		artemisSystem.announceComponentsRequiredBeforeDevelopment(this);
 
-		if (component.getComponentSystem().checkSystemIsOwnedByOnePlayer()) {
-			Game.announce("now owns all of " + component.getComponentSystem().getSystemName()
-					+ " and can develop any of its components", this);
+		if (artemisSystem.checkSystemIsOwnedByOnePlayer()) {
+			artemisSystem.setSystemOwner(this);
+			addSystem(artemisSystem);
+
+			Game.announce(this.getPlayerName().toUpperCase() +" now owns all of " + artemisSystem
+					+ " and can develop any of its components");
 		}
 	}
 
@@ -225,8 +228,6 @@ public class Player {
 				component.getSquareName(), component.getComponentCost(), Game.RESOURCE_NAME);
 		Game.announce(message, componentOwner);
 
-		String additionalMessage = "";
-
 		boolean playerResponse = Game.getPlayerConfirmation();
 
 		if (playerResponse) {
@@ -244,9 +245,20 @@ public class Player {
 			artemisSystem.announceComponentsRequiredBeforeDevelopment(this);
 
 			// check if the new component owner now owns the system
-			if (component.getComponentSystem().checkSystemIsOwnedByOnePlayer()) {
-				additionalMessage = "now owns all of " + component.getComponentSystem().getSystemName()
-						+ " and can develop any of its components";
+			if (artemisSystem.checkSystemIsOwnedByOnePlayer()) {
+				artemisSystem.setSystemOwner(this);
+				addSystem(artemisSystem);
+
+				Game.announce(getPlayerName().toUpperCase() +" now owns all of " + artemisSystem
+						+ " and can develop any of its components");
+			} else {
+				if (artemisSystem.getSystemOwner() != null) {
+					Game.announce(artemisSystem.getSystemOwner().getPlayerName().toUpperCase() +" has lost ownership of " + artemisSystem
+							+ " - this system can no longer be developed");
+
+					artemisSystem.getSystemOwner().removeSystem(artemisSystem);
+					artemisSystem.setSystemOwner(null);
+				}
 			}
 
 		} else {
@@ -254,9 +266,6 @@ public class Player {
 			Game.announce(String.format("%s rejected the trade with %s", componentOwner, this));
 		}
 
-		if (additionalMessage.length() > 1) {
-			Game.announce(additionalMessage, this);
-		}
 		consumeActionPoint(1);
 	}
 
@@ -499,6 +508,8 @@ public class Player {
 	public List<Component> getOwnedComponents() {
 		return ownedComponents;
 	}
+
+
 
 	/**
 	 * @return an ArrayList of ArtemisSystems owned by the player
