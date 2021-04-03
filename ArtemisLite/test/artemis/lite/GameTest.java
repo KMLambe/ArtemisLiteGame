@@ -149,11 +149,11 @@ class GameTest {
 
 		// test that valid number of players is accepted
 		Game.setScanner(new Scanner("2"));
-		assertEquals(validNumberOfPlayersLower, Game.playersInTheGame());
+		assertEquals(validNumberOfPlayersLower, Game.confirmNumberOfPlayers());
 		Game.setScanner(new Scanner("3"));
-		assertEquals(validNumberOfPlayersMid, Game.playersInTheGame());
+		assertEquals(validNumberOfPlayersMid, Game.confirmNumberOfPlayers());
 		Game.setScanner(new Scanner("4"));
-		assertEquals(validNumberOfPlayersUpper, Game.playersInTheGame());
+		assertEquals(validNumberOfPlayersUpper, Game.confirmNumberOfPlayers());
 
 	}
 
@@ -163,15 +163,15 @@ class GameTest {
 		// test that invalid number of players will not be accepted
 		int invalidNumberOfPlayers = -1;
 		Game.setScanner(new Scanner("1"));
-		assertEquals(invalidNumberOfPlayers, Game.playersInTheGame());
+		assertEquals(invalidNumberOfPlayers, Game.confirmNumberOfPlayers());
 		Game.setScanner(new Scanner("5"));
-		assertEquals(invalidNumberOfPlayers, Game.playersInTheGame());
+		assertEquals(invalidNumberOfPlayers, Game.confirmNumberOfPlayers());
 	}
 
 	@Test
 	void createPlayersValid() {
 		Game.setScanner(new Scanner("2 player1 player2"));
-		ArrayList<Player> players = Game.createPlayers();
+		List<Player> players = Game.createPlayers();
 		Player player1 = players.get(0);
 		Player player2 = players.get(1);
 		// tests that Array return at correct size with names and starting resources and
@@ -191,7 +191,7 @@ class GameTest {
 		// test showing duplicate name not accepted for second player and having to
 		// enter a third input to set player2 name
 		Game.setScanner(new Scanner("2 name1 name1 name2"));
-		ArrayList<Player> players = Game.createPlayers();
+		List<Player> players = Game.createPlayers();
 		Player player1 = players.get(0);
 		Player player2 = players.get(1);
 		// tests
@@ -216,7 +216,7 @@ class GameTest {
 		playersTest.add(new Player(validPlayer2, STARTING_RESOURCES, STARTING_POSITION));
 
 		// run method
-		Game.generatePlayerOrder();
+		Game.randomiseOrderOfPlayers();
 		// test that Array List still contains same amount of items
 		assertEquals(2, playersTest.size());
 	}
@@ -381,7 +381,7 @@ class GameTest {
 
 
 	@Test
-	void testOfferComponentForPurchaseValid()  {
+	void testOfferComponentForPurchaseValid() {
 
 		Square[] squares = board1.getSquares();
 
@@ -430,7 +430,7 @@ class GameTest {
 
 
 	@Test
-	void testOfferComponentForPurchaseInsufficientResources()  {
+	void testOfferComponentForPurchaseInsufficientResources() {
 
 		// set board and resources
 		player1.setCurrentBoardPosition(0);
