@@ -100,23 +100,23 @@ public class Component extends Square {
 			currentPlayer.consumeActionPoint(actionPointsToDeduct);
 
 			// increase the development level to the next stage
-			incrementDevelopmentStage();
+			int newDevelopmentStage = incrementDevelopmentStage();
 
 			// check new development level and adjust cost for landing
 			// and also check and adjust cost to develop
-			if (developmentStage < (MAXIMUM_DEVELOPMENT_LEVEL - 1)) {
+			if (newDevelopmentStage < (MAXIMUM_DEVELOPMENT_LEVEL - 1)) {
 
 				increaseCostToPurchase(MINOR_DEVELOPMENT_ADDITIONAL_PURCHASE_COST);
 				increaseCostOfLanding(INCREASE_COST_OF_LANDING_MINOR_DEVELOPMENT);
 				increaseCostToDevelop(MINOR_DEVELOPMENT_ADDITIONAL_DEVELOPMENT_COST);
 
-			} else if (developmentStage == (MAXIMUM_DEVELOPMENT_LEVEL - 1)) {
+			} else if (newDevelopmentStage == (MAXIMUM_DEVELOPMENT_LEVEL - 1)) {
 
 				increaseCostToPurchase(MINOR_DEVELOPMENT_ADDITIONAL_PURCHASE_COST);
 				increaseCostOfLanding(INCREASE_COST_OF_LANDING_MINOR_DEVELOPMENT);
 				increaseCostToDevelop(MAJOR_DEVELOPMENT_ADDITIONAL_DEVELOPMENT_COST);
 
-			} else if (developmentStage == MAXIMUM_DEVELOPMENT_LEVEL) {
+			} else if (newDevelopmentStage == MAXIMUM_DEVELOPMENT_LEVEL) {
 
 				increaseCostToPurchase(MAJOR_DEVELOPMENT_ADDITIONAL_PURCHASE_COST);
 				increaseCostOfLanding(INCREASE_COST_OF_LANDING_MAJOR_DEVELOPMENT);
@@ -124,44 +124,20 @@ public class Component extends Square {
 
 			}
 
-			// determine announcement to output to players
+			DevelopmentStage developmentStage = developmentStageNamesMap.get(newDevelopmentStage);
 
-			switch (developmentStage) {
-				case 1:
-					developmentAnnouncement = this.getSquareName() + " has advanced to the "
-							+ developmentStageNamesMap.get(1) + " stage.";
-					break;
-				case 2:
-					developmentAnnouncement = this.getSquareName() + " has advanced to the "
-							+ developmentStageNamesMap.get(2) + " stage.";
-					break;
-				case 3:
-					developmentAnnouncement = this.getSquareName() + " has advanced to the "
-							+ developmentStageNamesMap.get(3) + " stage.";
-					break;
-				case 4:
-					developmentAnnouncement = this.getSquareName() + " has advanced to the "
-							+ developmentStageNamesMap.get(4) + " stage.";
-					break;
-				default:
-					// nothing happens
+			developmentAnnouncement = this.getSquareName() + " has advanced to the "
+					+ developmentStage + " stage.";
+
+			if (newDevelopmentStage == MAXIMUM_DEVELOPMENT_LEVEL) {
+				developmentAnnouncement += " This is the maximum development level attainable, no further " +
+						"developments can be made.";
 			}
 
-			// announce development
 			Game.announce(developmentAnnouncement);
 
-			// additional announcement if fully developed
-			if (checkFullyDeveloped()) {
-				String fullyDevelopedAnnouncement = this.getSquareName()
-						+ " has advanced to the maximum development level and can be developed no further.";
-				Game.announce(fullyDevelopedAnnouncement);
-			}
-
-			// additional announcement if system is fully developed
-			if (getComponentSystem().checkFullyDeveloped()) {
-				Game.announce(currentPlayer + "'s team of experts has fully developed " +
-						getComponentSystem().getSystemName() + "! That's a big step towards completion of the project.");
-			}
+			// set the new development stage
+			setDevelopmentStage(newDevelopmentStage);
 		} else {
 			System.out.println("ERROR - Component cannot be developed.");
 		}
@@ -256,10 +232,12 @@ public class Component extends Square {
 	}
 
 	/**
-	 * Increases the component's development stage by 1.
+	 * Returns the developmentStage + 1.
+	 * <p>
+	 * NOTE: This does NOT update the development stage - setDevelopmentStage must be called to do that.
 	 */
-	public void incrementDevelopmentStage() {
-		developmentStage++;
+	public int incrementDevelopmentStage() {
+		return developmentStage + 1;
 	}
 
 	/**
@@ -361,6 +339,10 @@ public class Component extends Square {
 	 */
 	public void setDevelopmentStage(int developmentStage) {
 		this.developmentStage = developmentStage;
+
+		if (checkFullyDeveloped()) {
+			Game.getBoard().addDevelopedSystem(this.getComponentSystem());
+		}
 	}
 
 	/**
