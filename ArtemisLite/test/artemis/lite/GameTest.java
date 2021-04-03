@@ -715,6 +715,107 @@ class GameTest {
 
 
 	@Test
+	void checkThatFinalDevelopmentResultsInWinGame() {
+
+		Square[] squares = board1.getSquares();
+		//set resources and balances higher so this doesn't stop test
+		player1.setResourceBalance(5000);
+		player1.setActionPoints(10);
+
+		// purchase all Components
+		player1.purchaseComponent(squares[1]);
+		player1.purchaseComponent(squares[2]);
+		player1.purchaseComponent(squares[3]);
+		player1.purchaseComponent(squares[7]);
+		player1.purchaseComponent(squares[8]);
+		player1.purchaseComponent(squares[9]);
+		player1.purchaseComponent(squares[4]);
+		player1.purchaseComponent(squares[5]);
+		player1.purchaseComponent(squares[10]);
+		player1.purchaseComponent(squares[11]);
+
+
+		// fully develop components
+		Component testComponent1 = (Component) squares[1];
+		testComponent1.setDevelopmentStage(4);
+		Component testComponent2 = (Component) squares[2];
+		testComponent2.setDevelopmentStage(4);
+		Component testComponent3 = (Component) squares[3];
+		testComponent3.setDevelopmentStage(4);
+		Component testComponent4 = (Component) squares[4];
+		testComponent4.setDevelopmentStage(4);
+		Component testComponent5 = (Component) squares[5];
+		testComponent5.setDevelopmentStage(4);
+		Component testComponent7 = (Component) squares[7];
+		testComponent7.setDevelopmentStage(4);
+		Component testComponent8 = (Component) squares[8];
+		testComponent8.setDevelopmentStage(4);
+		Component testComponent9 = (Component) squares[9];
+		testComponent9.setDevelopmentStage(4);
+		Component testComponent10 = (Component) squares[10];
+		testComponent10.setDevelopmentStage(4);
+
+		// set last component to stage 3 so it can be developed one more time
+		Component testComponent11 = (Component) squares[11];
+		testComponent11.setDevelopmentStage(3);
+
+		// simulate player behaviour to develop component
+		Game.setScanner(new Scanner("1 1")); // input represents, selecting develop component, then selecting first component to develop
+
+		// invoke gameLoop to simulate real sequence of events
+		Game.gameLoop();
+
+		// tests
+		assertTrue(Game.checkAllSystemsFullyDeveloped());
+		assertTrue(Game.isWinGame());
+	}
+
+
+	@Test
+	void checkThatPlayerCanDevelopOwnedSystem() {
+
+		Square[] squares = board1.getSquares();
+		//set resources and balances higher so this doesn't stop test
+		player1.setResourceBalance(5000);
+		player1.setActionPoints(10);
+
+		// purchase all Components
+		player1.purchaseComponent(squares[1]);
+		player1.purchaseComponent(squares[2]);
+		player1.purchaseComponent(squares[3]);
+
+		// make sure default component is not yet developed
+		int expected = DevelopmentStage.ANALYSING_REQUIREMENTS.ordinal(); // returns the int of position in ENUM
+		assertEquals(expected, testComponent1.getDevelopmentStage());
+
+		// simulate player behaviour to develop component
+		Game.setScanner(new Scanner("1 1 5")); // (1) develop -> select component (1) -> end turn (5)
+		Game.playTurn(player1);
+
+		// check that the above sequence of events has resulted in the component development progressing
+		expected = DevelopmentStage.DESIGNING.ordinal();
+		assertEquals(expected, testComponent1.getDevelopmentStage());
+
+		// make sure this did not change end game variables/methods
+		assertFalse(Game.checkAllSystemsFullyDeveloped());
+		assertFalse(Game.isWinGame());
+		assertFalse(Game.isEndGame());
+	}
+
+	@Test
+	void getDefaultValueWinGame() {
+		// check that the default value is false
+		assertFalse(Game.isWinGame());
+	}
+
+	@Test
+	void getDefaultValueEndGame() {
+		// check that the default value is false
+		assertFalse(Game.isEndGame());
+	}
+
+
+	@Test
 	void getSetTestMode() {
 		Game.setTestMode(false);
 		assertFalse(Game.isTestMode());
