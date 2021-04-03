@@ -159,9 +159,9 @@ public class Component extends Square {
 
 			// additional announcement if system is fully developed
 			if (getComponentSystem().checkFullyDeveloped()) {
-				Game.announce("'s team of experts has fully developed " + getComponentSystem().getSystemName() + "! That's a big step towards completion of the project.", currentPlayer);
+				Game.announce(currentPlayer + "'s team of experts has fully developed " +
+						getComponentSystem().getSystemName() + "! That's a big step towards completion of the project.");
 			}
-
 		} else {
 			System.out.println("ERROR - Component cannot be developed.");
 		}
@@ -212,7 +212,6 @@ public class Component extends Square {
 		if (ownerResponse) {
 			if (currentPlayer.getResourceBalance() < costForLanding) {
 				currentPlayer.setResourceBalance(0);
-				Game.endGame();
 			} else {
 				currentPlayer.transferResources(componentOwner, costForLanding);
 			}
