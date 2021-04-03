@@ -7,8 +7,8 @@ package artemis.lite;
  */
 public class Board {
 
-    private Square[] squares = new Square[Game.MAXIMUM_SQUARES];
-    private ArtemisSystem[] systems = new ArtemisSystem[Game.MAXIMUM_SYSTEMS];
+    private final Square[] squares = new Square[Game.MAXIMUM_SQUARES];
+    private final ArtemisSystem[] systems = new ArtemisSystem[Game.MAXIMUM_SYSTEMS];
 
     /**
      * Default constructor
