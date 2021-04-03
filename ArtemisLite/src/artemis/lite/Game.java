@@ -12,6 +12,9 @@ import java.util.*;
  */
 public class Game {
 
+	/**
+	 * Game constants which are used throughout all classes within the game.
+	 */
 	private final static int MINIMUM_PLAYERS = 2;
 	private final static int MAXIMUM_PLAYERS = 4;
 	private final static int STARTING_POSITION = 0;
@@ -23,18 +26,36 @@ public class Game {
 	private final static int NUMBER_OF_DICE = 2;
 	public final static int MAXIMUM_SQUARES = 12;
 	public final static int MAXIMUM_SYSTEMS = 4;
-	public final static int MAXIMUM_NAME_LENGTH = 50;
+	public final static int MAXIMUM_NAME_LENGTH = 50;        // for systems and components
 	public final static int MAXIMUM_PLAYER_NAME_LENGTH = 10;
-
-	// labels - to be used in place of hard coding strings
 	public final static String RESOURCE_NAME = "EXPERTS";
-	private static List<Player> players = new ArrayList<Player>();
-	private static Board board;
-	private static boolean endGame = false;
-	private static boolean winGame = false;
 
+	/**
+	 * Stores a list of Player objects, for those that are playing the game.
+	 */
+	private static List<Player> players = new ArrayList<Player>();
+	/**
+	 * Stores the Board object which will contain all Squares, Components, and Systems that will be used by the Game.
+	 */
+	private static Board board;
+	/**
+	 * When winGame is true, this will end the loops inside playTurn and gameLoop resulting in the winGame method
+	 * being invoked. The value can only be set within the Game class but can be read anywhere using isEndGame().
+	 */
+	private static boolean endGame = false;
+	/**
+	 * When endGame is true, this will end the loops inside playTurn and gameLoop resulting in the endGame method
+	 * being invoked. The value can only be set within the Game class but can be read anywhere using isWinGame().
+	 */
+	private static boolean winGame = false;
+	/**
+	 * Stores a class scanner which can be accessed via any methods inside Game, and in other classes via getScanner().
+	 */
 	private static Scanner scanner = new Scanner(System.in);
 
+	/**
+	 * When testMode=true, all calls to delay() will skip the sleep aspect to speed up testing.
+	 */
 	private static boolean testMode;
 
 	/**
@@ -51,14 +72,16 @@ public class Game {
 		gameLoop();
 
 		// clear resources
-		scanner.close();
+		if (scanner != null) {
+			scanner.close();
+		}
 	}
 
 	/**
 	 * Outputs an overview of the game, rules, and mission - provides context before
 	 * jumping into gameplay.
 	 */
-	public static void gameBriefing() {
+	private static void gameBriefing() {
 		String[] mission = {
 				"For over half a century humans have yearned to return to the Moon." +
 						"\nOur collective spirit of discovery is undiminished by time." +
@@ -100,72 +123,18 @@ public class Game {
 	 * Responsible for running the setup sequence, i.e. make sure the board is
 	 * created, players have been created, and randomise the player order.
 	 */
-	public static void setupGame() {
+	private static void setupGame() {
 
 		// 1. create board object and store it in class var
 		setBoard(createBoard());
 
 		// 2. get players
-		ArrayList<Player> players = createPlayers();
+		players = createPlayers();
 
 		// 3. shuffle players
-		generatePlayerOrder();
+		randomiseOrderOfPlayers();
 
 		announce("Game setup complete...time to get rolling!");
-	}
-
-	/**
-	 * Responsible for handling all player interactions with the game.
-	 * <p>
-	 * It handles each player's turn, enabling them to perform any permissible
-	 * action so long as they have more than 0 action points. When the player runs
-	 * out of action points, the game moves on to the next player in the sequence.
-	 * <p>
-	 * At the end of a player's turn, the currentPlayer is set to the next player in
-	 * the sequence and their action points are set to the default amount (i.e.
-	 * reset).
-	 * <p>
-	 * The loop will end on any player's turn if a player leaves (setting endGame to
-	 * true).
-	 */
-	public static void gameLoop() {
-		// set currentPlayer to the first player in the arraylist
-		Player currentPlayer = players.get(0);
-
-		while (currentPlayer.getActionPoints() > 0 && !endGame && !winGame) {
-			try {
-				announce(String.format("Player %s it's your turn...make it count!", currentPlayer));
-
-				currentPlayer.incrementTurnCounter();
-
-				int rollDice = rollDice();
-
-				// let everyone know the player has moved
-				announce("is rolling the dice...", currentPlayer);
-				delay(2000);
-				announce("rolled " + rollDice + " and moves accordingly.", currentPlayer);
-				delay(1000);
-				Square playerPosition = updatePlayerPosition(currentPlayer, rollDice);
-
-				handlePlayerLanding(currentPlayer, playerPosition);
-
-			} catch (IllegalArgumentException illegalArgumentException) {
-				System.out.println(illegalArgumentException.getMessage());
-			}
-
-			playTurn(currentPlayer); // outside the above try-catch to prevent user from missing their turn
-
-
-			// current player's turn is over, get the nextPlayer and set to currentPlayer
-			// nextPlayer will be the currentPlayer on the next iteration of loop
-			currentPlayer = getNextPlayer(currentPlayer);
-			// make sure player has action points before starting loop
-			currentPlayer.setActionPoints(DEFAULT_ACTION_POINTS);
-		}
-
-		if (endGame) {
-			endGame();
-		}
 	}
 
 	/**
@@ -207,11 +176,12 @@ public class Game {
 	}
 
 	/**
-	 * Takes an input from the user to confirm the number of players playing
+	 * Asks the user to confirm the number of players that will be playing the game. This is used to determine the number
+	 * of Player objects that should be created before the game starts.
 	 *
-	 * @return the number of players in the game
+	 * @return the number of players that need to be created for the game.
 	 */
-	public static int playersInTheGame() {
+	public static int confirmNumberOfPlayers() {
 
 		int numberOfPlayers = 0;
 		while (numberOfPlayers < MINIMUM_PLAYERS || numberOfPlayers > MAXIMUM_PLAYERS) {
@@ -230,18 +200,26 @@ public class Game {
 				return -1;
 			}
 		}
+
 		return numberOfPlayers;
 	}
 
 	/**
-	 * Sets the player names, starting position and starting resources
+	 * Creates a list of players for the game based on input from the user.
+	 * <p>
+	 * This will invoke confirmNumberOfPlayers() to get the number of players that need to be created. This method will
+	 * ask the user to input a name for each player and will then create the relevant player object, adding it to the
+	 * players list.
+	 * <p>
+	 * NOTE: duplicate player names are not accepted. If the same name is entered twice, the user will be prompted to
+	 * input a different name.
 	 *
-	 * @return a List of all the players
+	 * @return list of player objects that will take part in the game
 	 */
-	public static ArrayList<Player> createPlayers() {
+	public static List<Player> createPlayers() {
 		int numberOfPlayers;
 		do {
-			numberOfPlayers = playersInTheGame();
+			numberOfPlayers = confirmNumberOfPlayers();
 		} while (numberOfPlayers < 0);
 
 		System.out.println("Player names can have a maximum of " + MAXIMUM_PLAYER_NAME_LENGTH + " characters.");
@@ -261,16 +239,29 @@ public class Game {
 			playerNames.add(playerName.toLowerCase());
 			players.add(new Player(playerName, STARTING_RESOURCES, STARTING_POSITION));
 		}
-		setPlayers(players); // updates static List<Player> players (global scope)
+
 		return players;
 	}
 
 	/**
-	 * Randomises the list of players so that player turns are not based on the
-	 * order they were created.
+	 * Shuffles the order of the players list, this is to ensure the order that players take turns is random and not
+	 * based on the order they were created.
 	 */
-	public static void generatePlayerOrder() {
+	public static void randomiseOrderOfPlayers() {
 		Collections.shuffle(players);
+	}
+
+	/**
+	 * This method simulates the rolling of two dice and returns the sum of the two
+	 * values as an integer.
+	 *
+	 * @return sumOfDice the sum of the two dice rolls.
+	 */
+	public static int rollDice() {
+		int dice1 = (int) (Math.random() * MAXIMUM_DICE_ROLL + 1);
+		int dice2 = (int) (Math.random() * MAXIMUM_DICE_ROLL + 1);
+
+		return dice1 + dice2;
 	}
 
 	/**
@@ -281,20 +272,6 @@ public class Game {
 	 */
 	public static Player getNextPlayer(Player currentPlayer) {
 		return players.get((players.indexOf(currentPlayer) + 1) % players.size());
-	}
-
-	/**
-	 * This method simulates the rolling of two dice and returns the sum of the two
-	 * values as an integer.
-	 *
-	 * @return sumOfDice - the sum of the two dice rolls.
-	 */
-	public static int rollDice() {
-		int dice1 = (int) (Math.random() * MAXIMUM_DICE_ROLL + 1);
-		int dice2 = (int) (Math.random() * MAXIMUM_DICE_ROLL + 1);
-		int sumOfDice = dice1 + dice2;
-
-		return sumOfDice;
 	}
 
 	/**
@@ -352,7 +329,6 @@ public class Game {
 		return board.getSquares()[newBoardPosition];
 	}
 
-
 	/**
 	 * Allows the position of the current player to be purchased only if the
 	 * component is an instance of a square and component is not owned by another
@@ -375,293 +351,6 @@ public class Game {
 				Game.announce("already owns this component", currentPlayer);
 			}
 		}
-	}
-
-	/**
-	 * Displays the component the current player has landed on once position is
-	 * updated. takes a user response and allows player to purchase component if
-	 * user enters yes and component is offered to other players if user enters no.
-	 *
-	 * @param currentPlayer  takes the current player
-	 * @param playerPosition takes the current board position of the current player
-	 */
-	public static void offerComponentForPurchase(Player currentPlayer, Square playerPosition) {
-		currentPlayer.displayTurnStats();
-
-		if (playerPosition instanceof Component) {
-			Component component = (Component) playerPosition;
-
-			if (currentPlayer.getResourceBalance() < component.getComponentCost()) {
-				announce("you do not have sufficient resources to purchase " + component, currentPlayer);
-				return;
-			}
-
-			announce("do you want to purchase " + component + "?", currentPlayer);
-
-			boolean playerResponse = getPlayerConfirmation();
-
-			if (playerResponse) {
-				currentPlayer.purchaseComponent(playerPosition);
-			} else {
-				announce("decided not to purchase " + component + ". It will now be offered to other players.");
-				currentPlayer.offerComponentToOtherPlayers(component);
-			}
-		}
-	}
-
-	/**
-	 * controls the number of actions a player can take per turn. displays all the
-	 * actions applicable to the current player in a menu form. takes a user
-	 * response to allow user to select an option from the menu that takes method
-	 * calls. Once out of action points or end turn selected the loop will break and
-	 * next player will run
-	 *
-	 * @param currentPlayer takes an arraylist of players
-	 */
-
-	public static void playTurn(Player currentPlayer) {
-		int playerChoice;
-		String[] menuOptions = {"...MENU...", "1. Develop Component", "2. Trade components", "3. Display board status",
-				"4. Display my components", "5. End turn", "6. Leave game", "Selection..."};
-
-		while (currentPlayer.getActionPoints() > 0 && !endGame && !winGame) {
-
-			currentPlayer.displayTurnStats();
-
-			// loop through string array and output to screen using method
-			for (String option : menuOptions) {
-				announce(option, currentPlayer);
-			}
-
-			try {
-				playerChoice = scanner.nextInt();
-				System.out.println();
-
-				switch (playerChoice) {
-					case 1:
-						displayDevelopComponentMenu(currentPlayer);
-						checkAllSystemsFullyDeveloped();
-						break;
-					case 2:
-						displayTradeMenu(currentPlayer);
-						break;
-					case 3:
-						board.displayAllSquares();
-						break;
-					case 4:
-						displayPlayerComponents(currentPlayer);
-						break;
-					case 5:
-						announce("has ended their turn", currentPlayer);
-						currentPlayer.setActionPoints(0);
-						break;
-					case 6:
-						// this breaks the loop and within gameLoop the endGame method is called
-						boolean playerWantsToLeave = confirmPlayerWantsToLeave(currentPlayer);
-						if (playerWantsToLeave) {
-							endGame = true;
-						}
-						break;
-					default:
-						announce("Invalid option inputted", currentPlayer);
-				}
-			} catch (InputMismatchException inputMismatchException) {
-				System.out.println("Invalid input - please try again");
-			} catch (Exception exception) {
-				System.out.println(exception.getMessage());
-				System.out.println("There was a problem - please try again");
-			} finally {
-				scanner.nextLine();
-			}
-
-		}
-	}
-
-	/**
-	 * Creates an map of components which the active player can purchase. The
-	 * components included are subject to a number of constraints: 1) the component
-	 * must have an owner 2) the owner must not be the current player 3) the current
-	 * player must have sufficient resources to purchase the component
-	 *
-	 * @param player the current player
-	 * @return an map of identifiers and components that the player can trade for
-	 * @throws NullPointerException if the board object is null
-	 */
-	public static Map<Integer, Component> getComponentsForTrading(Player player) throws NullPointerException {
-		Map<Integer, Component> componentsWithOwners = new HashMap<Integer, Component>();
-		Component component;
-
-		if (board == null) {
-			throw new NullPointerException("Board object has not been created");
-		}
-
-		int counter = 1;
-
-		for (Square square : board.getSquares()) {
-			if (square instanceof Component) {
-				component = (Component) square;
-
-				if (component.isOwned() && component.getComponentOwner() != player
-						&& player.checkSufficientResources(component.getComponentCost())) {
-					componentsWithOwners.put(counter++, component);
-				}
-			}
-		}
-
-		return componentsWithOwners;
-	}
-
-	/**
-	 * Displays components that the currentPlayer does not own but ARE owned by
-	 * other players, so long as the currentPlayer has sufficient resources to trade
-	 * for them
-	 *
-	 * @param components a Map containing components available for trading
-	 * @return true if there are components to display, otherwise display false
-	 */
-	public static boolean displayComponentsForTrading(Map<Integer, Component> components) {
-		Component component;
-
-		System.out.println();
-
-		if (components.size() > 0) {
-			System.out.printf("%-5s %-40s %-30s %-15s %-30s %s\n", "REF", "COMPONENT NAME", "SYSTEM", "OWNER",
-					"DEVELOPMENT STAGE", "COST");
-
-			for (Map.Entry<Integer, Component> componentEntry : components.entrySet()) {
-				component = componentEntry.getValue();
-				System.out.printf("%-5s %-40s %-30s %-15s %-30s %s\n", componentEntry.getKey(), component,
-						component.getComponentSystem().getSystemName(), component.getComponentOwner(),
-						component.getDevelopmentStageName(), component.getComponentCost());
-			}
-
-			return true;
-		}
-
-		Game.announce("There are no components available to trade resources for. This is either because you do not "
-				+ "have enough resources and/or there are no components owned by other players at present.");
-		return false;
-	}
-
-	/**
-	 * Takes a map object and uses it to prompt the user to select a valid component
-	 * to perform an action on.
-	 *
-	 * @param components a map containing components as the value
-	 * @return a component object if a valid selection was made, otherwise will
-	 * return null
-	 */
-	public static Component getPlayerComponentSelection(Map<Integer, Component> components) {
-		String playerInput;
-		int playerSelection = -1;
-		Component component;
-
-		do {
-			System.out.printf("Input your selection (number only) or type 'end' to go back...");
-			playerInput = scanner.next();
-
-			if (playerInput.equalsIgnoreCase("end")) {
-				return null;
-			}
-
-			try {
-				playerSelection = Integer.parseInt(playerInput);
-			} catch (NumberFormatException e) {
-				System.out.println("Invalid entry");
-			}
-			System.out.println();
-
-			component = components.get(playerSelection);
-		} while (component == null);
-
-		return component;
-	}
-
-	/**
-	 * Outputs a list of components which the player can trade resources for, the
-	 * user is then prompted to select one of the list of components. If a valid
-	 * selection is made, the purchaseComponent method is invoked.
-	 *
-	 * @param player the current player
-	 */
-	public static void displayTradeMenu(Player player) {
-		Map<Integer, Component> componentsAvailable = getComponentsForTrading(player);
-
-		boolean menuDisplayed = displayComponentsForTrading(componentsAvailable);
-		System.out.println();
-
-		// menu displayed at least one component
-		if (menuDisplayed) {
-			// get user input
-			Component playerSelection = getPlayerComponentSelection(componentsAvailable);
-
-			// player did not select a component - return to main main
-			if (playerSelection == null) {
-				return;
-			}
-
-			System.out.println(player + " has selected to trade with " + playerSelection.getComponentOwner() + " for "
-					+ playerSelection);
-			// process the trade
-			player.tradeComponent(playerSelection);
-		}
-	}
-
-	/**
-	 * This method prints to screen a menu of components that can be developed to
-	 * the next stage. *
-	 *
-	 * @param components - a HashMap of Components with associated Integer keys
-	 *                   representing menu numbers
-	 */
-	public static void displayComponentsPlayerCanDevelop(Map<Integer, Component> components) {
-
-		try {
-			Component component;
-			System.out.println();
-			delay(500);
-			if (components.size() == 0) {
-				announce("You do not own any Artemis Systems containing components available for development");
-				return;
-			}
-			delay(500);
-			System.out.printf("%-5s %-40s %-30s %-20s %-30s %-25s\n", "REF", "COMPONENT NAME", "SYSTEM", "OWNER",
-					"DEVELOPMENT STAGE", Game.RESOURCE_NAME + " REQUIRED TO DEVELOP");
-			delay(200);
-			for (Map.Entry<Integer, Component> componentEntry : components.entrySet()) {
-				component = componentEntry.getValue();
-				System.out.printf("%-5s %-40s %-30s %-20s %-30s %-25s\n", componentEntry.getKey(), component,
-						component.getComponentSystem().getSystemName(), component.getComponentOwner(),
-						component.getDevelopmentStage() + " - "
-								+ component.getDevelopmentStageNamesMap().get(component.getDevelopmentStage()),
-						component.getCostToDevelop());
-			}
-			System.out.println();
-
-		} catch (NullPointerException nullPointerException) {
-			System.out.println("Error: Component map cannot be null");
-			return;
-		}
-	}
-
-	/**
-	 * Sorts the board's components according to the number of resources devoted.
-	 */
-	public static void sortComponentsByTotalResourcesDevoted() {
-
-		List<Component> gameComponents = new ArrayList<>();
-
-		for (Square square : board.getSquares()) {
-			if (square instanceof Component) {
-				Component component = (Component) square;
-				gameComponents.add(component);
-			}
-		}
-
-		Collections.sort(gameComponents, new CompareByCounterOfResourcesDevoted());
-
-		displayAllComponentsNameSystemResourcesDevoted(gameComponents);
-
 	}
 
 	/**
@@ -720,131 +409,152 @@ public class Game {
 	}
 
 	/**
-	 * Outputs to screen key information about the components the player has developed to the maximum stage.
+	 * Outputs a list of components which the player can trade resources for, the
+	 * user is then prompted to select one of the list of components. If a valid
+	 * selection is made, the purchaseComponent method is invoked.
 	 *
-	 * @param player - the current player.
+	 * @param player the current player
 	 */
-	public static void displayPlayerFullyDevelopedComponents(Player player) {
+	public static void displayTradeMenu(Player player) {
+		Map<Integer, Component> componentsAvailable = getComponentsForTrading(player);
 
-		List<Component> fullyDevelopedComponents = player.getFullyDevelopedComponents();
+		boolean menuDisplayed = displayComponentsForTrading(componentsAvailable);
+		System.out.println();
 
-		if (fullyDevelopedComponents.isEmpty()) {
-			delay(200);
-			Game.announce("has not fully developed any components yet.", player);
+		// menu displayed at least one component
+		if (menuDisplayed) {
+			// get user input
+			Component playerSelection = getPlayerComponentSelection(componentsAvailable);
+
+			// player did not select a component - return to main main
+			if (playerSelection == null) {
+				return;
+			}
+
+			System.out.println(player + " has selected to trade with " + playerSelection.getComponentOwner() + " for "
+					+ playerSelection);
+			// process the trade
+			player.tradeComponent(playerSelection);
+		}
+	}
+
+	/**
+	 * Displays key information about the player's owned components
+	 *
+	 * @param player the player whose components will be displayed
+	 */
+	public static void displayPlayerComponents(Player player) {
+
+		if (player.getOwnedComponents().isEmpty()) {
+			Game.announce("does not own any components", player);
 		} else {
-			delay(200);
-			Game.announce("has fully developed the following components so far:\n", player);
-			delay(200);
+			Game.announce("owns the following components:\n", player);
+
 			System.out.printf("%-12s %-40s %-30s %-30s\n", "POSITION", "NAME", "SYSTEM", "DEVELOPMENT STAGE");
 
-			fullyDevelopedComponents.sort(new CompareByPosition());
+			List<Component> componentList = player.getOwnedComponents();
 
-			for (Component component : fullyDevelopedComponents) {
+			Collections.sort(componentList, new CompareByPosition());
+
+			for (Component component : player.getOwnedComponents()) {
 				component.displaySquarePositionNameSystemAndDevelopmentStage();
 			}
-
-			System.out.println();
 		}
 	}
 
 	/**
-	 * Outputs a message to the screen for all players to view.
+	 * This method confirms if the current player wishes to leave the game. If the
+	 * player inputs yes then game will end and if no then game will continue.
 	 *
-	 * @param message - the message to be outputted
+	 * @param currentPlayer is the player opting to leave
+	 * @return boolean to accept true or false conditions
 	 */
-	public static void announce(String message) {
+	public static boolean confirmPlayerWantsToLeave(Player currentPlayer) {
 
-		int borderLength = message.length();
+		announce("Are you sure you want to leave the game?", currentPlayer);
+		boolean playerResponse = getPlayerConfirmation();
 
-		System.out.println();
-
-		for (int loop = 0; loop < borderLength; loop++) {
-			System.out.print("-");
+		if (playerResponse) {
+			delay(1000);
+			announce(currentPlayer + " has chosen to abort the mission");
+			return true;
 		}
 
-		System.out.println("\n" + message);
-
-		for (int loop = 0; loop < borderLength; loop++) {
-			System.out.print("-");
-		}
-
-		System.out.println();
-		System.out.println();
+		return false;
 	}
 
 	/**
-	 * Outputs a message to the screen for all players to view.
+	 * controls the number of actions a player can take per turn. displays all the
+	 * actions applicable to the current player in a menu form. takes a user
+	 * response to allow user to select an option from the menu that takes method
+	 * calls. Once out of action points or end turn selected the loop will break and
+	 * next player will run
 	 *
-	 * @param message       the message to be outputted
-	 * @param currentPlayer the player object representing the current player
+	 * @param currentPlayer takes an arraylist of players
 	 */
-	public static void announce(String message, Player currentPlayer) {
-		String playerName = String.format("[%s]", currentPlayer.getPlayerName().toUpperCase());
-		System.out.printf("%s %s\n", playerName, message);
-	}
+	public static void playTurn(Player currentPlayer) {
+		int playerChoice;
+		String[] menuOptions = {"...MENU...", "1. Develop Component", "2. Trade components", "3. Display board status",
+				"4. Display my components", "5. End turn", "6. Leave game", "Selection..."};
 
-	/**
-	 * This method allocates the default number of resources once a player lands on
-	 * or passes the Recruitment square
-	 *
-	 * @param currentPlayer
-	 */
-	public static void allocateResources(Player currentPlayer) {
+		while (currentPlayer.getActionPoints() > 0 && !endGame && !winGame) {
 
-		String updatedResourceBalanceAnnouncement;
+			currentPlayer.displayTurnStats();
 
-		if (currentPlayer == null) {
-			throw new IllegalArgumentException("Current player cannot be null");
-		}
-
-		// add default resources to current player's balance
-		currentPlayer.setResourceBalance(currentPlayer.getResourceBalance() + DEFAULT_RESOURCES);
-
-		updatedResourceBalanceAnnouncement = "Recruitment drive! It's time for some fresh ideas. "
-				+ currentPlayer.getPlayerName() + " has added " + DEFAULT_RESOURCES + " " + RESOURCE_NAME
-				+ " to their team.";
-
-		announce(updatedResourceBalanceAnnouncement);
-
-	}
-
-	/**
-	 * Adds the total amount of turns taken in the game and gives the average number of turns to develop each system
-	 */
-	public static void displayTotalNumberOfTurns() {
-		int totalNumberOfTurns = 0;
-		double averageTurnsToUpgradeASystem;
-		for (Player player : players) {
-			totalNumberOfTurns += player.getTurnCounter();
-		}
-
-		System.out.println("\n\nIt has taken a combined effort of " + totalNumberOfTurns + " turns to successfully launch the system.");
-		averageTurnsToUpgradeASystem = (double) totalNumberOfTurns / board.getSystems().length;
-		System.out.printf("There was an average of %.2f turns to complete each system.", averageTurnsToUpgradeASystem);
-	}
-
-	/**
-	 * Checks if all systems have been fully developed and runs winGame method
-	 *
-	 * @return winGame boolean to check if the game has been won
-	 */
-	public static boolean checkAllSystemsFullyDeveloped() {
-		int counter = 0;
-		for (ArtemisSystem system : board.getSystems()) {
-			if (system.checkFullyDeveloped()) {
-				counter++;
+			// loop through string array and output to screen using method
+			for (String option : menuOptions) {
+				announce(option, currentPlayer);
 			}
+
+			try {
+				playerChoice = scanner.nextInt();
+				System.out.println();
+
+				switch (playerChoice) {
+					case 1:
+						displayDevelopComponentMenu(currentPlayer);
+						checkAllSystemsFullyDeveloped();
+						break;
+					case 2:
+						displayTradeMenu(currentPlayer);
+						break;
+					case 3:
+						board.displayAllSquares();
+						break;
+					case 4:
+						displayPlayerComponents(currentPlayer);
+						break;
+					case 5:
+						announce("has ended their turn", currentPlayer);
+						currentPlayer.setActionPoints(0);
+						break;
+					case 6:
+						// this breaks the loop and within gameLoop the endGame method is called
+						boolean playerWantsToLeave = confirmPlayerWantsToLeave(currentPlayer);
+						if (playerWantsToLeave) {
+							endGame = true;
+						}
+						break;
+					default:
+						announce("Invalid option", currentPlayer);
+				}
+			} catch (InputMismatchException inputMismatchException) {
+				System.out.println("Invalid input - please try again");
+			} catch (Exception exception) {
+				System.out.println(exception.getMessage());
+				System.out.println("There was a problem - please try again");
+			}
+
+			if (currentPlayer.getResourceBalance() == 0) {
+				// game is over when any player's balance reaches zero
+				endGame = true;
+			}
+
 		}
-		if (counter == board.getSystems().length) {
-			winGame();
-			winGame = true;
-		}
-		return winGame;
 	}
 
 	/**
-	 * Displays to the players that the game has been won along with stats about the
-	 * game
+	 * Displays to the players that the game has been won along with stats about the game
 	 */
 	public static void winGame() {
 		int totalNumberOfExperts = 0;
@@ -912,7 +622,7 @@ public class Game {
 		announce("In 2022");
 		delay(2000);
 		System.out.println(
-				"Following the success of the crewless expedition, the brave crew of Artemis II partcipates in the first manned test flight to check critical systems.");
+				"Following the success of the crewless expedition, the brave crew of Artemis II participates in the first manned test flight to check critical systems.");
 		delay(2000);
 		System.out.println("The spacecraft manages to orbit the Moon and its crew returns home safely.");
 		delay(2000);
@@ -982,161 +692,6 @@ public class Game {
 	}
 
 	/**
-	 * This post-game method sorts the final list of players according to how many
-	 * times they declined resources from other players during the course of the
-	 * game. It uses the CompareByCounterOfTimesPlayerDeclinedResources comparator
-	 * to perform the sort and returns a sorted ArrayList of Player objects.
-	 *
-	 * @return sortedList - the sorted list of players, ranked from most times
-	 * declined resources to least times
-	 */
-	public static List<Player> sortPlayersByCounterOfTimesDeclinedResources() {
-
-		List<Player> sortedList = players;
-
-		if (players == null) {
-			throw new NullPointerException("Error: Player list cannot be null");
-		}
-
-		// perform the sort
-		if (players.size() <= MAXIMUM_PLAYERS && players.size() >= MINIMUM_PLAYERS) {
-			CompareByCounterOfTimesPlayerDeclinedResources compareByNumberOfTimesDeclinedResources = new CompareByCounterOfTimesPlayerDeclinedResources();
-			Collections.sort(players, compareByNumberOfTimesDeclinedResources);
-		} else {
-			System.out.println("Error: The player list must be between " + MINIMUM_PLAYERS + " and " + MAXIMUM_PLAYERS
-					+ " (inclusive)");
-		}
-
-		return sortedList;
-
-	}
-
-	public static void displayAllComponentsNameSystemResourcesDevoted(List<Component> componentList) {
-
-		delay(500);
-		System.out.printf("%-40s %-30s %-30s\n", "COMPONENT", "SYSTEM", "TOTAL " + Game.RESOURCE_NAME + " DEVOTED");
-
-		for (Component component : componentList) {
-			delay(500);
-			component.displayNameSystemAndTotalResourcesDevoted();
-		}
-	}
-
-	/**
-	 * Displays key information about the player's owned components
-	 *
-	 * @param player
-	 */
-	public static void displayPlayerComponents(Player player) {
-
-		if (player.getOwnedComponents().isEmpty()) {
-			Game.announce("does not own any components", player);
-		} else {
-			Game.announce("owns the following components:\n", player);
-
-			System.out.printf("%-12s %-40s %-30s %-30s\n", "POSITION", "NAME", "SYSTEM", "DEVELOPMENT STAGE");
-
-			List<Component> componentList = player.getOwnedComponents();
-
-			Collections.sort(componentList, new CompareByPosition());
-
-			for (Component component : player.getOwnedComponents()) {
-				component.displaySquarePositionNameSystemAndDevelopmentStage();
-			}
-		}
-	}
-
-	/**
-	 * This post-game method displays to screen all player names alongside a count
-	 * of how many times they declined resources over the course of the game.
-	 * <p>
-	 * Could be used to display other endgame stats.
-	 *
-	 * @param playerList
-	 */
-	public static void displayTimesDeclinedResourcesStats(List<Player> playerList) {
-
-		// column headers
-		delay(1000);
-		System.out.printf("%-20s %-10s\n", "PLAYER", "NUMBER OF TIMES DECLINED RESOURCES");
-
-		// print stats to screen
-		for (Player player : playerList) {
-			delay(500);
-			System.out.printf("%-20s %-10s\n", player.getPlayerName(), player.getCountOfTimesPlayerDeclinedResources());
-		}
-
-		// display player(s) who declined most often
-		String nameOfPlayersWithMostDeclines = null;
-		String messageText, additionalText;
-		int mostTimesDeclinedNumber, numberOfPlayersWithHighestNumberOfDeclines, playersAddedToText;
-		CompareByCounterOfTimesPlayerDeclinedResources declineResourcesComparator = new CompareByCounterOfTimesPlayerDeclinedResources();
-
-		mostTimesDeclinedNumber = Collections.min(playerList, declineResourcesComparator)
-				.getCountOfTimesPlayerDeclinedResources();
-
-		if (mostTimesDeclinedNumber > 0) {
-			numberOfPlayersWithHighestNumberOfDeclines = 0;
-
-			for (Player player : playerList) {
-				if (player.getCountOfTimesPlayerDeclinedResources() == mostTimesDeclinedNumber) {
-					numberOfPlayersWithHighestNumberOfDeclines++;
-				}
-			}
-
-			playersAddedToText = 0;
-
-			for (int loop = 0; loop < playerList.size(); loop++) {
-				Player player = playerList.get(loop);
-				if (player.getCountOfTimesPlayerDeclinedResources() == mostTimesDeclinedNumber
-						&& nameOfPlayersWithMostDeclines == null) {
-					nameOfPlayersWithMostDeclines = player.getPlayerName();
-					playersAddedToText++;
-				} else if (player.getCountOfTimesPlayerDeclinedResources() == mostTimesDeclinedNumber
-						&& nameOfPlayersWithMostDeclines.length() > 0
-						&& playersAddedToText == numberOfPlayersWithHighestNumberOfDeclines - 1) {
-					additionalText = " and " + player.getPlayerName();
-					nameOfPlayersWithMostDeclines += additionalText;
-					playersAddedToText++;
-				} else if (player.getCountOfTimesPlayerDeclinedResources() == mostTimesDeclinedNumber) {
-					additionalText = ", " + player.getPlayerName();
-					nameOfPlayersWithMostDeclines += additionalText;
-					playersAddedToText++;
-				}
-			}
-
-			messageText = nameOfPlayersWithMostDeclines + " declined " + RESOURCE_NAME + " on the most occasions.";
-			delay(1000);
-			System.out.println("\n" + messageText);
-		} else {
-			delay(1000);
-			System.out.println("\nAt no point in the game did a player refuse to accept resources");
-		}
-
-	}
-
-	/**
-	 * This method confirms if the current player wishes to leave the game. If the
-	 * player inputs yes then game will end and if no then game will continue.
-	 *
-	 * @param currentPlayer is the player opting to leave
-	 * @return boolean to accept true or false conditions
-	 */
-	public static boolean confirmPlayerWantsToLeave(Player currentPlayer) {
-
-		announce("Are you sure you want to leave the game?", currentPlayer);
-		boolean playerResponse = getPlayerConfirmation();
-
-		if (playerResponse) {
-			delay(1000);
-			announce(currentPlayer + " has chosen to abort the mission");
-			return true;
-		}
-
-		return false;
-	}
-
-	/**
 	 * This end of game method gives the final state of play when the game has
 	 * ended. It displays to screen the final resources available to players before
 	 * game ended, owned components and systems and player who refused to accept
@@ -1185,6 +740,212 @@ public class Game {
 		displayTimesDeclinedResourcesStats(listOfPlayersSortedByTimesDeclinedResources);
 
 		announce("GAME ENDED");
+	}
+
+	/**
+	 * Responsible for handling all player interactions with the game.
+	 * <p>
+	 * It handles each player's turn, enabling them to perform any permissible
+	 * action so long as they have more than 0 action points. When the player runs
+	 * out of action points, the game moves on to the next player in the sequence.
+	 * <p>
+	 * At the end of a player's turn, the currentPlayer is set to the next player in
+	 * the sequence and their action points are set to the default amount (i.e.
+	 * reset).
+	 * <p>
+	 * The loop will end on any player's turn if a player leaves (setting endGame to
+	 * true).
+	 */
+	public static void gameLoop() {
+		// set currentPlayer to the first player in the arraylist
+		Player currentPlayer = players.get(0);
+
+		while (currentPlayer.getActionPoints() > 0 && !endGame && !winGame) {
+			try {
+				announce(String.format("Player %s it's your turn...make it count!", currentPlayer));
+
+				currentPlayer.incrementTurnCounter();
+
+				int rollDice = rollDice();
+
+				// let everyone know the player has moved
+				announce("is rolling the dice...", currentPlayer);
+				delay(2000);
+				announce("rolled " + rollDice + " and moves accordingly.", currentPlayer);
+				delay(1000);
+				Square playerPosition = updatePlayerPosition(currentPlayer, rollDice);
+
+				handlePlayerLanding(currentPlayer, playerPosition);
+
+			} catch (IllegalArgumentException illegalArgumentException) {
+				System.out.println(illegalArgumentException.getMessage());
+			}
+
+			playTurn(currentPlayer); // outside the above try-catch to prevent user from missing their turn
+
+
+			// current player's turn is over, get the nextPlayer and set to currentPlayer
+			// nextPlayer will be the currentPlayer on the next iteration of loop
+			currentPlayer = getNextPlayer(currentPlayer);
+			// make sure player has action points before starting loop
+			currentPlayer.setActionPoints(DEFAULT_ACTION_POINTS);
+		}
+
+		if (winGame) {
+			winGame();
+		}
+
+		if (endGame) {
+			endGame();
+		}
+	}
+
+
+	/**
+	 * Displays the component the current player has landed on once position is
+	 * updated. takes a user response and allows player to purchase component if
+	 * user enters yes and component is offered to other players if user enters no.
+	 *
+	 * @param currentPlayer  takes the current player
+	 * @param playerPosition takes the current board position of the current player
+	 */
+	public static void offerComponentForPurchase(Player currentPlayer, Square playerPosition) {
+		currentPlayer.displayTurnStats();
+
+		if (playerPosition instanceof Component) {
+			Component component = (Component) playerPosition;
+
+			if (currentPlayer.getResourceBalance() < component.getComponentCost()) {
+				announce("you do not have sufficient resources to purchase " + component, currentPlayer);
+				return;
+			}
+
+			announce("do you want to purchase " + component + "?", currentPlayer);
+
+			boolean playerResponse = getPlayerConfirmation();
+
+			if (playerResponse) {
+				currentPlayer.purchaseComponent(playerPosition);
+			} else {
+				announce("decided not to purchase " + component + ". It will now be offered to other players.");
+				currentPlayer.offerComponentToOtherPlayers(component);
+			}
+		}
+	}
+
+	/**
+	 * Creates an map of components which the active player can purchase. The
+	 * components included are subject to a number of constraints: 1) the component
+	 * must have an owner 2) the owner must not be the current player 3) the current
+	 * player must have sufficient resources to purchase the component
+	 *
+	 * @param player the current player
+	 * @return an map of identifiers and components that the player can trade for
+	 * @throws NullPointerException if the board object is null
+	 */
+	public static Map<Integer, Component> getComponentsForTrading(Player player) throws NullPointerException {
+		Map<Integer, Component> componentsWithOwners = new HashMap<Integer, Component>();
+		Component component;
+
+		if (board == null) {
+			throw new NullPointerException("Board object has not been created");
+		}
+
+		int counter = 1;
+
+		for (Square square : board.getSquares()) {
+			if (square instanceof Component) {
+				component = (Component) square;
+
+				if (component.isOwned() && component.getComponentOwner() != player
+						&& player.checkSufficientResources(component.getComponentCost())) {
+					componentsWithOwners.put(counter++, component);
+				}
+			}
+		}
+
+		return componentsWithOwners;
+	}
+
+	/**
+	 * Takes a map object and uses it to prompt the user to select a valid component
+	 * to perform an action on.
+	 *
+	 * @param components a map containing components as the value
+	 * @return a component object if a valid selection was made, otherwise will
+	 * return null
+	 */
+	public static Component getPlayerComponentSelection(Map<Integer, Component> components) {
+		String playerInput;
+		int playerSelection = -1;
+		Component component;
+
+		do {
+			System.out.print("Input your selection (number only) or type 'end' to go back...");
+			playerInput = scanner.next();
+
+			if (playerInput.equalsIgnoreCase("end")) {
+				return null;
+			}
+
+			try {
+				playerSelection = Integer.parseInt(playerInput);
+			} catch (NumberFormatException e) {
+				System.out.println("Invalid entry");
+			}
+			System.out.println();
+
+			component = components.get(playerSelection);
+		} while (component == null);
+
+		return component;
+	}
+
+	/**
+	 * This method allocates the default number of resources once a player lands on
+	 * or passes the Recruitment square
+	 *
+	 * @param currentPlayer the player whose resources will be updated
+	 */
+	public static void allocateResources(Player currentPlayer) {
+		String updatedResourceBalanceAnnouncement;
+
+		if (currentPlayer == null) {
+			throw new IllegalArgumentException("Current player cannot be null");
+		}
+
+		// add default resources to current player's balance
+		currentPlayer.setResourceBalance(currentPlayer.getResourceBalance() + DEFAULT_RESOURCES);
+
+		updatedResourceBalanceAnnouncement = "Recruitment drive! It's time for some fresh ideas. "
+				+ currentPlayer.getPlayerName() + " has added " + DEFAULT_RESOURCES + " " + RESOURCE_NAME
+				+ " to their team.";
+
+		announce(updatedResourceBalanceAnnouncement);
+	}
+
+	/**
+	 * Checks if all systems have been fully developed and sets the Game class variable, winGame = true.
+	 * <p>
+	 * A system is fully developed when all components with the System have reached the maximum attainable development
+	 * stage.
+	 *
+	 * @return true - if all systems are fully developed; false - if systems are not fully developed.
+	 */
+	public static boolean checkAllSystemsFullyDeveloped() {
+		int counter = 0;
+		for (ArtemisSystem system : board.getSystems()) {
+			if (system.checkFullyDeveloped()) {
+				counter++;
+			}
+		}
+
+		if (counter > 0 && counter == board.getSystems().length) {
+			winGame = true;
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -1270,16 +1031,12 @@ public class Game {
 
 		} while (!playerResponse.equalsIgnoreCase("yes") && !playerResponse.equalsIgnoreCase("no"));
 
-		if (playerResponse.equalsIgnoreCase("yes")) {
-			return true;
-		}
-
-		return false;
+		return playerResponse.equalsIgnoreCase("yes");
 	}
 
 	/**
 	 * Invokes Thread.sleep to pause programme execution for the specified number of milliseconds. This will only
-	 * execute if the game is not in test mode, otherwise, the code does not execute (i.e. THread.sleep is not invoked).
+	 * execute if the game is not in test mode, otherwise, the code does not execute (i.e. Thread.sleep is not invoked).
 	 * <p>
 	 * This method also handles the exceptions so that try-catch blocks are not required each time.
 	 *
@@ -1295,6 +1052,288 @@ public class Game {
 		} catch (InterruptedException interruptedException) {
 			System.out.println("Interrupted");
 		}
+	}
+
+	/**
+	 * Outputs a message to the screen for all players to view.
+	 *
+	 * @param message - the message to be outputted
+	 */
+	public static void announce(String message) {
+
+		int borderLength = message.length();
+
+		System.out.println();
+
+		for (int loop = 0; loop < borderLength; loop++) {
+			System.out.print("-");
+		}
+
+		System.out.println("\n" + message);
+
+		for (int loop = 0; loop < borderLength; loop++) {
+			System.out.print("-");
+		}
+
+		System.out.println();
+		System.out.println();
+	}
+
+	/**
+	 * Outputs a message to the screen for all players to view.
+	 *
+	 * @param message       the message to be outputted
+	 * @param currentPlayer the player object representing the current player
+	 */
+	public static void announce(String message, Player currentPlayer) {
+		String playerName = String.format("[%s]", currentPlayer.getPlayerName().toUpperCase());
+		System.out.printf("%s %s\n", playerName, message);
+	}
+
+	/**
+	 * Displays components that the currentPlayer does not own but ARE owned by
+	 * other players, so long as the currentPlayer has sufficient resources to trade
+	 * for them
+	 *
+	 * @param components a Map containing components available for trading
+	 * @return true if there are components to display, otherwise display false
+	 */
+	public static boolean displayComponentsForTrading(Map<Integer, Component> components) {
+		Component component;
+
+		System.out.println();
+
+		if (components.size() > 0) {
+			System.out.printf("%-5s %-40s %-30s %-15s %-30s %s\n", "REF", "COMPONENT NAME", "SYSTEM", "OWNER",
+					"DEVELOPMENT STAGE", "COST");
+
+			for (Map.Entry<Integer, Component> componentEntry : components.entrySet()) {
+				component = componentEntry.getValue();
+				System.out.printf("%-5s %-40s %-30s %-15s %-30s %s\n", componentEntry.getKey(), component,
+						component.getComponentSystem().getSystemName(), component.getComponentOwner(),
+						component.getDevelopmentStageName(), component.getComponentCost());
+			}
+
+			return true;
+		}
+
+		Game.announce("There are no components available to trade resources for. This is either because you do not "
+				+ "have enough resources and/or there are no components owned by other players at present.");
+		return false;
+	}
+
+	/**
+	 * This method prints to screen a menu of components that can be developed to
+	 * the next stage.
+	 *
+	 * @param components - a HashMap of Components with associated Integer keys
+	 *                   representing menu numbers
+	 */
+	public static void displayComponentsPlayerCanDevelop(Map<Integer, Component> components) {
+
+		try {
+			Component component;
+			System.out.println();
+			delay(500);
+			if (components.size() == 0) {
+				announce("You do not own any Artemis Systems containing components available for development");
+				return;
+			}
+			delay(500);
+			System.out.printf("%-5s %-40s %-30s %-20s %-30s %-25s\n", "REF", "COMPONENT NAME", "SYSTEM", "OWNER",
+					"DEVELOPMENT STAGE", Game.RESOURCE_NAME + " REQUIRED TO DEVELOP");
+			delay(200);
+			for (Map.Entry<Integer, Component> componentEntry : components.entrySet()) {
+				component = componentEntry.getValue();
+				System.out.printf("%-5s %-40s %-30s %-20s %-30s %-25s\n", componentEntry.getKey(), component,
+						component.getComponentSystem().getSystemName(), component.getComponentOwner(),
+						component.getDevelopmentStage() + " - "
+								+ component.getDevelopmentStageNamesMap().get(component.getDevelopmentStage()),
+						component.getCostToDevelop());
+			}
+			System.out.println();
+
+		} catch (NullPointerException nullPointerException) {
+			System.out.println("Error: Component map cannot be null");
+		}
+	}
+
+	/**
+	 * Outputs to screen key information about the components the player has developed to the maximum stage.
+	 *
+	 * @param player - the current player.
+	 */
+	public static void displayPlayerFullyDevelopedComponents(Player player) {
+
+		List<Component> fullyDevelopedComponents = player.getFullyDevelopedComponents();
+
+		if (fullyDevelopedComponents.isEmpty()) {
+			delay(200);
+			Game.announce("has not fully developed any components yet.", player);
+		} else {
+			delay(200);
+			Game.announce("has fully developed the following components so far:\n", player);
+			delay(200);
+			System.out.printf("%-12s %-40s %-30s %-30s\n", "POSITION", "NAME", "SYSTEM", "DEVELOPMENT STAGE");
+
+			fullyDevelopedComponents.sort(new CompareByPosition());
+
+			for (Component component : fullyDevelopedComponents) {
+				component.displaySquarePositionNameSystemAndDevelopmentStage();
+			}
+
+			System.out.println();
+		}
+	}
+
+	/**
+	 * Adds the total amount of turns taken in the game and gives the average number of turns to develop each system
+	 */
+	public static void displayTotalNumberOfTurns() {
+		int totalNumberOfTurns = 0;
+		double averageTurnsToUpgradeASystem;
+		for (Player player : players) {
+			totalNumberOfTurns += player.getTurnCounter();
+		}
+
+		System.out.println("\n\nIt has taken a combined effort of " + totalNumberOfTurns + " turns to successfully launch the system.");
+		averageTurnsToUpgradeASystem = (double) totalNumberOfTurns / board.getSystems().length;
+		System.out.printf("There was an average of %.2f turns to complete each system.", averageTurnsToUpgradeASystem);
+	}
+
+	/**
+	 * Lists all components with the number of resources that were devoted to each.
+	 *
+	 * @param componentList list of components
+	 */
+	public static void displayAllComponentsNameSystemResourcesDevoted(List<Component> componentList) {
+
+		delay(500);
+		System.out.printf("%-40s %-30s %-30s\n", "COMPONENT", "SYSTEM", "TOTAL " + Game.RESOURCE_NAME + " DEVOTED");
+
+		for (Component component : componentList) {
+			delay(500);
+			component.displayNameSystemAndTotalResourcesDevoted();
+		}
+	}
+
+	/**
+	 * This post-game method displays to screen all player names alongside a count
+	 * of how many times they declined resources over the course of the game.
+	 * <p>
+	 * Could be used to display other endgame stats.
+	 *
+	 * @param playerList list of players in the game
+	 */
+	public static void displayTimesDeclinedResourcesStats(List<Player> playerList) {
+
+		// column headers
+		delay(1000);
+		System.out.printf("%-20s %-10s\n", "PLAYER", "NUMBER OF TIMES DECLINED RESOURCES");
+
+		// print stats to screen
+		for (Player player : playerList) {
+			delay(500);
+			System.out.printf("%-20s %-10s\n", player.getPlayerName(), player.getCountOfTimesPlayerDeclinedResources());
+		}
+
+		// display player(s) who declined most often
+		String nameOfPlayersWithMostDeclines = null;
+		String messageText, additionalText;
+		int mostTimesDeclinedNumber, numberOfPlayersWithHighestNumberOfDeclines, playersAddedToText;
+		CompareByCounterOfTimesPlayerDeclinedResources declineResourcesComparator = new CompareByCounterOfTimesPlayerDeclinedResources();
+
+		mostTimesDeclinedNumber = Collections.min(playerList, declineResourcesComparator)
+				.getCountOfTimesPlayerDeclinedResources();
+
+		if (mostTimesDeclinedNumber > 0) {
+			numberOfPlayersWithHighestNumberOfDeclines = 0;
+
+			for (Player player : playerList) {
+				if (player.getCountOfTimesPlayerDeclinedResources() == mostTimesDeclinedNumber) {
+					numberOfPlayersWithHighestNumberOfDeclines++;
+				}
+			}
+
+			playersAddedToText = 0;
+
+			for (int loop = 0; loop < playerList.size(); loop++) {
+				Player player = playerList.get(loop);
+				if (player.getCountOfTimesPlayerDeclinedResources() == mostTimesDeclinedNumber
+						&& nameOfPlayersWithMostDeclines == null) {
+					nameOfPlayersWithMostDeclines = player.getPlayerName();
+					playersAddedToText++;
+				} else if (player.getCountOfTimesPlayerDeclinedResources() == mostTimesDeclinedNumber
+						&& nameOfPlayersWithMostDeclines.length() > 0
+						&& playersAddedToText == numberOfPlayersWithHighestNumberOfDeclines - 1) {
+					additionalText = " and " + player.getPlayerName();
+					nameOfPlayersWithMostDeclines += additionalText;
+					playersAddedToText++;
+				} else if (player.getCountOfTimesPlayerDeclinedResources() == mostTimesDeclinedNumber) {
+					additionalText = ", " + player.getPlayerName();
+					nameOfPlayersWithMostDeclines += additionalText;
+					playersAddedToText++;
+				}
+			}
+
+			messageText = nameOfPlayersWithMostDeclines + " declined " + RESOURCE_NAME + " on the most occasions.";
+			delay(1000);
+			System.out.println("\n" + messageText);
+		} else {
+			delay(1000);
+			System.out.println("\nAt no point in the game did a player refuse to accept resources");
+		}
+
+	}
+
+	/**
+	 * Sorts the board's components according to the number of resources devoted.
+	 */
+	public static void sortComponentsByTotalResourcesDevoted() {
+
+		List<Component> gameComponents = new ArrayList<>();
+
+		for (Square square : board.getSquares()) {
+			if (square instanceof Component) {
+				Component component = (Component) square;
+				gameComponents.add(component);
+			}
+		}
+
+		Collections.sort(gameComponents, new CompareByCounterOfResourcesDevoted());
+
+		displayAllComponentsNameSystemResourcesDevoted(gameComponents);
+
+	}
+
+	/**
+	 * This post-game method sorts the final list of players according to how many
+	 * times they declined resources from other players during the course of the
+	 * game. It uses the CompareByCounterOfTimesPlayerDeclinedResources comparator
+	 * to perform the sort and returns a sorted ArrayList of Player objects.
+	 *
+	 * @return sortedList - the sorted list of players, ranked from most times
+	 * declined resources to least times
+	 */
+	public static List<Player> sortPlayersByCounterOfTimesDeclinedResources() {
+
+		List<Player> sortedList = players;
+
+		if (players == null) {
+			throw new NullPointerException("Error: Player list cannot be null");
+		}
+
+		// perform the sort
+		if (players.size() <= MAXIMUM_PLAYERS && players.size() >= MINIMUM_PLAYERS) {
+			CompareByCounterOfTimesPlayerDeclinedResources compareByNumberOfTimesDeclinedResources = new CompareByCounterOfTimesPlayerDeclinedResources();
+			Collections.sort(players, compareByNumberOfTimesDeclinedResources);
+		} else {
+			System.out.println("Error: The player list must be between " + MINIMUM_PLAYERS + " and " + MAXIMUM_PLAYERS
+					+ " (inclusive)");
+		}
+
+		return sortedList;
+
 	}
 
 	// getters and setters
@@ -1370,5 +1409,19 @@ public class Game {
 	 */
 	public static void setScanner(Scanner scanner) {
 		Game.scanner = scanner;
+	}
+
+	/**
+	 * @return the value of endGame
+	 */
+	public static boolean isEndGame() {
+		return endGame;
+	}
+
+	/**
+	 * @return the value of winGame
+	 */
+	public static boolean isWinGame() {
+		return winGame;
 	}
 }
