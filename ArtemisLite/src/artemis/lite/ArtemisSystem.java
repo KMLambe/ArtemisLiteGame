@@ -14,7 +14,7 @@ public class ArtemisSystem {
 
 	private String systemName;
 	private Player systemOwner;
-	private ArrayList<Component> componentsInSystem = new ArrayList<>();
+	private final List<Component> componentsInSystem = new ArrayList<>();
 
 	/**
 	 * Default constructor
@@ -88,7 +88,7 @@ public class ArtemisSystem {
 	/**
 	 * @return the componentsInSystem
 	 */
-	public ArrayList<Component> getComponentsInSystem() {
+	public List<Component> getComponentsInSystem() {
 		return componentsInSystem;
 	}
 
