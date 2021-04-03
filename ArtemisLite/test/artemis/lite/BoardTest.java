@@ -55,6 +55,7 @@ class BoardTest {
 
         // create test objects
         b = new Board();
+        Game.setBoard(b);
 
         // let game class know it is running tests
         Game.setTestMode(true);
@@ -189,4 +190,36 @@ class BoardTest {
 
         assertTrue(illegalArgumentException.getMessage().toLowerCase().contains("too many squares added"));
     }
+
+    @Test
+    void addDevelopedSystemValid() {
+        s1 = b.createSystem(sysName1);
+        // check that system was created
+        assertEquals(sysName1, s1.getSystemName());
+
+        // add component to system
+        square1 = b.createSquare(validSqName1, validCost1, validDevelopmentCost1, validLandingCost1, s1);
+        square2 = b.createSquare(validSqName2, validCost2, validDevelopmentCost2, validLandingCost2, s1);
+
+        // recast squares as components
+        Component component1 = (Component) square1;
+        Component component2 = (Component) square2;
+        s1.addComponent(component1);
+        s1.addComponent(component2);
+
+        // develop one component and try
+        component1.setDevelopmentStage(4);
+
+        // try and add the system as fully developed
+        assertFalse(b.addDevelopedSystem(s1));
+        // check the list doesn't have the system
+        assertFalse(b.getDevelopedSystems().contains(s1));
+
+        // now develop the remaining component within the system
+        component2.setDevelopmentStage(4);
+
+        // check that system has been automatically added to developedSystems
+        assertTrue(b.getDevelopedSystems().contains(s1));
+    }
+
 }
