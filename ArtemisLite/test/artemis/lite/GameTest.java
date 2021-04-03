@@ -713,7 +713,6 @@ class GameTest {
 		assertEquals(expectedOutcome2, actualResult);
 	}
 
-
 	@Test
 	void checkThatFinalDevelopmentResultsInWinGame() {
 

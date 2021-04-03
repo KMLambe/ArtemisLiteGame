@@ -513,7 +513,8 @@ public class Game {
 				switch (playerChoice) {
 					case 1:
 						displayDevelopComponentMenu(currentPlayer);
-						checkAllSystemsFullyDeveloped();
+						// winGame will be set to true when all systems fully developed
+						winGame = checkAllSystemsFullyDeveloped();
 						break;
 					case 2:
 						displayTradeMenu(currentPlayer);
@@ -529,17 +530,17 @@ public class Game {
 						currentPlayer.setActionPoints(0);
 						break;
 					case 6:
-						// this breaks the loop and within gameLoop the endGame method is called
-						boolean playerWantsToLeave = confirmPlayerWantsToLeave(currentPlayer);
-						if (playerWantsToLeave) {
-							endGame = true;
-						}
+						// endGame will be set to true if player wants to leave
+						endGame = confirmPlayerWantsToLeave(currentPlayer);
 						break;
 					default:
 						announce("Invalid option", currentPlayer);
 				}
 			} catch (InputMismatchException inputMismatchException) {
 				System.out.println("Invalid input - please try again");
+			} catch (NoSuchElementException noSuchElementException) {
+				System.out.println("Please input your selection...");
+				scanner.nextInt();
 			} catch (Exception exception) {
 				System.out.println(exception.getMessage());
 				System.out.println("There was a problem - please try again");
@@ -933,19 +934,10 @@ public class Game {
 	 * @return true - if all systems are fully developed; false - if systems are not fully developed.
 	 */
 	public static boolean checkAllSystemsFullyDeveloped() {
-		int counter = 0;
-		for (ArtemisSystem system : board.getSystems()) {
-			if (system.checkFullyDeveloped()) {
-				counter++;
-			}
-		}
+		int totalSystems = board.getSystems().length;
+		int totalDevelopedSystems = board.getDevelopedSystems().size();
 
-		if (counter > 0 && counter == board.getSystems().length) {
-			winGame = true;
-			return true;
-		}
-
-		return false;
+		return totalSystems == totalDevelopedSystems;
 	}
 
 	/**
