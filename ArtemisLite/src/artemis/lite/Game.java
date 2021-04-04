@@ -169,8 +169,8 @@ public class Game {
 		board.createSquare("SERVICE MODULE", 150, 75, 35, system3);
 		board.createSquare("LAUNCH ABORT SYSTEM", 150, 75, 35, system3);
 		// system4
-		board.createSquare("POWER AND PROPULSION ELEMENT", 200, 100, 50, system4);
-		board.createSquare("HABITATION AND LOGISTICS OUTPOST", 200, 100, 50, system4);
+		board.createSquare("POWER AND PROPULSION ELEMENT", 250, 100, 50, system4);
+		board.createSquare("HABITATION AND LOGISTICS OUTPOST", 250, 100, 50, system4);
 
 		return board;
 	}
