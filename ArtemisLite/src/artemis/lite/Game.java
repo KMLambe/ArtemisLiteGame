@@ -954,7 +954,7 @@ public class Game {
 		if (playersToRoll.size() < 1) {
 			throw new IllegalArgumentException("Empty list of players");
 		} else if (playersToRoll.size() == 1) {
-			System.out.println("Only one player passed through...no need to roll the dice");
+			System.out.println("Only one player wants to purchase the component...no need to roll the dice");
 			return playersToRoll.get(0);
 		}
 
