@@ -493,7 +493,7 @@ public class Game {
 	 * @param currentPlayer takes an arraylist of players
 	 */
 	public static void playTurn(Player currentPlayer) {
-		int playerChoice;
+		int playerChoice = -1;
 		String[] menuOptions = {"...MENU...", "1. Develop Component", "2. Trade components", "3. Display board status",
 				"4. Display my components", "5. End turn", "6. Leave game", "Selection..."};
 
@@ -507,43 +507,46 @@ public class Game {
 
 			try {
 				playerChoice = scanner.nextInt();
-				System.out.println();
-
-				switch (playerChoice) {
-					case 1:
-						displayDevelopComponentMenu(currentPlayer);
-						// winGame will be set to true when all systems fully developed
-						gameWon = checkAllSystemsFullyDeveloped();
-						break;
-					case 2:
-						displayTradeMenu(currentPlayer);
-						break;
-					case 3:
-						board.displayAllSquares();
-						break;
-					case 4:
-						displayPlayerComponents(currentPlayer);
-						break;
-					case 5:
-						announce("has ended their turn", currentPlayer);
-						currentPlayer.setActionPoints(0);
-						break;
-					case 6:
-						// endGame will be set to true if player wants to leave
-						gameLost = confirmPlayerWantsToLeave(currentPlayer);
-						break;
-					default:
-						announce("Invalid option", currentPlayer);
-				}
 			} catch (InputMismatchException inputMismatchException) {
 				System.out.println("Invalid input - please try again");
+				scanner.next();
 			} catch (NoSuchElementException noSuchElementException) {
 				System.out.println("Please input your selection...");
-				scanner.nextInt();
+				scanner.next();
 			} catch (Exception exception) {
 				System.out.println(exception.getMessage());
 				System.out.println("There was a problem - please try again");
 			}
+
+			System.out.println();
+
+			switch (playerChoice) {
+				case 1:
+					displayDevelopComponentMenu(currentPlayer);
+					// winGame will be set to true when all systems fully developed
+					gameWon = checkAllSystemsFullyDeveloped();
+					break;
+				case 2:
+					displayTradeMenu(currentPlayer);
+					break;
+				case 3:
+					board.displayAllSquares();
+					break;
+				case 4:
+					displayPlayerComponents(currentPlayer);
+					break;
+				case 5:
+					announce("has ended their turn", currentPlayer);
+					currentPlayer.setActionPoints(0);
+					break;
+				case 6:
+					// endGame will be set to true if player wants to leave
+					gameLost = confirmPlayerWantsToLeave(currentPlayer);
+					break;
+				default:
+					announce("Invalid option", currentPlayer);
+			}
+
 		}
 	}
 
@@ -711,7 +714,7 @@ public class Game {
 		if (playerWithNoResources != null) {
 			announce("The mission failed because " + playerWithNoResources + " mismanaged their " + Game.RESOURCE_NAME);
 		} else {
-			announce("The mission was aborted due to one of the crew deciding they would leave...");
+			announce("The mission was aborted due to one of the crew deciding to abandon ship...");
 		}
 
 		System.out.println(totalNumberOfExperts + " " + RESOURCE_NAME + " were used trying to launch Artemis");
@@ -831,7 +834,7 @@ public class Game {
 			if (playerResponse) {
 				currentPlayer.purchaseComponent(playerPosition);
 			} else {
-				announce("decided not to purchase " + component + ". It will now be offered to other players.");
+				announce(currentPlayer + "decided not to purchase " + component + ". It will now be offered to other players.");
 				currentPlayer.offerComponentToOtherPlayers(component);
 			}
 		}
@@ -1421,6 +1424,16 @@ public class Game {
 	 */
 	public static void setGameLost(boolean gameLost) {
 		Game.gameLost = gameLost;
+	}
+
+	/**
+	 * This will set the value of gameWon. The purpose of this setter is to reset the gameWon value after before each
+	 * test.
+	 *
+	 * @param gameWon true - if the game has been won
+	 */
+	public static void setGameWon(boolean gameWon) {
+		Game.gameWon = gameWon;
 	}
 
 	/**
