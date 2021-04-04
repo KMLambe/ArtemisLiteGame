@@ -438,6 +438,11 @@ public class Player {
 			throw new IllegalArgumentException("Resource balance must be zero or more");
 		}
 
+		// when a player's resources equal zero the game will end
+		if (resourceBalance == 0) {
+			Game.setGameLost(true);
+		}
+
 		this.resourceBalance = resourceBalance;
 	}
 
