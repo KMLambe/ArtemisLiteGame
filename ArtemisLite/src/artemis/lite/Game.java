@@ -777,7 +777,7 @@ public class Game {
 				int rollDice = rollDice();
 
 				// let everyone know the player has moved
-				announce("is rolling the dice...", currentPlayer);
+				announce("is about to roll the two dice...", currentPlayer);
 				delay(2000);
 				announce("rolled " + rollDice + " and moves accordingly.", currentPlayer);
 				delay(1000);
