@@ -698,9 +698,22 @@ public class Game {
 		announce("Houston... we've had a problem");
 		delay(1000);
 
+		Player playerWithNoResources = null;
+
 		for (Player player : players) {
+			if (player.getResourceBalance() == 0) {
+				playerWithNoResources = player;
+			}
+
 			totalNumberOfExperts += player.getResourceBalance();
 		}
+
+		if (playerWithNoResources != null) {
+			announce("The mission failed because " + playerWithNoResources + " mismanaged their " + Game.RESOURCE_NAME);
+		} else {
+			announce("The mission was aborted due to one of the crew deciding they would leave...");
+		}
+
 		System.out.println(totalNumberOfExperts + " " + RESOURCE_NAME + " were used trying to launch Artemis");
 		delay(1000);
 
