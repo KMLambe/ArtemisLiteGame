@@ -717,7 +717,8 @@ public class Game {
 			announce("The mission was aborted due to one of the crew deciding to abandon ship...");
 		}
 
-		System.out.println(totalNumberOfExperts + " " + RESOURCE_NAME + " were used trying to launch Artemis");
+		System.out.println(totalNumberOfExperts + " " + RESOURCE_NAME + " were still available at teh end and could " +
+				"have been put to good use. Unfortunately we will never know what might have been, had they been used.");
 		delay(1000);
 
 		System.out.printf("\n%-20s %s\n", "PLAYER", "REMAINING RESOURCES");
@@ -834,7 +835,7 @@ public class Game {
 			if (playerResponse) {
 				currentPlayer.purchaseComponent(playerPosition);
 			} else {
-				announce(currentPlayer + "decided not to purchase " + component + ". It will now be offered to other players.");
+				announce(currentPlayer + " decided not to purchase " + component + ". It will now be offered to other players.");
 				currentPlayer.offerComponentToOtherPlayers(component);
 			}
 		}
