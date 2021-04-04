@@ -42,12 +42,12 @@ public class Game {
 	 * When winGame is true, this will end the loops inside playTurn and gameLoop resulting in the winGame method
 	 * being invoked. The value can only be set within the Game class but can be read anywhere using isEndGame().
 	 */
-	private static boolean endGame = false;
+	private static boolean gameLost = false;
 	/**
 	 * When endGame is true, this will end the loops inside playTurn and gameLoop resulting in the endGame method
 	 * being invoked. The value can only be set within the Game class but can be read anywhere using isWinGame().
 	 */
-	private static boolean winGame = false;
+	private static boolean gameWon = false;
 	/**
 	 * Stores a class scanner which can be accessed via any methods inside Game, and in other classes via getScanner().
 	 */
@@ -497,8 +497,7 @@ public class Game {
 		String[] menuOptions = {"...MENU...", "1. Develop Component", "2. Trade components", "3. Display board status",
 				"4. Display my components", "5. End turn", "6. Leave game", "Selection..."};
 
-		while (currentPlayer.getActionPoints() > 0 && !endGame && !winGame) {
-
+		while (currentPlayer.getActionPoints() > 0 && !gameLost && !gameWon) {
 			currentPlayer.displayTurnStats();
 
 			// loop through string array and output to screen using method
@@ -514,7 +513,7 @@ public class Game {
 					case 1:
 						displayDevelopComponentMenu(currentPlayer);
 						// winGame will be set to true when all systems fully developed
-						winGame = checkAllSystemsFullyDeveloped();
+						gameWon = checkAllSystemsFullyDeveloped();
 						break;
 					case 2:
 						displayTradeMenu(currentPlayer);
@@ -531,7 +530,7 @@ public class Game {
 						break;
 					case 6:
 						// endGame will be set to true if player wants to leave
-						endGame = confirmPlayerWantsToLeave(currentPlayer);
+						gameLost = confirmPlayerWantsToLeave(currentPlayer);
 						break;
 					default:
 						announce("Invalid option", currentPlayer);
@@ -545,19 +544,13 @@ public class Game {
 				System.out.println(exception.getMessage());
 				System.out.println("There was a problem - please try again");
 			}
-
-			if (currentPlayer.getResourceBalance() == 0) {
-				// game is over when any player's balance reaches zero
-				endGame = true;
-			}
-
 		}
 	}
 
 	/**
 	 * Displays to the players that the game has been won along with stats about the game
 	 */
-	public static void winGame() {
+	public static void missionSuccessful() {
 		int totalNumberOfExperts = 0;
 		ArtemisSystem spaceLaunchSystem = board.getSystems()[0];
 		ArtemisSystem preStagingSystem = board.getSystems()[1];
@@ -693,18 +686,16 @@ public class Game {
 	}
 
 	/**
-	 * This end of game method gives the final state of play when the game has
-	 * ended. It displays to screen the final resources available to players before
-	 * game ended, owned components and systems and player who refused to accept
-	 * resources most.
+	 * This gives the final state of play when a player has aborted the mission/a player has run out of resources.
+	 * It displays a closing reel, outputting each players resources, components and systems, alongside the player who
+	 * turned down the most resources.
 	 */
-	public static void endGame() {
+	public static void missionFailed() {
 
 		int totalNumberOfExperts = 0;
 
 		delay(1000);
 		announce("Houston... we've had a problem");
-		System.out.println("MISSION ABORTED!");
 		delay(1000);
 
 		for (Player player : players) {
@@ -713,31 +704,30 @@ public class Game {
 		System.out.println(totalNumberOfExperts + " " + RESOURCE_NAME + " were used trying to launch Artemis");
 		delay(1000);
 
-		System.out.printf("\n%-20s %-10s\n", "PLAYER", "REMAINING RESOURCES");
+		System.out.printf("\n%-20s %s\n", "PLAYER", "REMAINING RESOURCES");
 		System.out.println("-----------------------------------------");
 		for (Player player : players) {
-			System.out.printf("%-20s %-10s\n", player.getPlayerName(), player.getResourceBalance());
+			System.out.printf("%-20s %s\n", player.getPlayerName(), player.getResourceBalance());
 		}
 		delay(1000);
 
-		System.out.printf("\n%-20s %-10s\n", "PLAYER", "OWNED COMPONENTS");
+		System.out.printf("\n%-20s %s\n", "PLAYER", "OWNED COMPONENTS");
 		System.out.println("-----------------------------------------");
 		for (Player player : players) {
-			System.out.printf("\n%-20s %-10s\n", player.getPlayerName(), player.getOwnedComponents());
+			System.out.printf("%-20s %s\n", player.getPlayerName(), player.getOwnedComponents());
 		}
 		delay(1000);
 
-		System.out.printf("\n%-20s %-10s\n", "PLAYER", "OWNED SYSTEMS");
+		System.out.printf("\n%-20s %s\n", "PLAYER", "OWNED SYSTEMS");
 		System.out.println("-----------------------------------------");
 		for (Player player : players) {
-			System.out.printf("\n%-20s %-10s\n", player.getPlayerName(), player.getOwnedSystems());
+			System.out.printf("%-20s %s\n", player.getPlayerName(), player.getOwnedSystems());
 		}
 		delay(1000);
 
 		// get the sorted list
 		System.out.println();
 		List<Player> listOfPlayersSortedByTimesDeclinedResources = sortPlayersByCounterOfTimesDeclinedResources();
-		// display the sorted list
 		displayTimesDeclinedResourcesStats(listOfPlayersSortedByTimesDeclinedResources);
 
 		announce("GAME ENDED");
@@ -761,7 +751,7 @@ public class Game {
 		// set currentPlayer to the first player in the arraylist
 		Player currentPlayer = players.get(0);
 
-		while (currentPlayer.getActionPoints() > 0 && !endGame && !winGame) {
+		while (currentPlayer.getActionPoints() > 0 && !gameLost && !gameWon) {
 			try {
 				announce(String.format("Player %s it's your turn...make it count!", currentPlayer));
 
@@ -792,12 +782,12 @@ public class Game {
 			currentPlayer.setActionPoints(DEFAULT_ACTION_POINTS);
 		}
 
-		if (winGame) {
-			winGame();
-		}
-
-		if (endGame) {
-			endGame();
+		if (gameWon) {
+			missionSuccessful();
+		} else if (gameLost) {
+			missionFailed();
+		} else {
+			announce("The game ended unexpectedly");
 		}
 	}
 
@@ -1406,14 +1396,24 @@ public class Game {
 	/**
 	 * @return the value of endGame
 	 */
-	public static boolean isEndGame() {
-		return endGame;
+	public static boolean isGameLost() {
+		return gameLost;
+	}
+
+	/**
+	 * This will set the value of gameLost - which will end the game if set to true.
+	 * A game will be lost for one of two reasons: 1) a player runs out of resources; 2) a player leaves the game.
+	 *
+	 * @param gameLost true - if the game has been lost
+	 */
+	public static void setGameLost(boolean gameLost) {
+		Game.gameLost = gameLost;
 	}
 
 	/**
 	 * @return the value of winGame
 	 */
-	public static boolean isWinGame() {
-		return winGame;
+	public static boolean isGameWon() {
+		return gameWon;
 	}
 }
