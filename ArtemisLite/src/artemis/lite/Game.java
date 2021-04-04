@@ -717,7 +717,7 @@ public class Game {
 			announce("The mission was aborted due to one of the crew deciding to abandon ship...");
 		}
 
-		System.out.println(totalNumberOfExperts + " " + RESOURCE_NAME + " were still available at teh end and could " +
+		System.out.println(totalNumberOfExperts + " " + RESOURCE_NAME + " were still available at the end and could " +
 				"have been put to good use. Unfortunately we will never know what might have been, had they been used.");
 		delay(1000);
 
