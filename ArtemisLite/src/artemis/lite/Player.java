@@ -19,7 +19,7 @@ public class Player {
 	private int actionPoints = Game.DEFAULT_ACTION_POINTS;
 	private final List<Component> ownedComponents = new ArrayList<>();
 	private final List<ArtemisSystem> ownedSystems = new ArrayList<>();
-	private int CountOfTimesPlayerDeclinedResources;
+	private int countOfTimesPlayerDeclinedResources;
 	private int turnCounter;
 
 	/**
@@ -364,7 +364,7 @@ public class Player {
 	 * indication of how 'selfless' the player was over the course of the game.
 	 */
 	public void incrementCountOfTimesPlayerDeclinedResources() {
-		CountOfTimesPlayerDeclinedResources++;
+		countOfTimesPlayerDeclinedResources++;
 	}
 
 	/**
@@ -540,7 +540,7 @@ public class Player {
 	 * @return the countOfTimesPlayerDeclinedResources
 	 */
 	public int getCountOfTimesPlayerDeclinedResources() {
-		return CountOfTimesPlayerDeclinedResources;
+		return countOfTimesPlayerDeclinedResources;
 	}
 
 	/**
@@ -549,7 +549,7 @@ public class Player {
 	 *                                            to set
 	 */
 	public void setCountOfTimesPlayerDeclinedResources(int countOfTimesPlayerDeclinedResources) {
-		CountOfTimesPlayerDeclinedResources = countOfTimesPlayerDeclinedResources;
+		this.countOfTimesPlayerDeclinedResources = countOfTimesPlayerDeclinedResources;
 	}
 
 	/**
