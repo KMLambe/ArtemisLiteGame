@@ -135,6 +135,7 @@ class GameTest {
 		players.add(player1);
 		players.add(player2);
 		Game.setPlayers(players);
+		Game.setGameLost(false);
 
 		// let game class know it is running tests
 		Game.setTestMode(true);
@@ -708,7 +709,7 @@ class GameTest {
 		Component testComponent11 = (Component) squares[11];
 		testComponent11.setDevelopmentStage(4);
 
-		//test that all components have been fully developed
+		// test that all components have been fully developed
 		actualResult = Game.checkAllSystemsFullyDeveloped();
 		assertEquals(expectedOutcome2, actualResult);
 	}
@@ -766,7 +767,41 @@ class GameTest {
 
 		// tests
 		assertTrue(Game.checkAllSystemsFullyDeveloped());
-		assertTrue(Game.isWinGame());
+		assertTrue(Game.isGameWon());
+	}
+
+	@Test
+	void checkGameEndsWhenPlayerHasNoResources() {
+		Square[] squares = board1.getSquares();
+		//set resources and balances higher so this doesn't stop test
+		player1.setResourceBalance(5000);
+		player1.setActionPoints(10);
+
+		// purchase all Components
+		player1.purchaseComponent(squares[1]);
+		player1.purchaseComponent(squares[2]);
+		player1.purchaseComponent(squares[3]);
+
+
+
+		// fully develop components
+		Component testComponent1 = (Component) squares[1];
+		testComponent1.setDevelopmentStage(4);
+		Component testComponent2 = (Component) squares[2];
+		testComponent2.setDevelopmentStage(4);
+		Component testComponent3 = (Component) squares[3];
+		testComponent3.setDevelopmentStage(3);
+
+		// set player's resources to zero
+		player1.setResourceBalance(0);
+
+		// invoke gameLoop to simulate real sequence of events
+		Game.gameLoop();
+
+		// tests
+		assertFalse(Game.checkAllSystemsFullyDeveloped());
+		assertTrue(Game.isGameLost());
+		assertFalse(Game.isGameWon());
 	}
 
 
@@ -797,20 +832,20 @@ class GameTest {
 
 		// make sure this did not change end game variables/methods
 		assertFalse(Game.checkAllSystemsFullyDeveloped());
-		assertFalse(Game.isWinGame());
-		assertFalse(Game.isEndGame());
+		assertFalse(Game.isGameWon());
+		assertFalse(Game.isGameLost());
 	}
 
 	@Test
 	void getDefaultValueWinGame() {
 		// check that the default value is false
-		assertFalse(Game.isWinGame());
+		assertFalse(Game.isGameWon());
 	}
 
 	@Test
 	void getDefaultValueEndGame() {
 		// check that the default value is false
-		assertFalse(Game.isEndGame());
+		assertFalse(Game.isGameLost());
 	}
 
 
