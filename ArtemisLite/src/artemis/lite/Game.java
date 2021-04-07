@@ -823,7 +823,7 @@ public class Game {
 		if (playerPosition instanceof Component) {
 			Component component = (Component) playerPosition;
 
-			if (currentPlayer.getResourceBalance() < component.getComponentCost()) {
+			if (currentPlayer.checkSufficientResources(component.getComponentCost())) {
 				announce("you do not have sufficient resources to purchase " + component, currentPlayer);
 				return;
 			}
@@ -833,7 +833,7 @@ public class Game {
 			boolean playerResponse = getPlayerConfirmation();
 
 			if (playerResponse) {
-				currentPlayer.purchaseComponent(playerPosition);
+				currentPlayer.purchaseComponent(component);
 			} else {
 				announce(currentPlayer + " decided not to purchase " + component + ". It will now be offered to other players.");
 				currentPlayer.offerComponentToOtherPlayers(component);

@@ -165,8 +165,8 @@ public class Player {
 		Game.announce("has purchased " + component + " for " + component.getComponentCost() + " " + Game.RESOURCE_NAME, this);
 
 		updateResources(-component.getComponentCost());
-		component.updateTotalResourcesDevotedToComponent(component.getComponentCost());
 		addComponent(component);
+		component.updateTotalResourcesDevotedToComponent(component.getComponentCost());
 		component.setComponentOwner(this);
 
 		// let player know if they need more components before developing
