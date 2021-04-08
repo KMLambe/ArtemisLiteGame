@@ -438,16 +438,23 @@ class GameTest {
 
 		// set board and resources
 		player1.setCurrentBoardPosition(0);
-		player1.setResourceBalance(99);
+		player1.setResourceBalance(20);
+		player2.setResourceBalance(1_000);
 
 		Component playerPosition = (Component) Game.updatePlayerPosition(player1, 2);
 
+		// player1 does not have enough resources, should be offered to other players
+		// player2 accepts and should be there owner
+		Game.setScanner(new Scanner("yes"));
 		Game.handlePlayerLanding(player1, playerPosition);
 
 		// make sure resources are unchanged, position was updated, and ownedComponents are unchanged
-		assertEquals(99, player1.getResourceBalance());
+		assertEquals(20, player1.getResourceBalance());
 		assertEquals(2, playerPosition.getSquarePosition());
 		assertFalse(player1.getOwnedComponents().contains(playerPosition));
+
+		assertEquals(player2, playerPosition.getComponentOwner());
+		assertTrue(player2.getOwnedComponents().contains(playerPosition));
 	}
 
 	@Test

@@ -162,13 +162,13 @@ public class Player {
 			throw new IllegalArgumentException("Insufficient resources to purchase " + component.getSquareName());
 		}
 
-		Game.announce("has purchased " + component + " for " + component.getComponentCost() + " " + Game.RESOURCE_NAME, this);
 
 		updateResources(-component.getComponentCost());
 		addComponent(component);
 		component.updateTotalResourcesDevotedToComponent(component.getComponentCost());
 		component.setComponentOwner(this);
 
+		Game.announce("has purchased " + component + " for " + component.getComponentCost() + " " + Game.RESOURCE_NAME, this);
 		// let player know if they need more components before developing
 		ArtemisSystem artemisSystem = component.getComponentSystem();
 		artemisSystem.announceComponentsRequiredBeforeDevelopment(this);

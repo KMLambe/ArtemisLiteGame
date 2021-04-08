@@ -824,20 +824,20 @@ public class Game {
 			Component component = (Component) playerPosition;
 
 			if (currentPlayer.checkSufficientResources(component.getComponentCost())) {
-				announce("you do not have sufficient resources to purchase " + component, currentPlayer);
-				return;
-			}
+				announce("do you want to purchase " + component + "?", currentPlayer);
+				boolean playerResponse = getPlayerConfirmation();
 
-			announce("do you want to purchase " + component + "?", currentPlayer);
-
-			boolean playerResponse = getPlayerConfirmation();
-
-			if (playerResponse) {
-				currentPlayer.purchaseComponent(component);
+				if (playerResponse) {
+					currentPlayer.purchaseComponent(component);
+					return;
+				} else {
+					announce(currentPlayer + " decided not to purchase " + component + ". It will now be offered to other players.");
+				}
 			} else {
-				announce(currentPlayer + " decided not to purchase " + component + ". It will now be offered to other players.");
-				currentPlayer.offerComponentToOtherPlayers(component);
+				announce("you do not have sufficient resources to purchase " + component, currentPlayer);
 			}
+			// if player rejected purchase or did not have enough resources, offer to other players
+			currentPlayer.offerComponentToOtherPlayers(component);
 		}
 	}
 
